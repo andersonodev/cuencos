@@ -5,9 +5,9 @@ import EventCard from './EventCard';
 
 const EventList = ({ title, events }) => {
   return (
-    <div className="py-8">
+    <div className="py-12">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-cuencos-purple">{title}</h2>
           <div className="flex space-x-4">
             <div className="relative">
@@ -33,19 +33,17 @@ const EventList = ({ title, events }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {events.map(event => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
 
-        {events.length > 6 && (
-          <div className="text-center mt-8">
-            <Link to="/events" className="border border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white py-2 px-8 rounded-full inline-block transition-colors">
-              Explorar Mais
-            </Link>
-          </div>
-        )}
+        <div className="text-center mt-12">
+          <Link to="/events" className="border border-cuencos-purple text-cuencos-purple bg-transparent hover:bg-cuencos-purple hover:text-white py-3 px-10 rounded-full inline-block transition-colors">
+            Explorar Mais
+          </Link>
+        </div>
       </div>
     </div>
   );
