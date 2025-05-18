@@ -66,7 +66,7 @@ const EventDetailsPage = () => {
             <div className="bg-cuencos-gray rounded-md py-2 px-4">
               <div className="text-xs text-gray-400">Ingresso</div>
               <div className="flex items-center">
-                <div className="bg-cuencos-purple h-2 w-2 rounded-full mr-2"></div>
+                <div className="bg-orange-500 h-2 w-2 rounded-full mr-2"></div>
                 <span className="text-white font-medium">A partir de R${event.price.toFixed(2)}</span>
               </div>
             </div>
@@ -131,7 +131,7 @@ const EventDetailsPage = () => {
             <div>
               <Link 
                 to={`/events/${event.id}/buy`}
-                className="block w-full bg-cuencos-purple hover:bg-cuencos-darkPurple text-white text-center py-3 rounded-md font-medium mb-4"
+                className="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center py-3 rounded-md font-medium mb-4"
               >
                 Comprar
               </Link>

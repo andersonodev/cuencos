@@ -15,6 +15,11 @@ const EventCard = ({ event }) => {
         <div className="p-4">
           <h3 className="text-lg font-semibold text-white">{event.title}</h3>
           <p className="text-sm text-gray-400 mt-2">{event.description}</p>
+          {event.date && (
+            <div className="mt-3 text-xs text-cuencos-purple font-semibold">
+              {event.date}
+            </div>
+          )}
         </div>
       </Link>
     </div>
