@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -74,74 +73,54 @@ const SuccessPage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      
       <div className="flex-grow">
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title="Resumo da compra"
+          title="Confirmação de Compra"
         >
-          {!isPaymentCompleted ? (
-            <div className="py-8 text-center">
-              <div className="animate-pulse mb-4">
-                <div className="w-12 h-12 mx-auto bg-cuencos-purple rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl">💰</span>
+          <div className="text-center mb-6">
+            {!isPaymentCompleted ? (
+              <div className="flex flex-col items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cuencos-purple mb-4"></div>
+                <p className="text-white">Processando seu pagamento...</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center">
+                <div className="bg-green-500 rounded-full p-2 mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-cuencos-purple mb-2">Compra Confirmada!</h3>
+                <p className="text-white mb-4">Seu ingresso foi comprado com sucesso.</p>
+                
+                <div className="bg-cuencos-gray p-4 rounded-md w-full mb-6">
+                  <h4 className="text-cuencos-purple font-medium mb-2">{checkoutInfo?.ticketType}</h4>
+                  <p className="text-white">Quantidade: {checkoutInfo?.quantity}</p>
+                  <p className="text-white">Para: {checkoutInfo?.participantInfo?.fullName}</p>
+                  <p className="text-white">Total pago: R${(checkoutInfo?.finalTotal).toFixed(2)}</p>
+                </div>
+                
+                <div className="flex gap-4">
+                  <button 
+                    onClick={viewTicket}
+                    className="bg-cuencos-purple hover:bg-cuencos-darkPurple text-white py-2 px-6 rounded-md"
+                  >
+                    Ver meus ingressos
+                  </button>
+                  <button 
+                    onClick={closeModal}
+                    className="border border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white py-2 px-6 rounded-md"
+                  >
+                    Voltar à página inicial
+                  </button>
                 </div>
               </div>
-              <h3 className="text-xl text-white mb-2">Processando pagamento...</h3>
-              <p className="text-gray-400">Por favor, aguarde enquanto processamos o seu pagamento.</p>
-            </div>
-          ) : (
-            <div>
-              <h2 className="text-center text-2xl font-bold text-white mb-4">Pagamento Confirmado!</h2>
-              
-              <div className="bg-cuencos-gray rounded-lg p-4 mb-6">
-                <div className="flex justify-center mb-4">
-                  <img src={getEventById(checkoutInfo.eventId).image} alt={checkoutInfo.eventTitle} className="h-48 object-cover rounded" />
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-white font-bold text-lg">PUC IN RIO</h3>
-                  <p className="text-gray-400">09 de Maio 21:00 até 10 de Maio 04:00 – Em breve... - Curitiba / Paraná</p>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4 mt-4 border-t border-cuencos-gray pt-4">
-                  <div className="text-center">
-                    <p className="text-xs text-cuencos-purple">Data</p>
-                    <p className="text-white">09 de Maio</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-cuencos-purple">Horário</p>
-                    <p className="text-white">9:00 PM</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-cuencos-purple">Nome</p>
-                    <p className="text-white">{checkoutInfo.participantInfo.fullName.split(' ')[0]}</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 flex justify-center">
-                  <div className="w-48 h-48 bg-white p-2 rounded">
-                    <div className="w-full h-full bg-black flex items-center justify-center">
-                      <span className="text-white text-xs">QR Code</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="text-gray-400 text-xs text-center mt-3">Escaneie esse QR Code na entrada.</p>
-              </div>
-              
-              <button
-                onClick={viewTicket}
-                className="w-full bg-cuencos-purple hover:bg-cuencos-darkPurple text-white py-4 rounded-md text-lg font-medium"
-              >
-                Veja-o em Meus Ingressos
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </Modal>
       </div>
-      
       <Footer />
     </div>
   );

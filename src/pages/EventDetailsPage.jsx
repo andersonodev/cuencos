@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -10,6 +9,7 @@ import EventCard from '../components/EventCard';
 
 const EventDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const event = getEventById(Number(id));
   const [isFav, setIsFav] = useState(user ? isFavorite(user.id, Number(id)) : false);
@@ -27,127 +27,136 @@ const EventDetailsPage = () => {
     );
   }
 
-  const handleFavoriteToggle = () => {
-    if (!user) return;
-    const newStatus = toggleFavorite(user.id, event.id);
-    setIsFav(newStatus);
+  const handleToggleFavorite = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    const result = toggleFavorite(user.id, event.id);
+    setIsFav(result);
   };
   
-  // Get other events for recommendations
-  const otherEvents = getEvents()
-    .filter(e => e.id !== event.id)
-    .slice(0, 3);
+  const handleBuyTickets = () => {
+    navigate(`/events/${id}/buy`);
+  };
+  
+  // Get related events (simplified implementation)
+  const allEvents = getEvents();
+  const relatedEvents = allEvents.filter(e => e.id !== event.id).slice(0, 3);
   
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       
-      <div className="bg-cuencos-black">
-        <div className="relative h-80 overflow-hidden">
-          <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-        </div>
-        
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold text-white">{event.title}</h1>
-          
-          <div className="flex justify-between mt-4">
-            <div className="flex space-x-4">
-              <button 
-                onClick={handleFavoriteToggle}
-                className={`rounded-full p-2 ${isFav ? 'bg-cuencos-purple text-white' : 'bg-cuencos-gray text-white'}`}
-              >
-                ★
-              </button>
-              <button className="rounded-full p-2 bg-cuencos-gray text-white">
-                ↗
-              </button>
-            </div>
-            
-            <div className="bg-cuencos-gray rounded-md py-2 px-4">
-              <div className="text-xs text-gray-400">Ingresso</div>
-              <div className="flex items-center">
-                <div className="bg-orange-500 h-2 w-2 rounded-full mr-2"></div>
-                <span className="text-white font-medium">A partir de R${event.price.toFixed(2)}</span>
-              </div>
-            </div>
+      <div className="relative">
+        <div className="bg-rio-gradient bg-cover bg-center h-64 flex items-end">
+          <div className="container mx-auto px-4 pb-6">
+            <h1 className="text-4xl font-bold text-white">{event.title}</h1>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-            <div className="md:col-span-2">
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-white mb-4">Data e Horário</h2>
-                <div className="flex items-start space-x-3">
-                  <div className="text-gray-400 mt-1">📅</div>
-                  <div>
-                    <div className="text-white">{event.date}</div>
-                  </div>
+        </div>
+      </div>
+      
+      <main className="container mx-auto px-4 py-8 flex-grow">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Event details column */}
+          <div className="w-full md:w-2/3">
+            <div className="bg-cuencos-gray rounded-lg p-6 mb-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-2xl font-bold text-cuencos-purple">Detalhes do evento</h2>
+                <button 
+                  onClick={handleToggleFavorite}
+                  className="text-white bg-cuencos-gray hover:bg-cuencos-lightGray p-2 rounded-full"
+                >
+                  {isFav ? (
+                    <svg className="w-6 h-6 text-cuencos-purple" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <img 
+                    src={event.image} 
+                    alt={event.title} 
+                    className="w-full rounded-lg object-cover aspect-video"
+                  />
                 </div>
-                <div className="flex items-start space-x-3 mt-2">
-                  <div className="text-gray-400 mt-1">⏰</div>
-                  <div>
-                    <div className="text-white">{event.time || '21:00 PM - 4:00 AM'}</div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center text-white">
+                    <span className="mr-2">📅</span>
+                    <div>
+                      <p className="font-medium">{event.date}</p>
+                      <p className="text-sm text-gray-300">{event.time}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center text-white">
+                    <span className="mr-2">📍</span>
+                    <p>{event.location}</p>
+                  </div>
+                  
+                  {event.ageRestriction && (
+                    <div className="flex items-center text-white">
+                      <span className="mr-2">🔞</span>
+                      <p>{event.ageRestriction}</p>
+                    </div>
+                  )}
+                  
+                  {event.organizers && (
+                    <div className="flex items-center text-white">
+                      <span className="mr-2">👥</span>
+                      <p>{event.organizers}</p>
+                    </div>
+                  )}
+                  
+                  <div className="pt-4">
+                    <p className="text-white text-lg mb-2">Preço: <span className="text-cuencos-purple">R${event.price.toFixed(2)}</span></p>
+                    <button
+                      onClick={handleBuyTickets}
+                      className="w-full bg-cuencos-purple hover:bg-cuencos-darkPurple text-white py-3 rounded-md font-medium"
+                    >
+                      Comprar ingressos
+                    </button>
                   </div>
                 </div>
               </div>
               
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-white mb-4">Endereço e Local</h2>
-                <div className="flex items-start space-x-3">
-                  <div className="text-gray-400 mt-1">📍</div>
-                  <div>
-                    <div className="text-white">{event.location}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-white mb-4">Faixa Etária</h2>
-                <div className="flex items-start space-x-3">
-                  <div className="text-gray-400 mt-1">🔞</div>
-                  <div>
-                    <div className="text-white">{event.ageRestriction || 'Proibido menores de 18'}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-white mb-4">Organizadores</h2>
-                <div className="flex items-start space-x-3">
-                  <div className="text-gray-400 mt-1">👥</div>
-                  <div>
-                    <div className="text-white">{event.organizers || 'Associação Atlética'}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold text-white mb-4">Descrição do Evento</h2>
+              <div className="mt-8">
+                <h3 className="text-xl font-bold text-white mb-4">Sobre o evento</h3>
                 <div className="text-white whitespace-pre-line">
                   {event.longDescription || event.description}
                 </div>
               </div>
             </div>
-            
-            <div>
-              <Link 
-                to={`/events/${event.id}/buy`}
-                className="block w-full bg-orange-500 hover:bg-orange-600 text-white text-center py-3 rounded-md font-medium mb-4"
-              >
-                Comprar
-              </Link>
-            </div>
           </div>
           
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Outros eventos que você pode gostar</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {otherEvents.map(event => (
-                <EventCard key={event.id} event={event} />
-              ))}
+          {/* Sidebar */}
+          <div className="w-full md:w-1/3">
+            <div className="bg-cuencos-gray rounded-lg p-6 mb-6">
+              <h2 className="text-xl font-bold text-cuencos-purple mb-4">Eventos Relacionados</h2>
+              <div className="space-y-4">
+                {relatedEvents.map((relEvent) => (
+                  <div key={relEvent.id} className="border-b border-cuencos-lightGray pb-4 last:border-0">
+                    <Link to={`/events/${relEvent.id}`} className="group">
+                      <h3 className="text-white font-medium group-hover:text-cuencos-purple">{relEvent.title}</h3>
+                      <p className="text-sm text-gray-300">{relEvent.date}</p>
+                      <p className="text-sm text-gray-300">{relEvent.location}</p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
       
       <Footer />
     </div>

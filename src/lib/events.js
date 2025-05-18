@@ -1,125 +1,57 @@
-
-// Mock events data
-export const events = [
+// Mock data para eventos
+const events = [
   {
     id: 1,
-    title: 'PUC IN RIO',
-    description: 'Quem aí não perde uma festa da MAIOR DA CAPITAL?? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!',
-    image: '/lovable-uploads/edcb0aba-bd3b-48d1-b82e-46a62fd82676.png',
-    date: '09.MAIO',
-    month: 'MAY',
-    location: 'Em breve... - Curitiba / Paraná',
-    time: '21H ÀS 04H',
-    ageRestriction: 'Proibido menores de 18',
-    organizers: 'Associação Atlética e Acadêmica de Eng e Arq da PUCPR - AAAEA-PUCPR',
-    price: 110.0,
-    longDescription: `
-      FALA RAÇA!
-
-      Quem aí não perde uma festa da MAIOR DA CAPITAL??
-
-      Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!
-
-      Vocês estão preparados pra?
-
-      Esperamos que sim! Aqui é PUC, ninguém é fraco e sem talento!
-
-      Agora o que todo mundo quer saber...
-
-      Quando?
-      09 de maio de 2025
-      21H ÀS 04H
-
-      Onde?
-      EM BREVE...
-
-      OPEN BAR
-      -Cerveja Itaipava
-      -Vodka
-      -Energético
-      -Refrigerante
-      -Gummy
-
-      ATRAÇÕES:
-      EM BREVE...
-    `,
-    featured: true
+    title: "PUC IN RIO",
+    description: "O maior evento universitário de Curitiba está de volta!",
+    longDescription: "PUC IN RIO é uma experiência única que combina música, diversão e a energia jovem universitária. Este ano, contamos com atrações nacionais, área VIP e muito mais.\n\nNão perca a oportunidade de vivenciar uma noite inesquecível com seus amigos da faculdade!",
+    image: "/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png",
+    date: "09 de Maio de 2025",
+    time: "21:00 - 04:00",
+    location: "Em breve... - Curitiba / Paraná",
+    price: 80.00,
+    featured: true,
+    ageRestriction: "Proibido menores de 18 anos",
+    organizers: "Associação Atlética PUC-PR"
   },
   {
     id: 2,
-    title: 'Calourada UFRJ BRASIL 2025.1',
-    description: 'Calourada da UFRJ, do campus de Duque de Caxias. OPEN BAR!!',
-    image: '/lovable-uploads/e47fbcb4-c782-47dd-a0a3-d0fd3462e9d0.png',
-    date: '08 DE MAIO',
-    month: 'MAY',
-    location: 'UFRJ - Duque de Caxias',
-    price: 80.0,
+    title: "CALOURADA UNINORTE",
+    description: "Venha conhecer os novos calouros da UNINORTE!",
+    image: "/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png",
+    date: "15 de Maio de 2025",
+    location: "UNINORTE - Manaus / Amazonas",
+    price: 45.00
   },
   {
     id: 3,
-    title: 'Ressaca dos Campeões',
-    description: 'O Unigames acabou mas as comemorações só começaram!!',
-    image: '/lovable-uploads/aae3785a-62cc-471e-9722-0e9241b07ee7.png',
-    month: 'MAY',
-    location: 'Unigames - Paraná',
-    price: 90.0,
+    title: "JOGOS UNIVERSITÁRIOS",
+    description: "Competições esportivas entre as principais universidades da região",
+    image: "/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png",
+    date: "22-25 de Maio de 2025",
+    location: "Centro Esportivo - São Paulo / SP",
+    price: 30.00
   },
   {
     id: 4,
-    title: 'Clubhouse (Open Bar)',
-    description: 'Imagine uma noite onde cada batida te envolve...',
-    image: '/lovable-uploads/037f3722-d4b0-43c9-98c8-d9dc5f9971ff.png',
-    month: 'MAY',
-    date: 'SEXTA 09.05',
-    location: 'Clubhouse - São Paulo',
-    price: 100.0,
-  },
-  {
-    id: 5,
-    title: 'Baile do Magna - All Night',
-    description: 'Venha para a melhor festa universitária de Curitiba!',
-    image: '/lovable-uploads/e20a20aa-8546-4e06-9641-3338f53c0daa.png',
-    month: 'MAY',
-    location: 'Magna - Curitiba',
-    price: 85.0,
-  },
-  {
-    id: 6,
-    title: 'BLACKOUT - Submundo 707',
-    description: 'VENHA PREPARADO, O SUBMUNDO TE ESPERA!',
-    image: '/images/blackout.jpg',
-    month: 'MAY',
-    date: '15.05',
-    location: 'Bar do Juiz - Pelotas',
-    price: 95.0,
+    title: "INTERATLÉTICAS",
+    description: "O maior evento das atléticas do sul do Brasil",
+    image: "/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png",
+    date: "05 de Junho de 2025",
+    location: "Estádio Municipal - Florianópolis / SC",
+    price: 65.00
   }
 ];
 
-export const getEvents = () => {
-  return events;
-};
+export const getEvents = () => events;
 
-export const getEventById = (id) => {
-  return events.find(event => event.id === Number(id));
-};
+export const getEventById = (id) => events.find(event => event.id === id);
 
-export const searchEvents = (query, location, date) => {
-  let filtered = [...events];
-  
-  if (query) {
-    filtered = filtered.filter(event => 
-      event.title.toLowerCase().includes(query.toLowerCase()) ||
-      event.description.toLowerCase().includes(query.toLowerCase())
-    );
-  }
-  
-  if (location && location !== 'Todos') {
-    filtered = filtered.filter(event => 
-      event.location.toLowerCase().includes(location.toLowerCase())
-    );
-  }
-  
-  // For simplicity, we're not implementing actual date filtering
-  
-  return filtered;
+export const searchEvents = (term, location, date) => {
+  // Implementação simplificada de busca
+  return events.filter(event => 
+    (!term || event.title.toLowerCase().includes(term.toLowerCase())) &&
+    (!location || event.location.toLowerCase().includes(location.toLowerCase())) &&
+    (!date || event.date.includes(date))
+  );
 };

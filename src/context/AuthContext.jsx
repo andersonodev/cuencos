@@ -1,47 +1,46 @@
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-import { createContext, useState, useContext, useEffect } from 'react';
+const AuthContext = createContext();
 
-const AuthContext = createContext(null);
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
-    // Check if user is stored in localStorage
-    const storedUser = localStorage.getItem('cuencosUser');
+    // Verificar se o usuário está armazenado no localStorage
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setLoading(false);
   }, []);
-
+  
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem('cuencosUser', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
   };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('cuencosUser');
-  };
-
+  
   const signup = (userData) => {
     setUser(userData);
-    localStorage.setItem('cuencosUser', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
   };
-
-  const updateUser = (userData) => {
-    const updatedUser = { ...user, ...userData };
-    setUser(updatedUser);
-    localStorage.setItem('cuencosUser', JSON.stringify(updatedUser));
+  
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
   };
-
+  
+  const updateUser = (newData) => {
+    setUser(prev => {
+      const updatedUser = { ...prev, ...newData };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+  
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup, updateUser, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
