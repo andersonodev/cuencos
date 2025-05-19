@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/header.css';
+import { Star, Ticket, User, Heart } from 'lucide-react';
 
 const ModernHeader = () => {
   return (
@@ -18,8 +19,20 @@ const ModernHeader = () => {
           </Link>
           
           <nav className="header-nav">
-            <Link to="/sell" className="header-link">Venda aqui</Link>
-            <Link to="/login" className="header-login-button">Login</Link>
+            <Link to="/favorites" className="header-link flex items-center gap-1">
+              <Star className="h-4 w-4" />
+              <span>Favoritos</span>
+            </Link>
+            <Link to="/my-tickets" className="header-link flex items-center gap-1">
+              <Ticket className="h-4 w-4" />
+              <span>Meus ingressos</span>
+            </Link>
+            <Link to="/account" className="header-link">
+              <User className="h-5 w-5" />
+            </Link>
+            <div className="header-link cursor-pointer">
+              <Heart className="h-5 w-5" />
+            </div>
           </nav>
         </div>
       </header>
