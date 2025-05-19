@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/header.css';
+import '../styles/modern-header.css';
 import { Star, Ticket, User, Heart } from 'lucide-react';
 
 const ModernHeader = () => {

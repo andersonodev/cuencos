@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/header.css';
+import '../styles/navbar.css';
+import '../styles/mobile-menu.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
