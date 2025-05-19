@@ -6,7 +6,7 @@ import ModernHeader from '../components/ModernHeader';
 import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
-import { Star, Share2, Clock, MapPin, Calendar } from 'lucide-react';
+import { Star, Share2, Clock, MapPin, Calendar, Ticket } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
