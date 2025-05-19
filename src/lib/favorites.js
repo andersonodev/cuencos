@@ -1,5 +1,5 @@
 
-// Mock data para favoritos
+// Favorites management with localStorage
 const STORAGE_KEY = 'user_favorites';
 
 // Recuperar favoritos do localStorage
@@ -38,6 +38,8 @@ export const getFavorites = (userId) => {
 };
 
 export const toggleFavorite = (userId, eventId) => {
+  if (!userId) return false;
+  
   const favorites = getUserFavorites(userId);
   const index = favorites.indexOf(eventId);
   
@@ -55,6 +57,23 @@ export const toggleFavorite = (userId, eventId) => {
 };
 
 export const isFavorite = (userId, eventId) => {
+  if (!userId) return false;
+  
   const favorites = getUserFavorites(userId);
   return favorites.includes(eventId);
 };
+
+// Initialize favorites for testing
+const initializeFavorites = () => {
+  const defaultUser = "johnfrontend@gmail.com";
+  const currentFavorites = getUserFavorites(defaultUser);
+  
+  // Only initialize if the user has no favorites yet
+  if (currentFavorites.length === 0) {
+    // Set default favorites for the test user (events 1 and 3)
+    saveUserFavorites(defaultUser, [1, 3]);
+  }
+};
+
+// Run initialization
+initializeFavorites();

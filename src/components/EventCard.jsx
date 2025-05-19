@@ -1,19 +1,47 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
+import { Star, Ticket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
+import { hasTicketForEvent } from '../lib/tickets';
+import { useToast } from '@/components/ui/use-toast';
 
 const EventCard = ({ event }) => {
   const { user } = useAuth();
-  const [isFav, setIsFav] = useState(user ? isFavorite(user.id, event.id) : false);
+  const [isFav, setIsFav] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const { toast } = useToast();
+  
+  // Initialize state based on localStorage data
+  useEffect(() => {
+    if (user) {
+      setIsFav(isFavorite(user.id, event.id));
+      setHasPurchased(hasTicketForEvent(user.id, event.id));
+    } else {
+      setIsFav(false);
+      setHasPurchased(false);
+    }
+  }, [user, event.id]);
   
   const handleToggleFavorite = (e) => {
     e.preventDefault(); // Prevent navigation
     if (user) {
       const result = toggleFavorite(user.id, event.id);
       setIsFav(result);
+      
+      toast({
+        description: result 
+          ? "Evento adicionado aos favoritos!" 
+          : "Evento removido dos favoritos!",
+        duration: 2000,
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Faça login para adicionar aos favoritos",
+        duration: 3000,
+      });
     }
   };
 
@@ -39,14 +67,21 @@ const EventCard = ({ event }) => {
             alt={event.title} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <button 
-            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70"
-            onClick={handleToggleFavorite}
-          >
-            <Star 
-              className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
-            />
-          </button>
+          <div className="absolute top-2 right-2 flex gap-2">
+            {hasPurchased && (
+              <div className="w-8 h-8 rounded-full bg-green-500/80 flex items-center justify-center">
+                <Ticket className="w-4 h-4 text-white" />
+              </div>
+            )}
+            <button 
+              className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70"
+              onClick={handleToggleFavorite}
+            >
+              <Star 
+                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
+              />
+            </button>
+          </div>
         </div>
         
         <div className="p-4">

@@ -1,6 +1,9 @@
 
-// Mock data para eventos
-const events = [
+// Mock data for events with localStorage persistence
+const EVENTS_STORAGE_KEY = 'cuencos_events';
+
+// Initial mock data for events
+const initialEvents = [
   {
     id: 1,
     title: "PUC IN RIO",
@@ -71,11 +74,41 @@ const events = [
   }
 ];
 
-export const getEvents = () => events;
+// Initialize events in localStorage if not present
+const initializeEvents = () => {
+  try {
+    const storedEvents = localStorage.getItem(EVENTS_STORAGE_KEY);
+    if (!storedEvents) {
+      localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(initialEvents));
+      return initialEvents;
+    }
+    return JSON.parse(storedEvents);
+  } catch (error) {
+    console.error("Erro ao inicializar eventos:", error);
+    return initialEvents;
+  }
+};
 
-export const getEventById = (id) => events.find(event => event.id === id);
+// Get all events from localStorage
+export const getEvents = () => {
+  try {
+    const events = localStorage.getItem(EVENTS_STORAGE_KEY);
+    return events ? JSON.parse(events) : initializeEvents();
+  } catch (error) {
+    console.error("Erro ao obter eventos:", error);
+    return initializeEvents();
+  }
+};
 
+// Get a specific event by ID
+export const getEventById = (id) => {
+  const events = getEvents();
+  return events.find(event => event.id === id);
+};
+
+// Search events with filters
 export const searchEvents = (term, location, date) => {
+  const events = getEvents();
   // Implementação simplificada de busca
   return events.filter(event => 
     (!term || event.title.toLowerCase().includes(term.toLowerCase())) &&
@@ -83,3 +116,6 @@ export const searchEvents = (term, location, date) => {
     (!date || event.date.includes(date))
   );
 };
+
+// Make sure events are initialized when this module is imported
+initializeEvents();

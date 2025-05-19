@@ -1,14 +1,16 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ModernHeader from '../components/ModernHeader';
 import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
+import { hasTicketForEvent } from '../lib/tickets';
 import { Star, Share2, Clock, MapPin, Calendar, Ticket } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useToast } from "@/components/ui/use-toast";
 import {
   Carousel,
   CarouselContent,
@@ -21,8 +23,17 @@ const EventDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const event = getEventById(Number(id));
-  const [isFav, setIsFav] = useState(user ? isFavorite(user.id, Number(id)) : false);
+  const [isFav, setIsFav] = useState(false);
+  const [hasTicket, setHasTicket] = useState(false);
+  
+  useEffect(() => {
+    if (user && event) {
+      setIsFav(isFavorite(user.id, Number(id)));
+      setHasTicket(hasTicketForEvent(user.id, Number(id)));
+    }
+  }, [user, id, event]);
   
   if (!event) {
     return (
@@ -45,6 +56,11 @@ const EventDetailsPage = () => {
     
     const result = toggleFavorite(user.id, event.id);
     setIsFav(result);
+    
+    toast({
+      description: result ? "Adicionado aos favoritos!" : "Removido dos favoritos!",
+      duration: 2000,
+    });
   };
   
   const handleBuyTickets = () => {
@@ -63,8 +79,11 @@ const EventDetailsPage = () => {
     } else {
       // Fallback for browsers that don't support Web Share API
       navigator.clipboard.writeText(window.location.href);
-      // Here you could show a toast notification
-      console.log('Link copiado!');
+      // Show toast notification
+      toast({
+        description: "Link copiado para a área de transferência!",
+        duration: 2000,
+      });
     }
   };
   
@@ -212,13 +231,26 @@ const EventDetailsPage = () => {
                 <p className="text-sm text-gray-400 ml-5">+ taxa a partir de R${(event.price * 0.1).toFixed(2)}</p>
               </div>
               
-              <Button
-                onClick={handleBuyTickets}
-                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2"
-              >
-                <Ticket className="h-4 w-4" />
-                Comprar
-              </Button>
+              {hasTicket ? (
+                <div className="bg-green-500/20 p-3 rounded-lg mb-4 text-center border border-green-500/30">
+                  <Ticket className="w-5 h-5 text-green-500 mx-auto mb-2" />
+                  <p className="text-green-400 font-medium">Você já tem ingresso para este evento!</p>
+                  <Link 
+                    to="/my-tickets" 
+                    className="text-green-300 text-sm hover:underline mt-1 inline-block"
+                  >
+                    Ver meus ingressos
+                  </Link>
+                </div>
+              ) : (
+                <Button
+                  onClick={handleBuyTickets}
+                  className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2"
+                >
+                  <Ticket className="h-4 w-4" />
+                  Comprar
+                </Button>
+              )}
             </div>
           </div>
         </div>

@@ -1,115 +1,137 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toast } from '@/components/ui/use-toast';
-import '../styles/login.css';
+import { useToast } from "@/components/ui/use-toast";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: 'johnfrontend@gmail.com',
-    password: '***************'
-  });
-  const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Get the next page to navigate to after login
-  const from = location.state?.from || '/';
+  const [credentials, setCredentials] = useState({
+    email: '',
+    password: ''
+  });
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setCredentials(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Simple validation
-    if (!formData.email || !formData.password) {
+    try {
+      const result = await login(credentials.email, credentials.password);
+      
+      if (result.success) {
+        toast({
+          description: "Login realizado com sucesso!",
+          duration: 2000,
+        });
+        
+        // Redirect to the page the user was trying to access or to home
+        const from = location.state?.from || '/';
+        navigate(from);
+      } else {
+        toast({
+          variant: "destructive",
+          description: result.message || "Credenciais inválidas. Tente novamente.",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Erro de login",
-        description: "Por favor, preencha todos os campos.",
-        variant: "destructive"
+        variant: "destructive",
+        description: "Ocorreu um erro ao fazer login. Tente novamente mais tarde.",
+        duration: 3000,
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Mock login - in a real app, you would validate with a backend
-    login({
-      id: 'user-123',
-      name: 'Beto Cuenca',
-      email: formData.email,
-      phone: '(21) 99997-9888'
-    });
-    
-    // Navigate to the next page
-    navigate(from);
   };
   
   return (
-    <div className="login-container">
-      {/* Logo à esquerda */}
-      <div className="logo">
-        <img src="/lovable-uploads/logo_preta.png" alt="Logo Cuencos" />
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="hidden md:block md:w-1/2 bg-cover bg-center" 
+           style={{backgroundImage: 'url(/public/loginimage.png)'}}>
       </div>
       
-      {/* Texto promocional à esquerda */}
-      <div className="promo-text">
-        <p>Encontre as melhores festas universitárias com facilidade e a qualquer hora!</p>
-      </div>
-      
-      {/* Card de login */}
-      <div className="login-card">
-        <h1>BEM-VINDO DE VOLTA!</h1>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
+      <div className="w-full md:w-1/2 bg-black py-8 px-4 md:px-16 flex flex-col justify-center">
+        <div className="max-w-md mx-auto w-full">
+          <Link to="/" className="flex items-center gap-2 mb-8">
+            <img src="/lovable-uploads/ticket-icon-purple.svg" alt="Cuencos" className="w-8 h-8" />
+            <h1 className="text-3xl font-bold text-white">Cuencos</h1>
+          </Link>
           
-          <div className="form-group">
-            <label htmlFor="password">Senha</label>
-            <div className="password-input">
+          <h2 className="text-2xl font-bold text-white mb-6">Bem-vindo(a) de volta!</h2>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
               <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
+                id="email"
+                type="email"
+                name="email"
+                value={credentials.email}
                 onChange={handleChange}
-              />
-              <span 
-                className="eye-icon"
-                onClick={() => setShowPassword(!showPassword)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cuencos-purple"
+                placeholder="Seu endereço de e-mail"
+                required
               />
             </div>
+            
+            <div>
+              <div className="flex justify-between mb-2">
+                <label htmlFor="password" className="block text-gray-300">Senha</label>
+                <a href="#" className="text-cuencos-purple text-sm">Esqueceu a senha?</a>
+              </div>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cuencos-purple"
+                placeholder="Sua senha"
+                required
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 rounded-md text-white font-medium ${
+                isLoading ? 'bg-cuencos-purple/70' : 'bg-cuencos-purple hover:bg-cuencos-darkPurple'
+              }`}
+            >
+              {isLoading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
+          
+          <div className="mt-8">
+            <p className="text-gray-400 text-center">
+              Não tem uma conta? <Link to="/register" className="text-cuencos-purple hover:underline">Cadastre-se</Link>
+            </p>
           </div>
           
-          <button type="submit" className="continue-btn">CONTINUAR</button>
-        </form>
-        
-        <div className="divider">
-          <span>Ou</span>
-        </div>
-        
-        <div className="google-login">
-          <img src="/lovable-uploads/google.png" alt="Google" />
-          <span>Faça login com o Google</span>
-        </div>
-        
-        <div className="signup-link">
-          <span>Ainda não tem cadastro? </span>
-          <Link to="/register">CLIQUE AQUI</Link>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-400 mb-4">Entre também com</p>
+            <button className="bg-white text-black px-6 py-2 rounded-md flex items-center justify-center gap-2 w-full hover:bg-gray-100 transition-colors">
+              <img src="/google-logo.png" alt="Google" className="w-5 h-5" />
+              <span>Continuar com Google</span>
+            </button>
+          </div>
+          
+          <div className="mt-8 text-sm text-gray-500 text-center">
+            <p>
+              Ao entrar você concorda com nossos <a href="#" className="text-cuencos-purple hover:underline">Termos de Serviço</a> e <a href="#" className="text-cuencos-purple hover:underline">Política de Privacidade</a>.
+            </p>
+          </div>
         </div>
       </div>
     </div>
