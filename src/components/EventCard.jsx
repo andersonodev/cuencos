@@ -1,47 +1,60 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { useAuth } from '../context/AuthContext';
+import { toggleFavorite, isFavorite } from '../lib/favorites';
 
 const EventCard = ({ event }) => {
+  const { user } = useAuth();
+  const [isFav, setIsFav] = useState(user ? isFavorite(user.id, event.id) : false);
+  
+  const handleToggleFavorite = (e) => {
+    e.preventDefault(); // Prevent navigation
+    if (user) {
+      const result = toggleFavorite(user.id, event.id);
+      setIsFav(result);
+    }
+  };
+
+  // Extract month from date
+  const getMonth = () => {
+    try {
+      if (event.date) {
+        const dateParts = event.date.split(' ');
+        return dateParts[0].substring(0, 3).toUpperCase();
+      }
+      return 'MAY'; // Fallback
+    } catch (error) {
+      return 'MAY'; // Fallback
+    }
+  };
+
   return (
     <Link to={`/events/${event.id}`} className="block group">
-      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg transition-shadow relative">
-        <div className="absolute top-2 right-2 z-10">
+      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+        <div className="h-48 overflow-hidden relative">
+          <img 
+            src={event.image} 
+            alt={event.title} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
           <button 
-            className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center"
-            onClick={(e) => {
-              e.preventDefault();
-              // Adicionar aos favoritos
-            }}
+            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70"
+            onClick={handleToggleFavorite}
           >
-            <Star className="w-5 h-5 text-cuencos-purple" />
+            <Star 
+              className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
+            />
           </button>
         </div>
         
-        <div className="flex flex-col md:flex-row h-full">
-          <div className="md:w-1/3 h-32 md:h-auto overflow-hidden">
-            <img 
-              src={event.image} 
-              alt={event.title} 
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+        <div className="p-4">
+          <div className="text-xs font-semibold text-cuencos-purple mb-2">
+            {getMonth()}
           </div>
-          
-          <div className="p-4 md:w-2/3 flex flex-col justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-white line-clamp-2 mb-2">{event.title}</h3>
-              <p className="text-sm text-gray-300">
-                {event.date} | {event.location}
-              </p>
-            </div>
-            <div className="mt-3">
-              <Badge variant="outline" className="text-xs font-semibold text-white border-cuencos-purple">
-                {event.duration || "3 DIAS"}
-              </Badge>
-            </div>
-          </div>
+          <h3 className="text-white font-bold text-lg mb-1 line-clamp-1">{event.title}</h3>
+          <p className="text-gray-400 text-sm line-clamp-2">{event.description}</p>
         </div>
       </div>
     </Link>

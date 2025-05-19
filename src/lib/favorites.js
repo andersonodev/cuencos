@@ -1,3 +1,4 @@
+
 // Mock data para favoritos
 const STORAGE_KEY = 'user_favorites';
 

@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header';
+import ModernHeader from '../components/ModernHeader';
 import Footer from '../components/Footer';
 import EventCard from '../components/EventCard';
 import { getFavorites } from '../lib/favorites';
 import { getEventById } from '../lib/events';
+import { ArrowLeft } from 'lucide-react';
 
 const FavoritesPage = () => {
   const { user } = useAuth();
@@ -22,10 +23,10 @@ const FavoritesPage = () => {
   
   if (!user) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
+      <div className="flex flex-col min-h-screen bg-cuencos-black">
+        <ModernHeader />
         <div className="container mx-auto py-12 px-4 text-center flex-grow">
-          <h1 className="text-2xl font-bold mb-4">Você precisa estar logado para acessar esta página</h1>
+          <h1 className="text-2xl font-bold mb-4 text-white">Você precisa estar logado para acessar esta página</h1>
           <Link to="/login" className="text-cuencos-purple hover:underline">Fazer login</Link>
         </div>
         <Footer />
@@ -34,14 +35,14 @@ const FavoritesPage = () => {
   }
   
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-cuencos-black">
+      <ModernHeader />
       
-      <main className="flex-grow bg-cuencos-black py-8">
+      <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center mb-8">
-            <Link to="/" className="text-white mr-2">
-              ←
+            <Link to="/" className="text-white mr-2 hover:text-gray-300">
+              <ArrowLeft className="h-6 w-6" />
             </Link>
             <h1 className="text-3xl font-bold text-white">Favoritos</h1>
           </div>
