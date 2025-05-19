@@ -1,7 +1,6 @@
-
 .navbar {
   width: 100%;
-  height: 72px;
+  height: 72px; /* Altura fixa para o menu */
   background-color: #000;
   position: fixed;
   top: 0;
@@ -21,13 +20,57 @@
   justify-content: space-between;
 }
 
+.logo-icon {
+  height: 40px; /* Altura fixa para a logo */
+  max-height: 100%; /* Garante que não ultrapasse o container */
+  width: auto; /* Mantém proporção */
+  object-fit: contain; /* Garante que a imagem seja exibida completamente */
+  margin-right: 8px;
+  vertical-align: middle; /* Ajuda no alinhamento vertical */
+}
+
+.logo-text {
+  color: #a200ff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+
+
+
+
+.logo-container {
+  color: #1f1b22; /* Novo tom de roxo mais vibrante */
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  height: 4rem; /* Altura fixa para a logo */
+  max-height: 100%; /* Garante que não ultrapasse o container */
+  width: auto; /* Mantém proporção */
+  object-fit: contain; /* Garante que a imagem seja exibida completamente */
+  vertical-align: middle; /* Ajuda no alinhamento vertical */
+}
+
+
+ .logo-text {
+  color: #8A00FF; /* Novo tom de roxo mais vibrante */
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+}
+
+
+
+
 .logo {
-  height: 40px;
+  height: 400px;
   max-height: 100%;
   object-fit: contain;
   display: block;
-}
+  align-items: center; 
+} 
 
+/* Navigation links */
 .nav-links {
   display: flex;
   align-items: center;
@@ -50,4 +93,28 @@
   padding: 0.5rem 1.25rem;
   border: 1.5px solid #A200FF;
   border-radius: 30px;
+  color: #A200FF;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: #a200ff;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.logout-button:hover {
+  color: white;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  color: white;
 }

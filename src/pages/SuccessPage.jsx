@@ -16,13 +16,21 @@ const SuccessPage = () => {
   const [addedTicket, setAddedTicket] = useState(null);
   
   useEffect(() => {
-    const storedInfo = sessionStorage.getItem('checkoutInfo');
+    const storedInfo = localStorage.getItem('checkoutInfo');
     if (!storedInfo) {
       navigate('/');
       return;
     }
     
-    setCheckoutInfo(JSON.parse(storedInfo));
+    const data = JSON.parse(storedInfo);
+    // Verificar se os dados são recentes (menos de 1 hora)
+    if (Date.now() - (data.timestamp || 0) > 60 * 60 * 1000) {
+      localStorage.removeItem('checkoutInfo');
+      navigate('/');
+      return;
+    }
+    
+    setCheckoutInfo(data);
   }, [navigate]);
   
   useEffect(() => {
@@ -50,13 +58,21 @@ const SuccessPage = () => {
         setAddedTicket(newTicket);
         
         // Clear session storage
-        sessionStorage.removeItem('ticketSelection');
-        sessionStorage.removeItem('checkoutInfo');
+        localStorage.removeItem('checkoutInfo');
+        localStorage.removeItem('ticketSelection');
       }, 1500);
       
       return () => clearTimeout(timer);
     }
   }, [checkoutInfo, user, isPaymentCompleted]);
+  
+  useEffect(() => {
+    if (isPaymentCompleted && addedTicket) {
+      // Limpar os dados temporários de checkout e seleção
+      localStorage.removeItem('checkoutInfo');
+      localStorage.removeItem('ticketSelection');
+    }
+  }, [isPaymentCompleted, addedTicket]);
   
   const closeModal = () => {
     setIsModalOpen(false);

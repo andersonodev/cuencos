@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -45,14 +44,15 @@ const TicketSelectionPage = () => {
       return;
     }
     
-    // Store ticket selection in session storage
-    sessionStorage.setItem('ticketSelection', JSON.stringify({
+    // Armazenar a seleção de ingressos no localStorage
+    localStorage.setItem('ticketSelection', JSON.stringify({
       eventId: event.id,
       eventTitle: event.title,
       ticketType: 'Sexto Lote',
       quantity,
       unitPrice: event.price,
       totalPrice: event.price * quantity,
+      timestamp: Date.now(), // Adicionar timestamp para melhor controle
     }));
     
     navigate('/checkout');

@@ -1,12 +1,13 @@
-
 // User authentication with localStorage
-const USERS_STORAGE_KEY = 'cuencos_users';
-const CURRENT_USER_KEY = 'cuencos_current_user';
+import { setItem, getItem, removeItem } from './storage';
+
+const USERS_KEY = 'users';
+const CURRENT_USER_KEY = 'current_user';
 
 // Initialize default users if none exist
 const initializeUsers = () => {
   try {
-    const existingUsers = localStorage.getItem(USERS_STORAGE_KEY);
+    const existingUsers = getItem(USERS_KEY);
     
     if (!existingUsers) {
       const defaultUsers = [
@@ -16,32 +17,43 @@ const initializeUsers = () => {
           name: "John Frontend",
           password: "admin123", // In a real app, this would be hashed
           phone: "+5521999887766",
-        }
+        },
+        {
+          id: "fronted",
+          email: "fronted@example.com",
+          name: "Frontend Developer",
+          password: "admin123", // In a real app, this would be hashed
+          phone: "+5521888776655",
+        }  
+
+
+        // Email: organizador@cuencos.com
+        // Senha: admin123
       ];
       
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(defaultUsers));
+      setItem(USERS_KEY, defaultUsers);
     }
   } catch (error) {
     console.error("Erro ao inicializar usuários:", error);
   }
 };
 
+// Initialize users when this module loads
+initializeUsers();
+
 // Get all users
 export const getUsers = () => {
-  try {
-    const usersData = localStorage.getItem(USERS_STORAGE_KEY);
-    return usersData ? JSON.parse(usersData) : [];
-  } catch (error) {
-    console.error("Erro ao obter usuários:", error);
-    return [];
-  }
+  return getItem(USERS_KEY) || [];
 };
 
 // Login user
 export const loginUser = (email, password) => {
   try {
     const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === password);
+    // Check if the input is email or username
+    const user = users.find(u => 
+      (u.email === email || u.id === email) && u.password === password
+    );
     
     if (user) {
       // Store only non-sensitive user data in session
@@ -52,7 +64,7 @@ export const loginUser = (email, password) => {
         phone: user.phone
       };
       
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(sessionUser));
+      setItem(CURRENT_USER_KEY, sessionUser);
       return sessionUser;
     }
     return null;
@@ -64,19 +76,13 @@ export const loginUser = (email, password) => {
 
 // Get current logged in user
 export const getCurrentUser = () => {
-  try {
-    const userData = localStorage.getItem(CURRENT_USER_KEY);
-    return userData ? JSON.parse(userData) : null;
-  } catch (error) {
-    console.error("Erro ao obter usuário atual:", error);
-    return null;
-  }
+  return getItem(CURRENT_USER_KEY);
 };
 
 // Logout current user
 export const logoutUser = () => {
   try {
-    localStorage.removeItem(CURRENT_USER_KEY);
+    removeItem(CURRENT_USER_KEY);
     return true;
   } catch (error) {
     console.error("Erro ao fazer logout:", error);
@@ -97,12 +103,13 @@ export const registerUser = (userData) => {
     // Create new user
     const newUser = {
       id: userData.email, // Using email as ID
-      ...userData
+      ...userData,
+      createdAt: new Date().toISOString(),
     };
     
     // Save to localStorage
     users.push(newUser);
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    setItem(USERS_KEY, users);
     
     // Return success but don't include password in the response
     const { password, ...userWithoutPassword } = newUser;
@@ -127,10 +134,11 @@ export const updateUser = (userId, updatedData) => {
     users[userIndex] = {
       ...users[userIndex],
       ...updatedData,
-      id: userId // Ensure ID doesn't change
+      id: userId, // Ensure ID doesn't change
+      updatedAt: new Date().toISOString(),
     };
     
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+    setItem(USERS_KEY, users);
     
     // Also update current user session if it's the same user
     const currentUser = getCurrentUser();
@@ -140,7 +148,7 @@ export const updateUser = (userId, updatedData) => {
         ...updatedData,
         id: userId
       };
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedSessionUser));
+      setItem(CURRENT_USER_KEY, updatedSessionUser);
     }
     
     return { success: true };
@@ -149,6 +157,3 @@ export const updateUser = (userId, updatedData) => {
     return { success: false, message: "Erro ao atualizar usuário" };
   }
 };
-
-// Initialize users on module import
-initializeUsers();

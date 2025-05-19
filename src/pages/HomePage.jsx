@@ -1,12 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getEvents } from '../lib/events';
-import ModernHeader from '../components/ModernHeader';
+import { useAuth } from '../context/AuthContext';
+import Header from '../components/Header'; // Usando o Header ao invés de GuestNavbar
+import EventCard from '../components/EventCard';
+import { ChevronLeft, ChevronRight } from 'lucide-react'; // Adicionando a importação dos ícones
 import '../styles/homepage.css';
 
 const HomePage = () => {
   const events = getEvents();
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const heroEvents = [
+    {
+      id: 1,
+      title: "PUC IN RIO",
+      description: "Quem aí não perde uma festa da MAIOR DA CAPITAL? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
+      image: "/lovable-uploads/4d09bc83-a8f8-4a0c-aebc-e51cd1526dee.png",
+    },
+    {
+      id: 2,
+      title: "BAILE DO MAGNA",
+      description: "Venha curtir a melhor festa universitária do semestre! Uma noite inesquecível com as melhores atrações.",
+      image: "/lovable-uploads/3e8b36aa-1f23-4483-97b1-67d9521b5e6a.png",
+    },
+    {
+      id: 3,
+      title: "CALOURADA 2025.1",
+      description: "A festa de boas-vindas aos calouros que vai agitar o campus! Não perca essa celebração incrível.",
+      image: "/lovable-uploads/68619dad-8ba1-48be-8d77-8858c3151a75.png",
+    }
+  ];
+  
+  // Funções para navegação do carousel
+  const nextSlide = () => {
+    setActiveSlide((prev) => (prev === heroEvents.length - 1 ? 0 : prev + 1));
+  };
+  
+  const prevSlide = () => {
+    setActiveSlide((prev) => (prev === 0 ? heroEvents.length - 1 : prev - 1));
+  };
   
   // Função para abrir o menu
   const openMenu = () => {
@@ -36,21 +70,59 @@ const HomePage = () => {
     };
   }, [isMenuOpen]);
 
+  // Autoplay para o carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [activeSlide]);
+
   return (
     <>
-      <ModernHeader />
+      <Header />
       
       <div className={`menu-overlay ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
 
       <main>
-        <section className="hero">
-          <div className="hero-content">
-            <h1>PUC IN RIO</h1>
-            <p>Quem aí não perde uma festa da MAIOR DA CAPITAL? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!</p>
-            <div className="hero-buttons">
-              <Link to="#" className="btn primary">Comprar</Link>
-              <Link to="#" className="btn secondary">Saiba Mais</Link>
+        {/* Hero Section com Carousel */}
+        <section className="hero-carousel">
+          {heroEvents.map((heroEvent, index) => (
+            <div 
+              key={heroEvent.id}
+              className={`hero-slide ${index === activeSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `linear-gradient(to right, rgba(162, 0, 255, 0.7), rgba(162, 0, 255, 0.4)), url(${heroEvent.image})` }}
+            >
+              <div className="hero-content">
+                <h1 className="hero-title">{heroEvent.title}</h1>
+                <p className="hero-description">{heroEvent.description}</p>
+                <div className="hero-buttons">
+                  <Link to="/login" className="btn-primary">Comprar</Link>
+                  <Link to={`/events/${heroEvent.id}`} className="btn-secondary">Saiba Mais</Link>
+                </div>
+              </div>
             </div>
+          ))}
+          
+          {/* Controles do carousel */}
+          <button className="hero-carousel-control prev" onClick={prevSlide} aria-label="Slide anterior">
+            <ChevronLeft className="carousel-arrow" />
+          </button>
+          <button className="hero-carousel-control next" onClick={nextSlide} aria-label="Próximo slide">
+            <ChevronRight className="carousel-arrow" />
+          </button>
+          
+          {/* Indicadores do carousel */}
+          <div className="carousel-indicators">
+            {heroEvents.map((_, index) => (
+              <button 
+                key={index}
+                className={`carousel-indicator ${index === activeSlide ? 'active' : ''}`}
+                onClick={() => setActiveSlide(index)}
+                aria-label={`Ir para slide ${index + 1}`}
+              />
+            ))}
           </div>
         </section>
 
@@ -95,16 +167,7 @@ const HomePage = () => {
 
           <div className="eventos-grid">
             {events.slice(0, 6).map(event => (
-              <Link to={`/events/${event.id}`} key={event.id}>
-                <div className="card-evento">
-                  <img src={event.image} alt={event.title} />
-                  <div className="info">
-                    <span>{event.date?.split(' ')[1]?.toUpperCase() || 'MAY'}</span>
-                    <h3>{event.title}</h3>
-                    <p>{event.description}</p>
-                  </div>
-                </div>
-              </Link>
+              <EventCard key={event.id} event={event} />
             ))}
           </div>
 

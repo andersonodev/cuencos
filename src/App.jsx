@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "./components/ui/toaster"; // Corrigido o caminho de importação
+import { AuthProvider } from './context/AuthContext';
+import { FavoritesProvider } from './context/FavoritesContext';
+import { ThemeProvider } from "./components/theme-provider"; // Corrigido o caminho da importação
 
 // Importação de todas as páginas
 import HomePage from './pages/HomePage';
@@ -18,35 +21,72 @@ import MyTicketsPage from './pages/MyTicketsPage';
 import FavoritesPage from './pages/FavoritesPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import NotFound from './pages/NotFound';
+import DashboardPage from './pages/DashboardPage';
 
-// Context providers
-import { AuthProvider } from './context/AuthContext';
+// Importar o utilitário para verificar disponibilidade do localStorage
+import { isAvailable } from './lib/storage';
 
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [storageAvailable, setStorageAvailable] = useState(true);
+  
+  useEffect(() => {
+    // Verificar se o localStorage está disponível
+    const checkStorage = () => {
+      const available = isAvailable();
+      setStorageAvailable(available);
+      
+      if (!available) {
+        console.warn('LocalStorage não está disponível. Algumas funcionalidades podem não funcionar corretamente.');
+      }
+    };
+    
+    checkStorage();
+  }, []);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Toaster />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/events/:id" element={<EventDetailsPage />} />
-            <Route path="/events/:id/buy" element={<TicketSelectionPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/success" element={<SuccessPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/logout" element={<LogoutPage />} />
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/account/email" element={<ChangeEmailPage />} />
-            <Route path="/my-tickets" element={<MyTicketsPage />} />
-            <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/search" element={<SearchResultsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <FavoritesProvider>
+          <ThemeProvider defaultTheme="dark" storageKey="cuencos-theme">
+            {!storageAvailable && (
+              <div 
+                style={{ 
+                  background: '#ff4040', 
+                  color: 'white', 
+                  textAlign: 'center', 
+                  padding: '10px', 
+                  fontSize: '14px' 
+                }}
+              >
+                Atenção: O armazenamento local está desativado ou indisponível. 
+                Algumas funcionalidades como login e favoritos não irão funcionar corretamente.
+              </div>
+            )}
+            
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/events/:id" element={<EventDetailsPage />} />
+                <Route path="/events/:id/buy" element={<TicketSelectionPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/success" element={<SuccessPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/logout" element={<LogoutPage />} />
+                <Route path="/account" element={<AccountPage />} />
+                <Route path="/account/email" element={<ChangeEmailPage />} />
+                <Route path="/my-tickets" element={<MyTicketsPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/search" element={<SearchResultsPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard/*" element={<DashboardPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ThemeProvider>
+        </FavoritesProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

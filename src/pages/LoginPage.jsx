@@ -1,54 +1,79 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from '../components/ui/use-toast';
+import '../styles/login.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const { toast } = useToast();
+  
+  // Estado para armazenar os valores dos campos
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials(prev => ({ ...prev, [name]: value }));
-  };
+  // Obter a página para onde redirecionar após o login
+  const from = location.state?.from || '/';
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Erro no login",
+        description: "Por favor, preencha todos os campos.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
-      const result = await login(credentials.email, credentials.password);
+      // Verificação especial para login de organizador
+      if (email === 'organizador@cuencos.com' && password === 'admin123') {
+        // Armazenar dados do organizador no localStorage
+        localStorage.setItem('usuarioLogado', JSON.stringify({
+          tipo: 'organizador',
+          nome: 'Organizador Cuencos',
+          email: 'organizador@cuencos.com'
+        }));
+        
+        toast({
+          title: "Login realizado!",
+          description: "Bem-vindo, Organizador Cuencos!",
+        });
+        
+        navigate('/dashboard');
+        return;
+      }
+      
+      // Login regular para outros usuários
+      const result = await login(email, password);
       
       if (result.success) {
         toast({
-          description: "Login realizado com sucesso!",
-          duration: 2000,
+          title: "Login realizado com sucesso!",
+          description: `Bem-vindo de volta, ${result.user.name?.split(' ')[0] || result.user.email}!`,
         });
-        
-        // Redirect to the page the user was trying to access or to home
-        const from = location.state?.from || '/';
-        navigate(from);
+        // Redireciona para a página anterior ou home
+        navigate(from, { replace: true });
       } else {
         toast({
-          variant: "destructive",
-          description: result.message || "Credenciais inválidas. Tente novamente.",
-          duration: 3000,
+          title: "Erro no login",
+          description: result.message || "Usuário ou senha incorretos.",
+          variant: "destructive"
         });
       }
     } catch (error) {
+      console.error("Erro no login:", error);
       toast({
-        variant: "destructive",
-        description: "Ocorreu um erro ao fazer login. Tente novamente mais tarde.",
-        duration: 3000,
+        title: "Erro no login",
+        description: "Ocorreu um erro ao tentar fazer login.",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -56,82 +81,77 @@ const LoginPage = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="hidden md:block md:w-1/2 bg-cover bg-center" 
-           style={{backgroundImage: 'url(/public/loginimage.png)'}}>
+    <div className="login-container">
+      {/* Logo à esquerda */}
+      <div className="logo">
+        <img src="/images/logo-roxa-pura.png" alt="Logo Cuencos" />
       </div>
       
-      <div className="w-full md:w-1/2 bg-black py-8 px-4 md:px-16 flex flex-col justify-center">
-        <div className="max-w-md mx-auto w-full">
-          <Link to="/" className="flex items-center gap-2 mb-8">
-            <img src="/lovable-uploads/ticket-icon-purple.svg" alt="Cuencos" className="w-8 h-8" />
-            <h1 className="text-3xl font-bold text-white">Cuencos</h1>
-          </Link>
-          
-          <h2 className="text-2xl font-bold text-white mb-6">Bem-vindo(a) de volta!</h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={credentials.email}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cuencos-purple"
-                placeholder="Seu endereço de e-mail"
-                required
-              />
-            </div>
-            
-            <div>
-              <div className="flex justify-between mb-2">
-                <label htmlFor="password" className="block text-gray-300">Senha</label>
-                <a href="#" className="text-cuencos-purple text-sm">Esqueceu a senha?</a>
-              </div>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                value={credentials.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cuencos-purple"
-                placeholder="Sua senha"
-                required
-              />
-            </div>
-            
-            <button
-              type="submit"
+      {/* Texto promocional à esquerda */}
+      <div className="promo-text">
+        <p>Encontre as melhores festas universitárias com facilidade e a qualquer hora!</p>
+      </div>
+      
+      {/* Card de login */}
+      <div className="login-card">
+        <h1>BEM-VINDO DE VOLTA!</h1>
+        
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email ou Nome de Usuário</label>
+            <input
+              type="text"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              className={`w-full py-3 rounded-md text-white font-medium ${
-                isLoading ? 'bg-cuencos-purple/70' : 'bg-cuencos-purple hover:bg-cuencos-darkPurple'
-              }`}
-            >
-              {isLoading ? 'Entrando...' : 'Entrar'}
-            </button>
-          </form>
-          
-          <div className="mt-8">
-            <p className="text-gray-400 text-center">
-              Não tem uma conta? <Link to="/register" className="text-cuencos-purple hover:underline">Cadastre-se</Link>
-            </p>
+              placeholder="fronted ou johnfrontend@gmail.com"
+            />
           </div>
           
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-400 mb-4">Entre também com</p>
-            <button className="bg-white text-black px-6 py-2 rounded-md flex items-center justify-center gap-2 w-full hover:bg-gray-100 transition-colors">
-              <img src="/google-logo.png" alt="Google" className="w-5 h-5" />
-              <span>Continuar com Google</span>
-            </button>
+          <div className="form-group">
+            <label htmlFor="password">Senha</label>
+            <div className="password-input">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                placeholder="admin123"
+              />
+              <span 
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            </div>
           </div>
           
-          <div className="mt-8 text-sm text-gray-500 text-center">
-            <p>
-              Ao entrar você concorda com nossos <a href="#" className="text-cuencos-purple hover:underline">Termos de Serviço</a> e <a href="#" className="text-cuencos-purple hover:underline">Política de Privacidade</a>.
-            </p>
-          </div>
+          <button 
+            type="submit" 
+            className="continue-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
+          </button>
+        </form>
+        
+        {/* Divisor "Ou" estilizado */}
+        <div className="divider-container">
+          <hr className="divider-line" />
+          <span className="divider-text">Ou</span>
+          <hr className="divider-line" />
+        </div>
+        
+        <div className="google-login">
+          <img src="/images/google.png" alt="Google" />
+          <span>Faça login com o Google</span>
+        </div>
+        
+        {/* Link de registro */}
+        <div className="signup-link">
+          <span>Ainda não tem cadastro? </span>
+          <Link to="/register">CLIQUE AQUI</Link>
         </div>
       </div>
     </div>

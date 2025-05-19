@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -7,7 +6,7 @@ import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
 import { hasTicketForEvent } from '../lib/tickets';
-import { Star, Share2, Clock, MapPin, Calendar, Ticket } from 'lucide-react';
+import { Share2, Clock, MapPin, Calendar, Ticket } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
@@ -116,8 +115,10 @@ const EventDetailsPage = () => {
               onClick={handleToggleFavorite}
               className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
             >
-              <Star 
-                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
+              <img 
+                src="/lovable-uploads/interestedbutton.png"
+                className={`w-6 h-6 ${isFav ? 'opacity-100 brightness-125' : 'opacity-80'}`}
+                alt="Favoritar"
               />
             </button>
           </div>

@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { toast } from '@/components/ui/use-toast';
-import '../styles/register.css'; // Usando o novo CSS específico para a página de registro
+import { registerUser } from '../lib/auth'; // Importando a função de registro
+import { toast } from '../components/ui/use-toast';
+import '../styles/register.css';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
   const [formData, setFormData] = useState({
-    name: 'John Front End',
-    email: 'johnfrontend@gmail.com',
-    password: '***************'
+    name: '',
+    email: '',
+    password: '',
+    phone: ''  // Adicionando campo de telefone para completar o cadastro
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,30 +25,39 @@ const RegisterPage = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Simple validation
+    // Validação simples
     if (!formData.name || !formData.email || !formData.password) {
       toast({
         title: "Erro no cadastro",
-        description: "Por favor, preencha todos os campos.",
+        description: "Por favor, preencha todos os campos obrigatórios.",
         variant: "destructive"
       });
+      setIsLoading(false);
       return;
     }
     
-    // Mock registration - in a real app, you would send to a backend
-    signup({
-      id: 'user-' + Date.now(),
-      name: formData.name,
-      email: formData.email,
-    });
+    // Tentativa de registro usando localStorage
+    const result = registerUser(formData);
     
-    toast({
-      title: "Sucesso!",
-      description: "Sua conta foi criada com sucesso."
-    });
+    if (result.success) {
+      toast({
+        title: "Cadastro realizado!",
+        description: "Sua conta foi criada com sucesso.",
+      });
+      
+      // Redireciona para a página inicial após cadastro bem-sucedido
+      navigate('/');
+    } else {
+      toast({
+        title: "Erro no cadastro",
+        description: result.message || "Ocorreu um erro ao criar sua conta.",
+        variant: "destructive"
+      });
+    }
     
-    navigate('/');
+    setIsLoading(false);
   };
   
   return (
@@ -68,29 +78,46 @@ const RegisterPage = () => {
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Nome</label>
+            <label htmlFor="name">Nome Completo*</label>
             <input 
               type="text" 
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              disabled={isLoading}
+              required
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Email*</label>
             <input 
               type="email" 
               id="email" 
               name="email"
               value={formData.email}
               onChange={handleChange}
+              disabled={isLoading}
+              required
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="password">Senha</label>
+            <label htmlFor="phone">Telefone</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              disabled={isLoading}
+              placeholder="(00) 00000-0000"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Senha*</label>
             <div className="password-input">
               <input 
                 type={showPassword ? "text" : "password"} 
@@ -98,15 +125,23 @@ const RegisterPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                disabled={isLoading}
+                required
               />
               <span 
                 className="eye-icon"
                 onClick={() => setShowPassword(!showPassword)}
-              ></span>
+              />
             </div>
           </div>
           
-          <button type="submit" className="continue-btn">CONTINUAR</button>
+          <button 
+            type="submit" 
+            className="continue-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
+          </button>
         </form>
         
         {/* Divisor "Ou" estilizado */}
@@ -121,7 +156,7 @@ const RegisterPage = () => {
           <span>Faça login com o Google</span>
         </div>
         
-        {/* Link de login mantido dentro do card */}
+        {/* Link de login */}
         <div className="login-link">
           <span>Já tem login? </span>
           <Link to="/login">FAÇA LOGIN AQUI</Link>

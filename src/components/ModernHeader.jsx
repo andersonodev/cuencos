@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
-import { Star, Ticket, User, ChevronDown, LogOut } from 'lucide-react';
+import { Ticket, User, ChevronDown, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
   DropdownMenu,
@@ -26,7 +25,7 @@ const ModernHeader = () => {
         <div className="header-container">
           <Link to="/" className="header-logo">
             <img 
-              src="/lovable-uploads/ticket-icon-purple.svg" 
+              src="/images/logo-roxa-pura.png" 
               alt="Cuencos" 
               className="header-logo-icon" 
             />
@@ -35,7 +34,12 @@ const ModernHeader = () => {
           
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
-              <Star className="h-4 w-4" />
+              <img 
+                src="/images/interestedbutton.png" 
+                alt="Favoritos"
+                className="header-icon" 
+                style={{ width: "18px", height: "18px" }}
+              />
               <span className="hidden sm:inline">Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="header-link flex items-center gap-1">

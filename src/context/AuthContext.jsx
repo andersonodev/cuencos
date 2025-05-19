@@ -1,59 +1,107 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getCurrentUser, loginUser, logoutUser, registerUser, updateUser } from '../lib/auth';
+// Criar contexto de autenticação
+const AuthContext = createContext(null);
 
-const AuthContext = createContext();
+// Hook personalizado para usar o contexto de autenticação
+export const useAuth = () => useContext(AuthContext);
 
+// Provedor do contexto de autenticação
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Carregar usuário da sessão ao montar o componente
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const storedUser = getCurrentUser();
-    if (storedUser) {
-      setUser(storedUser);
-    }
-    setLoading(false);
+    const loadUser = () => {
+      try {
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+          console.log("Usuário autenticado carregado:", currentUser);
+          setUser(currentUser);
+        } else {
+          console.log("Nenhum usuário autenticado encontrado");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar usuário:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
   }, []);
 
-  const login = async (email, password) => {
-    const loggedInUser = loginUser(email, password);
-    if (loggedInUser) {
-      setUser(loggedInUser);
-      return { success: true, user: loggedInUser };
+  // Função de login
+  const login = (email, password) => {
+    try {
+      const loggedInUser = authLogin(email, password);
+      
+      if (loggedInUser) {
+        console.log("Login bem-sucedido:", loggedInUser);
+        setUser(loggedInUser);
+        return { success: true, user: loggedInUser };
+      } else {
+        console.log("Login falhou: credenciais inválidas");
+        return { success: false, message: "Credenciais inválidas" };
+      }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      return { success: false, message: "Erro ao fazer login" };
     }
-    return { success: false, message: "Credenciais inválidas" };
   };
 
+  // Função de logout
   const logout = () => {
-    logoutUser();
-    setUser(null);
+    try {
+      logoutUser();
+      setUser(null);
+      console.log("Logout bem-sucedido");
+      return true;
+    } catch (error) {
+      console.error("Erro no logout:", error);
+      return false;
+    }
   };
 
-  const register = async (userData) => {
-    const result = registerUser(userData);
+  // Função de registro
+  const registerUser = (userData) => {
+    const result = authRegister(userData);
     if (result.success) {
       setUser(result.user);
     }
     return result;
   };
 
-  const updateUserInfo = async (userId, updatedData) => {
-    const result = updateUser(userId, updatedData);
-    if (result.success && userId === user?.id) {
-      // Update the user in context if it's the current user
-      const updatedUser = getCurrentUser();
-      setUser(updatedUser);
+  // Função de atualização do usuário
+  const updateUser = (userData) => {
+    if (!user) return { success: false };
+    
+    const result = authUpdateUser(user.id, userData);
+    if (result.success) {
+      // Atualizar o estado do usuário com os novos dados
+      setUser(prev => ({
+        ...prev,
+        ...userData
+      }));
     }
     return result;
   };
 
+  // Valores fornecidos pelo contexto
+  const value = {
+    user,
+    login,
+    logout,
+    registerUser,
+    updateUser,
+    loading
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, updateUserInfo, loading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

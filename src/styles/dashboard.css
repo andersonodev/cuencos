@@ -1,0 +1,368 @@
+.dashboard-page {
+  min-height: 100vh;
+  background-color: #121212;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 2rem 5%;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.dashboard-welcome {
+  margin-bottom: 2rem;
+}
+
+.dashboard-welcome h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-welcome p {
+  color: #aaa;
+  font-size: 1rem;
+}
+
+/* Filtros */
+.dashboard-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.filter-dropdown {
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 500;
+}
+
+.filter-dropdown span {
+  margin-right: 0.5rem;
+}
+
+.period-filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.period-filters button {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #1e1e1e;
+  color: #bbb;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.period-filters button:hover {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.period-filters button.active {
+  background-color: #b84af7;
+  color: #fff;
+}
+
+.period-filters button.select-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Grid de dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+/* Card comum */
+.dashboard-card {
+  background-color: #1e1e1e;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2a2a2a;
+  color: #bbb;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Gráfico de visitas */
+.visits-chart {
+  grid-column: span 3;
+  height: 400px;
+}
+
+.chart-container {
+  height: calc(100% - 50px);
+  width: 100%;
+}
+
+/* Cards de resumo */
+.sales-summary {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.summary-card {
+  background-color: #1e1e1e;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: calc((400px - 2rem) / 3);
+}
+
+.summary-icon {
+  width: 3rem;
+  height: 3rem;
+  background-color: rgba(184, 74, 247, 0.2);
+  color: #b84af7;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-content h3 {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.summary-trend {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.summary-trend span {
+  font-weight: 600;
+}
+
+.summary-trend.positive span {
+  color: #4caf50;
+}
+
+.summary-trend.negative span {
+  color: #f44336;
+}
+
+/* Produtos mais vendidos */
+.popular-products {
+  grid-column: span 2;
+}
+
+.popular-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.product-item {
+  display: grid;
+  grid-template-columns: 3fr 6fr 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-name {
+  font-size: 0.875rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.product-bar {
+  height: 100%;
+  background: linear-gradient(to right, #8a2be2, #b84af7);
+  border-radius: 6px;
+  transition: width 0.5s ease-out;
+}
+
+.product-percentage {
+  font-size: 0.875rem;
+  color: #b84af7;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Gráfico de distribuição de receita */
+.revenue-distribution {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.pie-chart-container {
+  height: 250px;
+  width: 100%;
+}
+
+.total-percentage {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+  color: #aaa;
+}
+
+/* Loading */
+.dashboard-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #b84af7;
+  font-size: 1.5rem;
+}
+
+/* Placeholder dos gráficos */
+.chart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #A200FF;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px dashed rgba(162, 0, 255, 0.3);
+}
+
+.chart-placeholder p {
+  margin: 5px 0;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .visits-chart {
+    grid-column: span 2;
+  }
+  
+  .sales-summary {
+    grid-column: span 2;
+    flex-direction: row;
+  }
+  
+  .summary-card {
+    flex: 1;
+    height: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-filters {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .period-filters {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .visits-chart,
+  .sales-summary,
+  .popular-products,
+  .revenue-distribution {
+    grid-column: span 1;
+  }
+  
+  .sales-summary {
+    flex-direction: column;
+  }
+}

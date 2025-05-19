@@ -1,98 +1,82 @@
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Ticket } from 'lucide-react';
+import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
-import { toggleFavorite, isFavorite } from '../lib/favorites';
-import { hasTicketForEvent } from '../lib/tickets';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from '../components/ui/use-toast';
+import '../styles/eventCard.css';
 
 const EventCard = ({ event }) => {
+  const { toggleFavorite, isFavorite } = useFavorites();
   const { user } = useAuth();
-  const [isFav, setIsFav] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState(false);
-  const { toast } = useToast();
+  const favorite = isFavorite(event.id);
   
-  // Initialize state based on localStorage data
-  useEffect(() => {
-    if (user) {
-      setIsFav(isFavorite(user.id, event.id));
-      setHasPurchased(hasTicketForEvent(user.id, event.id));
-    } else {
-      setIsFav(false);
-      setHasPurchased(false);
+  // Extrair mês da data do evento
+  const getMonthAbbreviation = (dateString) => {
+    if (!dateString) return 'MAY';
+    
+    // Extrai o mês da string de data (formato esperado: "19 de Jun")
+    const parts = dateString.split(' ');
+    if (parts.length >= 3) {
+      return parts[2].toUpperCase();
     }
-  }, [user, event.id]);
+    return dateString.split(' ')[1]?.toUpperCase() || 'MAY';
+  };
   
   const handleToggleFavorite = (e) => {
-    e.preventDefault(); // Prevent navigation
-    if (user) {
-      const result = toggleFavorite(user.id, event.id);
-      setIsFav(result);
-      
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!user) {
       toast({
-        description: result 
-          ? "Evento adicionado aos favoritos!" 
-          : "Evento removido dos favoritos!",
-        duration: 2000,
+        title: "Ação necessária",
+        description: "Faça login para adicionar eventos aos favoritos",
+        variant: "warning"
       });
-    } else {
+      return;
+    }
+    
+    const result = toggleFavorite(event);
+    if (result) {
       toast({
-        variant: "destructive",
-        description: "Faça login para adicionar aos favoritos",
-        duration: 3000,
+        title: favorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
+        description: favorite ? "O evento foi removido dos seus favoritos" : "O evento foi adicionado aos seus favoritos",
+        variant: favorite ? "default" : "success"
       });
     }
   };
-
-  // Extract month from date
-  const getMonth = () => {
-    try {
-      if (event.date) {
-        const dateParts = event.date.split(' ');
-        return dateParts[0].substring(0, 3).toUpperCase();
-      }
-      return 'MAY'; // Fallback
-    } catch (error) {
-      return 'MAY'; // Fallback
-    }
-  };
-
+  
   return (
-    <Link to={`/events/${event.id}`} className="block group">
-      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="h-48 overflow-hidden relative">
+    <div className="event-card">
+      <Link to={`/events/${event.id}`} className="event-card-link">
+        <div className="event-card-image-container">
           <img 
             src={event.image} 
             alt={event.title} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="event-card-image"
           />
-          <div className="absolute top-2 right-2 flex gap-2">
-            {hasPurchased && (
-              <div className="w-8 h-8 rounded-full bg-green-500/80 flex items-center justify-center">
-                <Ticket className="w-4 h-4 text-white" />
-              </div>
-            )}
-            <button 
-              className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70"
-              onClick={handleToggleFavorite}
-            >
-              <Star 
-                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
-              />
-            </button>
-          </div>
+          
+          <button 
+            className={`favorite-button ${favorite ? 'favorited' : ''}`} 
+            onClick={handleToggleFavorite}
+            aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <img 
+              src="/lovable-uploads/interestedbutton.png" 
+              alt="Favorito" 
+              className={`favorite-icon ${favorite ? 'active' : ''}`}
+            />
+          </button>
         </div>
         
-        <div className="p-4">
-          <div className="text-xs font-semibold text-cuencos-purple mb-2">
-            {getMonth()}
+        <div className="event-card-content">
+          <div className="event-card-month">
+            {getMonthAbbreviation(event.date)}
           </div>
-          <h3 className="text-white font-bold text-lg mb-1 line-clamp-1">{event.title}</h3>
-          <p className="text-gray-400 text-sm line-clamp-2">{event.description}</p>
+          <h3 className="event-card-title">{event.title}</h3>
+          <p className="event-card-description">{event.description}</p>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 

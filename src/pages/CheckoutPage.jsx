@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -20,13 +19,21 @@ const CheckoutPage = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   
   useEffect(() => {
-    const storedSelection = sessionStorage.getItem('ticketSelection');
+    const storedSelection = localStorage.getItem('ticketSelection');
     if (!storedSelection) {
       navigate('/');
       return;
     }
     
-    setTicketSelection(JSON.parse(storedSelection));
+    // Verificar se os dados são recentes (menos de 24 horas)
+    const data = JSON.parse(storedSelection);
+    if (Date.now() - (data.timestamp || 0) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('ticketSelection');
+      navigate('/');
+      return;
+    }
+    
+    setTicketSelection(data);
   }, [navigate]);
   
   const closeModal = () => {
@@ -81,13 +88,15 @@ const CheckoutPage = () => {
       const serviceFee = ticketSelection.totalPrice * 0.1; // 10% service fee
       
       // Store checkout info
-      sessionStorage.setItem('checkoutInfo', JSON.stringify({
+      const checkoutInfo = {
         ...ticketSelection,
         participantInfo: formData,
         serviceFee,
         finalTotal: ticketSelection.totalPrice + serviceFee,
-      }));
+        timestamp: Date.now(),
+      };
       
+      localStorage.setItem('checkoutInfo', JSON.stringify(checkoutInfo));
       navigate('/success');
     }
   };

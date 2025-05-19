@@ -62,7 +62,7 @@ a {
 }
 
 .logo img {
-  width: 180px; 
+  width: 180px; /* Mantendo o tamanho aumentado da logo */
   height: auto;
 }
 
@@ -132,6 +132,17 @@ a {
   border-radius: 8px;
   font-size: 16px;
   font-family: "Zen Kaku Gothic Antique", sans-serif;
+  color: #333; /* Cor escura para o texto digitado */
+  background-color: #fff; /* Garante fundo branco para contraste */
+}
+
+.form-group input:focus {
+  outline: 2px solid #A200FF;
+  border-color: #A200FF;
+}
+
+.form-group input::placeholder {
+  color: #aaa; /* Cor mais clara para placeholder */
 }
 
 .password-input {
@@ -214,8 +225,8 @@ a {
 .signup-link {
   text-align: center;
   font-size: 14px;
-  margin-top: 10px; /* Adicionado: espaço acima do link */
-  padding-bottom: 10px; /* Adicionado: espaço abaixo do link */
+  margin-top: auto; /* Empurra o link para o final do card - igual ao login-link do registro */
+  padding-top: 10px;
 }
 
 .signup-link span {
@@ -282,6 +293,8 @@ a {
   .logo-text {
     font-size: 22px;
   }
+
+
   
   .logo img {
     width: 70px;
