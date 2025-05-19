@@ -1,178 +1,76 @@
-
-import React, { useState } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import '../styles/header.css';
 
 const Header = () => {
-  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
-  
-  const isLoginPage = location.pathname === '/login' || location.pathname === '/register';
-  
-  if (isLoginPage) return null; // Hide header on login/register pages
-  
+
+  // Função para abrir o menu
+  const openMenu = () => {
+    setIsMenuOpen(true);
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden'; // Impede rolagem quando menu está aberto
+  };
+
+  // Função para fechar o menu
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = ''; // Restaura rolagem
+  };
+
+  // Fecha o menu ao redimensionar a tela para desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768 && isMenuOpen) {
+        closeMenu();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isMenuOpen]);
+
   return (
-    <header className="bg-cuencos-black shadow-md">
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <img src="/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png" alt="Cuencos" className="h-8" />
-          </Link>
-          
-          {/* Desktop Nav Links - Hidden on mobile */}
-          <div className="hidden md:flex space-x-6">
-            <NavLink to="/" className={({isActive}) => isActive ? "text-cuencos-purple" : "text-white hover:text-cuencos-purple"}>
-              Home
-            </NavLink>
-            <NavLink to="/search" className={({isActive}) => isActive ? "text-cuencos-purple" : "text-white hover:text-cuencos-purple"}>
-              Explorar
-            </NavLink>
-          </div>
-          
-          {/* User Menu - Hidden on mobile */}
-          <div className="hidden md:flex">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                <NavLink to="/my-tickets" className={({isActive}) => isActive ? "text-cuencos-purple" : "text-white hover:text-cuencos-purple"}>
-                  Meus Ingressos
-                </NavLink>
-                <NavLink to="/favorites" className={({isActive}) => isActive ? "text-cuencos-purple" : "text-white hover:text-cuencos-purple"}>
-                  Favoritos
-                </NavLink>
-                <div className="relative group">
-                  <button className="flex items-center text-white">
-                    <span className="mr-2">Olá, {user.name.split(' ')[0]}</span>
-                    <span>▾</span>
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
-                    <NavLink to="/profile" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                      Perfil
-                    </NavLink>
-                    <NavLink to="/account" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                      Conta
-                    </NavLink>
-                    <NavLink to="/logout" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                      Sair
-                    </NavLink>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex space-x-4">
-                <Link to="/login" className="text-white hover:text-cuencos-purple">
-                  Entrar
-                </Link>
-                <Link to="/register" className="bg-cuencos-purple text-white px-4 py-1 rounded-md hover:bg-cuencos-darkPurple">
-                  Cadastrar
-                </Link>
-              </div>
-            )}
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-white focus:outline-none"
-          >
-            {isMenuOpen ? "✕" : "☰"}
-          </button>
-        </div>
-        
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <NavLink 
-              to="/" 
-              className={({isActive}) => 
-                `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </NavLink>
-            <NavLink 
-              to="/search" 
-              className={({isActive}) => 
-                `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-              }
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Explorar
-            </NavLink>
-            
-            {user ? (
-              <>
-                <NavLink 
-                  to="/my-tickets" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Meus Ingressos
-                </NavLink>
-                <NavLink 
-                  to="/favorites" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Favoritos
-                </NavLink>
-                <NavLink 
-                  to="/profile" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Perfil
-                </NavLink>
-                <NavLink 
-                  to="/account" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Conta
-                </NavLink>
-                <NavLink 
-                  to="/logout" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sair
-                </NavLink>
-              </>
-            ) : (
-              <>
-                <NavLink 
-                  to="/login" 
-                  className={({isActive}) => 
-                    `block py-2 ${isActive ? "text-cuencos-purple" : "text-white"}`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Entrar
-                </NavLink>
-                <NavLink 
-                  to="/register" 
-                  className="block py-2 mt-2 bg-cuencos-purple text-white text-center rounded-md"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Cadastrar
-                </NavLink>
-              </>
-            )}
-          </div>
-        )}
-      </nav>
+    <header className="navbar">
+      <div className="navbar-section">
+        <Link to="/">
+          <img 
+            src="/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png" 
+            alt="Cuencos Logo" 
+            className="logo" 
+          />
+        </Link>
+      </div>
+      
+      <div className="menu-toggle" onClick={openMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
+        <div className="close-menu" onClick={closeMenu}></div>
+        <Link to="/favorites" className="nav-item" onClick={closeMenu}>
+          <img src="/lovable-uploads/star-icon.png" alt="Favoritos" className="nav-icon" />
+          <span>Favoritos</span>
+        </Link>
+        <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
+          <img src="/lovable-uploads/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
+          <span>Meus Ingressos</span>
+        </Link>
+        <Link to="/account">
+          <img 
+            src="/lovable-uploads/profile-dropdown.png" 
+            alt="Perfil" 
+            className="profile-icon" 
+            onClick={closeMenu}
+          />
+        </Link>
+      </div>
     </header>
   );
 };
