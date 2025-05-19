@@ -1,11 +1,21 @@
+
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header';
+import ModernHeader from '../components/ModernHeader';
 import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
-import EventCard from '../components/EventCard';
+import { Star, Share2, Clock, MapPin, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
@@ -17,9 +27,9 @@ const EventDetailsPage = () => {
   if (!event) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header />
+        <ModernHeader />
         <div className="container mx-auto py-12 px-4 text-center">
-          <h1 className="text-3xl font-bold mb-4">Evento não encontrado</h1>
+          <h1 className="text-3xl font-bold mb-4 text-white">Evento não encontrado</h1>
           <Link to="/" className="text-cuencos-purple hover:underline">Voltar para a página inicial</Link>
         </div>
         <Footer />
@@ -41,119 +51,217 @@ const EventDetailsPage = () => {
     navigate(`/events/${id}/buy`);
   };
   
-  // Get related events (simplified implementation)
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: event.description,
+        url: window.location.href,
+      }).catch(err => {
+        console.error('Error sharing:', err);
+      });
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(window.location.href);
+      // Here you could show a toast notification
+      console.log('Link copiado!');
+    }
+  };
+  
+  // Get related events
   const allEvents = getEvents();
   const relatedEvents = allEvents.filter(e => e.id !== event.id).slice(0, 3);
   
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-cuencos-black">
+      <ModernHeader />
       
-      <div className="relative">
-        <div className="bg-rio-gradient bg-cover bg-center h-64 flex items-end">
-          <div className="container mx-auto px-4 pb-6">
-            <h1 className="text-4xl font-bold text-white">{event.title}</h1>
+      {/* Event Banner */}
+      <div className="container mx-auto px-4 pt-6">
+        <div className="rounded-lg overflow-hidden relative">
+          <img 
+            src={event.image} 
+            alt={event.title} 
+            className="w-full h-56 md:h-80 object-cover"
+          />
+          
+          {/* Action buttons */}
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button 
+              onClick={handleShare}
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+            >
+              <Share2 className="w-5 h-5 text-cuencos-purple" />
+            </button>
+            <button 
+              onClick={handleToggleFavorite}
+              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+            >
+              <Star 
+                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-cuencos-purple'}`} 
+              />
+            </button>
           </div>
         </div>
       </div>
       
-      <main className="container mx-auto px-4 py-8 flex-grow">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Event details column */}
+      <main className="container mx-auto px-4 py-6 flex-grow">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">{event.title}</h1>
+        
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Main content column */}
           <div className="w-full md:w-2/3">
-            <div className="bg-cuencos-gray rounded-lg p-6 mb-6">
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-2xl font-bold text-cuencos-purple">Detalhes do evento</h2>
-                <button 
-                  onClick={handleToggleFavorite}
-                  className="text-white bg-cuencos-gray hover:bg-cuencos-lightGray p-2 rounded-full"
-                >
-                  {isFav ? (
-                    <svg className="w-6 h-6 text-cuencos-purple" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  )}
-                </button>
+            {/* Date and time section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white mb-3">Data e Horário</h2>
+              <div className="flex items-start gap-2 text-gray-300">
+                <Calendar className="w-5 h-5 mt-0.5 text-cuencos-purple" />
+                <p>{event.date}</p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <img 
-                    src={event.image} 
-                    alt={event.title} 
-                    className="w-full rounded-lg object-cover aspect-video"
-                  />
+              <div className="flex items-start gap-2 text-gray-300 mt-2">
+                <Clock className="w-5 h-5 mt-0.5 text-cuencos-purple" />
+                <p>{event.time || "21:00 PM - 4:00 AM"}</p>
+              </div>
+            </div>
+            
+            {/* Location section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white mb-3">Endereço e Local</h2>
+              <div className="flex items-start gap-2 text-gray-300">
+                <MapPin className="w-5 h-5 mt-0.5 text-cuencos-purple" />
+                <p>{event.location}</p>
+              </div>
+            </div>
+            
+            {/* Age restriction */}
+            {event.ageRestriction && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-3">Faixa Etária</h2>
+                <div className="flex items-start gap-2 text-gray-300">
+                  <span className="text-cuencos-purple text-xl">🔞</span>
+                  <p>{event.ageRestriction}</p>
+                </div>
+              </div>
+            )}
+            
+            {/* Organizers */}
+            {event.organizers && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-white mb-3">Organizadores</h2>
+                <p className="text-gray-300">{event.organizers}</p>
+              </div>
+            )}
+            
+            {/* Event description */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-white mb-3">Descrição do Evento</h2>
+              <div className="text-gray-300 space-y-4">
+                <p className="font-bold text-cuencos-purple">FALA RAÇA</p>
+                <p>Quem aí não perde uma festa da MAIOR DA CAPITAL??</p>
+                <p>Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!</p>
+                <p>Vocês estão preparados (ou)?</p>
+                <p>Esperamos que SIM! Aqui é PUC, respeitem e traga o seu sorriso!</p>
+                <p>Agora o que todo mundo quer saber...</p>
+                
+                <div className="mt-4">
+                  <p className="font-semibold">Quando?</p>
+                  <p>09 de maio de 2025</p>
+                  <p>21h - 04h</p>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center text-white">
-                    <span className="mr-2">📅</span>
-                    <div>
-                      <p className="font-medium">{event.date}</p>
-                      <p className="text-sm text-gray-300">{event.time}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center text-white">
-                    <span className="mr-2">📍</span>
-                    <p>{event.location}</p>
-                  </div>
-                  
-                  {event.ageRestriction && (
-                    <div className="flex items-center text-white">
-                      <span className="mr-2">🔞</span>
-                      <p>{event.ageRestriction}</p>
-                    </div>
-                  )}
-                  
-                  {event.organizers && (
-                    <div className="flex items-center text-white">
-                      <span className="mr-2">👥</span>
-                      <p>{event.organizers}</p>
-                    </div>
-                  )}
-                  
-                  <div className="pt-4">
-                    <p className="text-white text-lg mb-2">Preço: <span className="text-cuencos-purple">R${event.price.toFixed(2)}</span></p>
-                    <button
-                      onClick={handleBuyTickets}
-                      className="w-full bg-cuencos-purple hover:bg-cuencos-darkPurple text-white py-3 rounded-md font-medium"
-                    >
-                      Comprar ingressos
-                    </button>
-                  </div>
+                <div className="mt-4">
+                  <p className="font-semibold">Onde?</p>
+                  <p>EM BREVE...</p>
                 </div>
-              </div>
-              
-              <div className="mt-8">
-                <h3 className="text-xl font-bold text-white mb-4">Sobre o evento</h3>
-                <div className="text-white whitespace-pre-line">
-                  {event.longDescription || event.description}
+                
+                <div className="mt-4">
+                  <p className="font-semibold">OPEN BAR</p>
+                  <ul className="list-disc pl-5">
+                    <li>Cerveja (brahma)</li>
+                    <li>Vodka</li>
+                    <li>Energético</li>
+                    <li>Refrigerante</li>
+                    <li>Gummy</li>
+                  </ul>
+                </div>
+                
+                <div className="mt-4">
+                  <p className="font-semibold">ATRAÇÕES</p>
+                  <p>EM BREVE...</p>
+                </div>
+                
+                <div className="mt-6 text-sm border-t border-gray-700 pt-4">
+                  <p>A receita pra curtir: vodcê já sabem! Né! fígado forte, filtro delicado, muita animação, chegar no rol crush, perde o BJ, ficar de ressaca e sair felizão quando é planetário!</p>
+                  <p className="mt-2">Você não pode perdor, omitir ou piorar, muito menos que você vai se arrepender até o último suspiro.</p>
+                  <p className="mt-2">Lembrando sempre que não será tolerado nenhum tipo de abuso, desrespeito, intolerância, racismo, machismo e LGBTfobia. Não hesite em procurar a organização (de blusa, óculos ou seguranças). Depois só MÓ festa e álcool, queremos te encontrar ainda de lucido!</p>
+                  <p className="mt-2">Só é permitida a entrada de maiores de 18 anos.</p>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Sidebar */}
+          {/* Ticket sidebar */}
           <div className="w-full md:w-1/3">
-            <div className="bg-cuencos-gray rounded-lg p-6 mb-6">
-              <h2 className="text-xl font-bold text-cuencos-purple mb-4">Eventos Relacionados</h2>
-              <div className="space-y-4">
-                {relatedEvents.map((relEvent) => (
-                  <div key={relEvent.id} className="border-b border-cuencos-lightGray pb-4 last:border-0">
-                    <Link to={`/events/${relEvent.id}`} className="group">
-                      <h3 className="text-white font-medium group-hover:text-cuencos-purple">{relEvent.title}</h3>
-                      <p className="text-sm text-gray-300">{relEvent.date}</p>
-                      <p className="text-sm text-gray-300">{relEvent.location}</p>
-                    </Link>
-                  </div>
-                ))}
+            <div className="bg-cuencos-gray rounded-lg p-6 sticky top-20">
+              <h2 className="text-2xl font-bold text-white mb-4">Ingresso</h2>
+              <div className="bg-cuencos-black/50 p-4 rounded-lg mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-3 h-3 rounded-full bg-cuencos-purple"></div>
+                  <p className="text-white font-medium">Sexto Lote: R$ {event.price.toFixed(2)}</p>
+                </div>
+                <p className="text-sm text-gray-400 ml-5">+ taxa a partir de R${(event.price * 0.1).toFixed(2)}</p>
               </div>
+              
+              <Button
+                onClick={handleBuyTickets}
+                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2"
+              >
+                <Ticket className="h-4 w-4" />
+                Comprar
+              </Button>
             </div>
+          </div>
+        </div>
+        
+        {/* Related events carousel */}
+        <div className="my-12">
+          <h2 className="text-2xl font-bold text-white mb-6">Outros eventos que você pode gostar</h2>
+          
+          <div className="relative px-4">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent>
+                {relatedEvents.map((relEvent) => (
+                  <CarouselItem key={relEvent.id} className="sm:basis-1/2 lg:basis-1/3">
+                    <Link to={`/events/${relEvent.id}`} className="block">
+                      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="h-48 overflow-hidden">
+                          <img 
+                            src={relEvent.image} 
+                            alt={relEvent.title} 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <div className="text-xs font-semibold text-cuencos-purple mb-2">
+                            MAY
+                          </div>
+                          <h3 className="text-white font-medium line-clamp-2 mb-1">{relEvent.title}</h3>
+                          <p className="text-gray-400 text-sm line-clamp-2">{relEvent.description}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0 bg-black/50 text-white border-none" />
+              <CarouselNext className="right-0 bg-black/50 text-white border-none" />
+            </Carousel>
           </div>
         </div>
       </main>

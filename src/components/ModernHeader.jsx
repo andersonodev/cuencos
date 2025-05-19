@@ -21,11 +21,11 @@ const ModernHeader = () => {
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
               <Star className="h-4 w-4" />
-              <span>Favoritos</span>
+              <span className="hidden sm:inline">Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="header-link flex items-center gap-1">
               <Ticket className="h-4 w-4" />
-              <span>Meus ingressos</span>
+              <span className="hidden sm:inline">Meus ingressos</span>
             </Link>
             <Link to="/account" className="header-link">
               <User className="h-5 w-5" />

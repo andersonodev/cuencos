@@ -38,7 +38,7 @@ const EventCard = ({ event }) => {
             </div>
             <div className="mt-3">
               <Badge variant="outline" className="text-xs font-semibold text-white border-cuencos-purple">
-                {event.duration}
+                {event.duration || "3 DIAS"}
               </Badge>
             </div>
           </div>
