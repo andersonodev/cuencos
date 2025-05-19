@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '@/components/ui/use-toast';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import '../styles/register.css'; // Usando o novo CSS específico para a página de registro
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { signup } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: 'John Front End',
+    email: 'johnfrontend@gmail.com',
+    password: '***************'
   });
+  const [showPassword, setShowPassword] = useState(false);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,76 +51,82 @@ const RegisterPage = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="register-container">
+      {/* Logo à esquerda */}
+      <div className="logo">
+        <img src="/lovable-uploads/logo_preta.png" alt="Logo Cuencos" />
+      </div>
       
-      <main className="flex-grow flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md bg-cuencos-gray p-8 rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold text-cuencos-purple mb-6 text-center">Criar conta</h1>
+      {/* Texto promocional à esquerda */}
+      <div className="promo-text">
+        <p>Crie sua conta e seja avisado sobre promoções e novas festas!</p>
+      </div>
+      
+      {/* Card de cadastro */}
+      <div className="register-card">
+        <h1>CADASTRE-SE!</h1>
+        
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Nome</label>
+            <input 
+              type="text" 
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-white mb-1">Nome completo</label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full bg-cuencos-black border border-gray-700 rounded-md p-2 text-white"
-                placeholder="Digite seu nome completo"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-white mb-1">E-mail</label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full bg-cuencos-black border border-gray-700 rounded-md p-2 text-white"
-                placeholder="Digite seu e-mail"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-white mb-1">Senha</label>
-              <input
-                id="password"
-                type="password"
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Senha</label>
+            <div className="password-input">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                id="password" 
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full bg-cuencos-black border border-gray-700 rounded-md p-2 text-white"
-                placeholder="Digite sua senha"
-                required
               />
+              <span 
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              ></span>
             </div>
-            
-            <button
-              type="submit"
-              className="w-full bg-cuencos-purple hover:bg-cuencos-darkPurple text-white py-3 rounded-md font-medium"
-            >
-              Cadastrar
-            </button>
-          </form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-white">
-              Já tem uma conta?{" "}
-              <Link to="/login" className="text-cuencos-purple hover:underline">
-                Faça login
-              </Link>
-            </p>
           </div>
+          
+          <button type="submit" className="continue-btn">CONTINUAR</button>
+        </form>
+        
+        {/* Divisor "Ou" estilizado */}
+        <div className="divider-container">
+          <hr className="divider-line" />
+          <span className="divider-text">Ou</span>
+          <hr className="divider-line" />
         </div>
-      </main>
-      
-      <Footer />
+        
+        <div className="google-login">
+          <img src="/lovable-uploads/google.png" alt="Google" />
+          <span>Faça login com o Google</span>
+        </div>
+        
+        {/* Link de login mantido dentro do card */}
+        <div className="login-link">
+          <span>Já tem login? </span>
+          <Link to="/login">FAÇA LOGIN AQUI</Link>
+        </div>
+      </div>
     </div>
   );
 };

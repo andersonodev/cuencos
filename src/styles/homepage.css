@@ -17,7 +17,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #000000; /* Alterado para fundo totalmente preto */
+  background-color: #000000;
   position: sticky;
   top: 0;
   width: 100%;
@@ -27,19 +27,20 @@ body {
 .logo {
   height: 30px;
   width: auto;
-  max-height: auto;
-  max-width: auto;
+  max-height: 30px;
+  display: block;
 }
 
 .navbar-section {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  padding: 0 5rem 0 5rem;
+  padding: 0 1rem; /* Reduzido padding para manter a logo dentro do header */
 }
 
 .navbar-end {
-  gap: 1.5rem;
+  gap: 2rem; /* Aumentado um pouco para espaçamento melhor */
+  margin-right: 1rem; /* Adicionado margin para balancear com o lado da logo */
 }
 
 .nav-item {

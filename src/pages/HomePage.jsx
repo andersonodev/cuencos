@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getEvents } from '../lib/events';
+import ModernHeader from '../components/ModernHeader';
 import '../styles/homepage.css';
 
 const HomePage = () => {
@@ -37,23 +38,7 @@ const HomePage = () => {
 
   return (
     <>
-      <header className="navbar">
-        <div className="navbar-section">
-          <Link to="/">
-            <img src="/lovable-uploads/32356300-a01b-4b6e-ba0b-7a23804f784b.png" alt="Logo Cuencos" className="logo" />
-          </Link>
-        </div>
-        <div className="menu-toggle" onClick={openMenu}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
-          <div className="close-menu" onClick={closeMenu}></div>
-          <Link to="/sell" className="nav-item nav-link" onClick={closeMenu}>Venda aqui</Link>
-          <Link to="/login" className="nav-item login-button" onClick={closeMenu}>Login</Link>
-        </div>
-      </header>
+      <ModernHeader />
       
       <div className={`menu-overlay ${isMenuOpen ? 'active' : ''}`} onClick={closeMenu}></div>
 
