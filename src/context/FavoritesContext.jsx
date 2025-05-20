@@ -1,5 +1,7 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { getFavorites, toggleFavorite, isFavorite } from '../lib/favorites';
 
 const FavoritesContext = createContext();
 
@@ -9,72 +11,39 @@ export const FavoritesProvider = ({ children }) => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
 
-  // Carregar favoritos do localStorage quando o componente montar
+  // Carregar favoritos do localStorage quando o usuário mudar
   useEffect(() => {
     if (user) {
-      const storedFavorites = localStorage.getItem(`favorites_${user.id}`);
-      if (storedFavorites) {
-        setFavorites(JSON.parse(storedFavorites));
-      }
+      const userFavorites = getFavorites(user.id);
+      setFavorites(userFavorites);
     } else {
       setFavorites([]);
     }
   }, [user]);
 
-  // Salvar favoritos no localStorage quando houver mudanças
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(favorites));
-    }
-  }, [favorites, user]);
-
-  // Adicionar um evento aos favoritos
-  const addFavorite = (event) => {
+  // Função para adicionar/remover favorito
+  const toggleUserFavorite = (eventId) => {
     if (!user) return false;
     
-    setFavorites(prevFavorites => {
-      // Verifica se o evento já está nos favoritos
-      if (prevFavorites.some(fav => fav.id === event.id)) {
-        return prevFavorites;
-      }
-      return [...prevFavorites, event];
-    });
-    return true;
-  };
-
-  // Remover um evento dos favoritos
-  const removeFavorite = (eventId) => {
-    if (!user) return false;
+    const isFav = toggleFavorite(user.id, eventId);
     
-    setFavorites(prevFavorites => 
-      prevFavorites.filter(event => event.id !== eventId)
-    );
-    return true;
+    // Atualizar o estado local
+    setFavorites(getFavorites(user.id));
+    
+    return isFav;
   };
-
+  
   // Verificar se um evento está nos favoritos
-  const isFavorite = (eventId) => {
-    return favorites.some(event => event.id === eventId);
-  };
-
-  // Toggle favorito (adiciona se não existir, remove se existir)
-  const toggleFavorite = (event) => {
+  const checkIsFavorite = (eventId) => {
     if (!user) return false;
-    
-    if (isFavorite(event.id)) {
-      return removeFavorite(event.id);
-    } else {
-      return addFavorite(event);
-    }
+    return isFavorite(user.id, eventId);
   };
 
   return (
     <FavoritesContext.Provider value={{ 
       favorites, 
-      addFavorite, 
-      removeFavorite, 
-      isFavorite,
-      toggleFavorite 
+      toggleFavorite: toggleUserFavorite, 
+      isFavorite: checkIsFavorite
     }}>
       {children}
     </FavoritesContext.Provider>

@@ -1,5 +1,5 @@
-import { toast } from "./sonner";
 
+import { toast } from "./sonner";
 
 export function useToast() {
   return {
@@ -11,6 +11,5 @@ export function useToast() {
     info: (message) => toast.info(message),
   };
 }
-
 
 export { toast };

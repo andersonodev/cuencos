@@ -1,5 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
+import { useToast } from '../components/ui/use-toast';
 
 // Criar contexto de autenticação
 const AuthContext = createContext(null);
@@ -11,6 +13,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   // Carregar usuário da sessão ao montar o componente
   useEffect(() => {
@@ -41,13 +44,16 @@ export const AuthProvider = ({ children }) => {
       if (loggedInUser) {
         console.log("Login bem-sucedido:", loggedInUser);
         setUser(loggedInUser);
+        toast.success("Login realizado com sucesso!");
         return { success: true, user: loggedInUser };
       } else {
         console.log("Login falhou: credenciais inválidas");
+        toast.error("Credenciais inválidas");
         return { success: false, message: "Credenciais inválidas" };
       }
     } catch (error) {
       console.error("Erro no login:", error);
+      toast.error("Erro ao fazer login");
       return { success: false, message: "Erro ao fazer login" };
     }
   };
@@ -58,9 +64,11 @@ export const AuthProvider = ({ children }) => {
       logoutUser();
       setUser(null);
       console.log("Logout bem-sucedido");
+      toast.success("Logout realizado com sucesso!");
       return true;
     } catch (error) {
       console.error("Erro no logout:", error);
+      toast.error("Erro ao fazer logout");
       return false;
     }
   };
@@ -70,6 +78,9 @@ export const AuthProvider = ({ children }) => {
     const result = authRegister(userData);
     if (result.success) {
       setUser(result.user);
+      toast.success("Cadastro realizado com sucesso!");
+    } else {
+      toast.error(result.message || "Erro ao cadastrar usuário");
     }
     return result;
   };
@@ -85,8 +96,16 @@ export const AuthProvider = ({ children }) => {
         ...prev,
         ...userData
       }));
+      toast.success("Perfil atualizado com sucesso!");
+    } else {
+      toast.error(result.message || "Erro ao atualizar perfil");
     }
     return result;
+  };
+
+  // Verificar se o usuário é organizador
+  const isOrganizer = () => {
+    return user && user.role === 'organizer';
   };
 
   // Valores fornecidos pelo contexto
@@ -96,7 +115,8 @@ export const AuthProvider = ({ children }) => {
     logout,
     registerUser,
     updateUser,
-    loading
+    loading,
+    isOrganizer
   };
 
   return (

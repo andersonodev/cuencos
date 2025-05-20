@@ -1,23 +1,44 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
 import ModernHeader from '../components/ModernHeader';
 import Footer from '../components/Footer';
+import EventCard from '../components/EventCard';
 import { ArrowLeft } from 'lucide-react';
+import { getEventById } from '../lib/events';
 import '../styles/favorites.css';
 
 const FavoritesPage = () => {
-  const { favorites, removeFavorite } = useFavorites();
+  const { isFavorite } = useFavorites();
   const { user } = useAuth();
   const [favoriteEvents, setFavoriteEvents] = useState([]);
   
   useEffect(() => {
-    if (user) {
-      const favoriteIds = getFavorites(user.id);
-      const events = favoriteIds.map(id => getEventById(id)).filter(Boolean);
-      setFavoriteEvents(events);
-    }
+    // Carregar os favoritos do localStorage e obter os detalhes dos eventos
+    const loadFavorites = async () => {
+      if (!user) return;
+      
+      try {
+        // Importamos getFavorites aqui para evitar problemas de circular dependency
+        const { getFavorites } = await import('../lib/favorites');
+        const favoriteIds = getFavorites(user.id);
+        
+        // Carregar detalhes de cada evento favorito
+        const favorites = [];
+        for (const id of favoriteIds) {
+          const event = getEventById(id);
+          if (event) favorites.push(event);
+        }
+        
+        setFavoriteEvents(favorites);
+      } catch (error) {
+        console.error("Erro ao carregar favoritos:", error);
+      }
+    };
+    
+    loadFavorites();
   }, [user]);
   
   // Redirecionar para a página de login se não estiver autenticado
@@ -26,7 +47,7 @@ const FavoritesPage = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-cuencos-black">
+    <div className="flex flex-col min-h-screen bg-black">
       <ModernHeader />
       
       <main className="flex-grow py-8">
@@ -48,17 +69,21 @@ const FavoritesPage = () => {
           {favoriteEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favoriteEvents.map(event => (
-                <EventCard key={event.id} event={event} />
+                <EventCard 
+                  key={event.id} 
+                  event={event} 
+                  isFavorite={isFavorite(event.id)}
+                />
               ))}
             </div>
           ) : (
-            <div className="bg-cuencos-gray rounded-lg p-12 text-center">
+            <div className="bg-gray-900 rounded-lg p-12 text-center">
               <div className="text-5xl mb-4">⭐</div>
               <h2 className="text-2xl font-bold text-white mb-4">Você ainda não tem favoritos</h2>
               <p className="text-gray-400 mb-6">Adicione eventos aos seus favoritos para encontrá-los facilmente aqui.</p>
               <Link 
                 to="/"
-                className="bg-cuencos-purple hover:bg-cuencos-darkPurple text-white px-6 py-2 rounded-md inline-block"
+                className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-md inline-block"
               >
                 Explorar Eventos
               </Link>
