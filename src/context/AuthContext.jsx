@@ -44,16 +44,26 @@ export const AuthProvider = ({ children }) => {
       if (loggedInUser) {
         console.log("Login bem-sucedido:", loggedInUser);
         setUser(loggedInUser);
-        toast.success("Login realizado com sucesso!");
+        toast({
+          title: "Login realizado com sucesso!",
+          variant: "success"
+        });
         return { success: true, user: loggedInUser };
       } else {
         console.log("Login falhou: credenciais inválidas");
-        toast.error("Credenciais inválidas");
+        toast({
+          title: "Credenciais inválidas",
+          variant: "destructive"
+        });
         return { success: false, message: "Credenciais inválidas" };
       }
     } catch (error) {
       console.error("Erro no login:", error);
-      toast.error("Erro ao fazer login");
+      toast({
+        title: "Erro ao fazer login",
+        description: error.message || "Ocorreu um erro inesperado",
+        variant: "destructive"
+      });
       return { success: false, message: "Erro ao fazer login" };
     }
   };
@@ -64,11 +74,17 @@ export const AuthProvider = ({ children }) => {
       logoutUser();
       setUser(null);
       console.log("Logout bem-sucedido");
-      toast.success("Logout realizado com sucesso!");
+      toast({
+        title: "Logout realizado com sucesso!",
+        variant: "success"
+      });
       return true;
     } catch (error) {
       console.error("Erro no logout:", error);
-      toast.error("Erro ao fazer logout");
+      toast({
+        title: "Erro ao fazer logout",
+        variant: "destructive"
+      });
       return false;
     }
   };
@@ -78,9 +94,16 @@ export const AuthProvider = ({ children }) => {
     const result = authRegister(userData);
     if (result.success) {
       setUser(result.user);
-      toast.success("Cadastro realizado com sucesso!");
+      toast({
+        title: "Cadastro realizado com sucesso!",
+        variant: "success"
+      });
     } else {
-      toast.error(result.message || "Erro ao cadastrar usuário");
+      toast({
+        title: "Erro ao cadastrar usuário",
+        description: result.message || "Ocorreu um erro inesperado",
+        variant: "destructive"
+      });
     }
     return result;
   };
@@ -96,9 +119,16 @@ export const AuthProvider = ({ children }) => {
         ...prev,
         ...userData
       }));
-      toast.success("Perfil atualizado com sucesso!");
+      toast({
+        title: "Perfil atualizado com sucesso!",
+        variant: "success"
+      });
     } else {
-      toast.error(result.message || "Erro ao atualizar perfil");
+      toast({
+        title: "Erro ao atualizar perfil",
+        description: result.message || "Ocorreu um erro inesperado",
+        variant: "destructive"
+      });
     }
     return result;
   };
@@ -125,3 +155,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+

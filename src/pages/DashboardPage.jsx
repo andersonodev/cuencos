@@ -5,6 +5,9 @@ import { CalendarDays, Share2, Download, PlusCircle, ChevronDown } from 'lucide-
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import '../styles/dashboard.css';
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '../context/AuthContext';
+import { getEvents, getPopularEvents } from '../lib/events';
 
 // Importação condicional para evitar erros caso as bibliotecas não estejam instaladas
 let Bar, Line, Pie, ChartJS, registerables;
@@ -32,33 +35,61 @@ try {
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const { user, isOrganizer } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [isLoading, setIsLoading] = useState(true);
   const [chartsLoaded, setChartsLoaded] = useState(!!Bar && !!Line && !!Pie);
+  const [events, setEvents] = useState([]);
+  const [popularEvents, setPopularEvents] = useState([]);
+  const { toast } = useToast();
 
   // Verificar se o usuário está logado e é um organizador
   useEffect(() => {
-    try {
-      const loggedUser = JSON.parse(localStorage.getItem('usuarioLogado'));
-      
-      if (!loggedUser) {
-        navigate('/login');
-        return;
-      }
-
-      if (loggedUser.tipo !== 'organizador') {
-        navigate('/');
-        return;
-      }
-
-      setUser(loggedUser);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Erro ao verificar usuário:', error);
+    if (!user) {
+      toast({
+        title: "Acesso restrito",
+        description: "Faça login para acessar esta página",
+        variant: "destructive",
+      });
       navigate('/login');
+      return;
     }
-  }, [navigate]);
+
+    if (!isOrganizer()) {
+      toast({
+        variant: "destructive",
+        title: "Acesso restrito",
+        description: "Essa área é exclusiva para organizadores",
+      });
+      navigate('/');
+      return;
+    }
+
+    // Carregar dados dos eventos
+    const loadEvents = () => {
+      try {
+        const allEvents = getEvents();
+        const activeEvents = allEvents.filter(event => !event.isDraft);
+        const popular = getPopularEvents(4);
+        
+        setEvents(activeEvents);
+        
+        // Formatar dados para os gráficos de popularidade
+        const formattedPopular = popular.map((event, index) => ({
+          nome: event.title,
+          popularidade: event.salesCount || Math.floor(Math.random() * 50) + 20
+        }));
+        
+        setPopularEvents(formattedPopular);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erro ao carregar eventos:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [user, isOrganizer, navigate, toast]);
 
   // Dados para o gráfico de linha - Visitas
   const lineChartData = {
@@ -110,7 +141,7 @@ const DashboardPage = () => {
 
   // Dados para o gráfico de pizza - Distribuição de receita
   const pieChartData = {
-    labels: ['Engenharias Paranaense', 'PUC IN RIO'],
+    labels: events.slice(0, 2).map(event => event.title),
     datasets: [
       {
         data: [92, 8],
@@ -143,13 +174,45 @@ const DashboardPage = () => {
     },
   };
 
-  // Dados para o gráfico de barras horizontais - Produtos mais vendidos
-  const popularEvents = [
-    { nome: "PUC IN RIO", popularidade: 84 },
-    { nome: "Engenharias Paranaense 2025", popularidade: 44 },
-    { nome: "Festa Junina Universitária", popularidade: 32 },
-    { nome: "Calourada 2025.1", popularidade: 28 }
-  ];
+  // Função para criar novo evento (redireciona para a página de gerenciamento)
+  const handleCreateEvent = () => {
+    navigate('/dashboard/management');
+  };
+
+  // Função para quando o usuário muda o período selecionado
+  const handlePeriodChange = (period) => {
+    setSelectedPeriod(period);
+    
+    toast({
+      title: "Período alterado",
+      description: `Visualizando dados por ${period}`,
+    });
+  };
+
+  // Função para exportar dados
+  const handleExportData = () => {
+    toast({
+      title: "Exportação iniciada",
+      description: "Os dados serão exportados em CSV",
+    });
+    
+    // Mock de exportação
+    setTimeout(() => {
+      toast({
+        title: "Exportação concluída",
+        description: "Dados exportados com sucesso!",
+        variant: "success",
+      });
+    }, 1500);
+  };
+
+  // Função para compartilhar dados
+  const handleShareData = () => {
+    toast({
+      title: "Compartilhamento",
+      description: "Função de compartilhamento em desenvolvimento",
+    });
+  };
 
   if (isLoading) {
     return <div className="dashboard-loading">Carregando...</div>;
@@ -174,25 +237,25 @@ const DashboardPage = () => {
           <div className="period-filters">
             <button 
               className={selectedPeriod === 'day' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('day')}
+              onClick={() => handlePeriodChange('day')}
             >
               Dia
             </button>
             <button 
               className={selectedPeriod === 'week' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('week')}
+              onClick={() => handlePeriodChange('week')}
             >
               Semana
             </button>
             <button 
               className={selectedPeriod === 'month' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('month')}
+              onClick={() => handlePeriodChange('month')}
             >
               Mês
             </button>
             <button 
               className={selectedPeriod === 'semester' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('semester')}
+              onClick={() => handlePeriodChange('semester')}
             >
               Semestre
             </button>
@@ -210,11 +273,11 @@ const DashboardPage = () => {
             <div className="card-header">
               <h2>Visitas à página - Abril</h2>
               <div className="card-actions">
-                <button className="action-button">
+                <button className="action-button" onClick={handleExportData}>
                   <Download size={16} />
                   Exportar
                 </button>
-                <button className="action-button">
+                <button className="action-button" onClick={handleShareData}>
                   <Share2 size={16} />
                   Compartilhar
                 </button>
@@ -273,7 +336,7 @@ const DashboardPage = () => {
             <div className="card-header">
               <h2>Produtos mais vendidos</h2>
               <div className="card-actions">
-                <button className="action-button">
+                <button className="action-button" onClick={handleCreateEvent}>
                   <PlusCircle size={16} />
                   Novo produto
                 </button>

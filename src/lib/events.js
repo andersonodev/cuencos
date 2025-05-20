@@ -16,7 +16,10 @@ const initialEvents = [
     price: 80.00,
     featured: true,
     ageRestriction: "Proibido menores de 18 anos",
-    organizers: "Associação Atlética PUC-PR"
+    organizers: "Associação Atlética PUC-PR",
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 84
   },
   {
     id: 2,
@@ -25,7 +28,10 @@ const initialEvents = [
     image: "/lovable-uploads/68619dad-8ba1-48be-8d77-8858c3151a75.png",
     date: "8 de Maio de 2025",
     location: "UFRJ - Rio de Janeiro / RJ",
-    price: 45.00
+    price: 45.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 32
   },
   {
     id: 3,
@@ -34,7 +40,10 @@ const initialEvents = [
     image: "/lovable-uploads/aba21f9b-e021-4750-b392-540b5d308c84.png",
     date: "10 de Maio de 2025",
     location: "Centro Esportivo - São Paulo / SP",
-    price: 35.00
+    price: 35.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 28
   },
   {
     id: 4,
@@ -43,7 +52,10 @@ const initialEvents = [
     image: "/lovable-uploads/524806a7-7b46-44f1-9d25-5e8d1d8e1bcc.png",
     date: "09 de Maio de 2025",
     location: "Clubhouse - Florianópolis / SC",
-    price: 65.00
+    price: 65.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 15
   },
   {
     id: 5,
@@ -52,7 +64,9 @@ const initialEvents = [
     image: "/lovable-uploads/4d09bc83-a8f8-4a0c-aebc-e51cd1526dee.png",
     date: "09 de Maio de 2025",
     location: "OP Events - Rio de Janeiro / RJ",
-    price: 80.00
+    price: 80.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: true
   },
   {
     id: 6,
@@ -61,7 +75,10 @@ const initialEvents = [
     image: "/lovable-uploads/3e8b36aa-1f23-4483-97b1-67d9521b5e6a.png",
     date: "12 de Maio de 2025",
     location: "Magna - Curitiba / PR",
-    price: 55.00
+    price: 55.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 12
   },
   {
     id: 7,
@@ -70,7 +87,10 @@ const initialEvents = [
     image: "/lovable-uploads/f8b0e0a5-83e7-431e-b9af-31d9e85e3b19.png",
     date: "15 de Maio de 2025",
     location: "Bar do Juiz - São Paulo / SP",
-    price: 45.00
+    price: 45.00,
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 44
   }
 ];
 
@@ -104,6 +124,76 @@ export const getEvents = () => {
 export const getEventById = (id) => {
   const events = getEvents();
   return events.find(event => event.id === id);
+};
+
+// Add a new event
+export const addEvent = (eventData) => {
+  try {
+    const events = getEvents();
+    const newEvent = {
+      id: Date.now(),
+      ...eventData,
+      createdAt: new Date().toISOString()
+    };
+    
+    events.push(newEvent);
+    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+    return newEvent;
+  } catch (error) {
+    console.error("Erro ao adicionar evento:", error);
+    return null;
+  }
+};
+
+// Update an existing event
+export const updateEvent = (id, eventData) => {
+  try {
+    const events = getEvents();
+    const index = events.findIndex(event => event.id === id);
+    
+    if (index === -1) return null;
+    
+    events[index] = {
+      ...events[index],
+      ...eventData,
+      updatedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+    return events[index];
+  } catch (error) {
+    console.error("Erro ao atualizar evento:", error);
+    return null;
+  }
+};
+
+// Delete an event
+export const deleteEvent = (id) => {
+  try {
+    const events = getEvents();
+    const filteredEvents = events.filter(event => event.id !== id);
+    
+    if (filteredEvents.length === events.length) return false;
+    
+    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(filteredEvents));
+    return true;
+  } catch (error) {
+    console.error("Erro ao remover evento:", error);
+    return false;
+  }
+};
+
+// Get events created by a specific user
+export const getEventsByUser = (userId) => {
+  const events = getEvents();
+  return events.filter(event => event.createdBy === userId);
+};
+
+// Get most popular events (by sales)
+export const getPopularEvents = (limit = 5) => {
+  const events = getEvents().filter(event => !event.isDraft);
+  events.sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0));
+  return events.slice(0, limit);
 };
 
 // Search events with filters
