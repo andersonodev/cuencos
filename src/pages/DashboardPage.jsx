@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Share2, Download, PlusCircle, BarChart, Layers, ChevronDown } from 'lucide-react';
+import { CalendarDays, Share2, Download, PlusCircle, ChevronDown } from 'lucide-react';
 import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import '../styles/dashboard.css';
@@ -160,8 +161,7 @@ const DashboardPage = () => {
       
       <div className="dashboard-content">
         <div className="dashboard-welcome">
-          <h1>Bem-vindo ao Dashboard, {user.nome}!</h1>
-          <p>Aqui você gerencia todos os seus eventos.</p>
+          <h1>Dashboard</h1>
         </div>
 
         {/* Filtro de eventos */}

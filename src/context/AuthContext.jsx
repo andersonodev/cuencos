@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
+import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser, isOrganizer as authIsOrganizer } from '../lib/auth';
 import { useToast } from '../components/ui/use-toast';
 
 // Criar contexto de autenticação
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }) => {
 
   // Verificar se o usuário é organizador
   const isOrganizer = () => {
-    return user && user.role === 'organizer';
+    return user && user.tipo === 'organizador';
   };
 
   // Valores fornecidos pelo contexto

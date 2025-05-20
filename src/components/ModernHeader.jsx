@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
 import { Ticket, User, ChevronDown, LogOut } from 'lucide-react';
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const ModernHeader = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isOrganizer } = useAuth();
   
   const handleLogout = () => {
     logout();
@@ -25,7 +26,7 @@ const ModernHeader = () => {
         <div className="header-container">
           <Link to="/" className="header-logo">
             <img 
-              src="/images/logo-roxa-pura.png" 
+              src="/lovable-uploads/0859a779-d4bb-47a6-9f22-1e2c2b6498a7.png" 
               alt="Cuencos" 
               className="header-logo-icon" 
             />
@@ -48,6 +49,17 @@ const ModernHeader = () => {
             </Link>
             {user ? (
               <>
+                {isOrganizer() && (
+                  <Link to="/dashboard" className="header-link flex items-center gap-1">
+                    <img 
+                      src="/lovable-uploads/f7b0388e-b525-439e-bd9f-f75673f8fe89.png" 
+                      alt="Dashboard"
+                      className="header-icon" 
+                      style={{ width: "18px", height: "18px" }}
+                    />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </Link>
+                )}
                 <Link to="/account" className="header-link">
                   <User className="h-5 w-5" />
                 </Link>

@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BarChart2, Ticket, User, LogOut, ChevronDown, Settings } from 'lucide-react';
+import { LogOut, ChevronDown, Settings, User } from 'lucide-react';
 import '../styles/dashboard-header.css';
 
 const DashboardHeader = ({ user }) => {
@@ -17,20 +18,27 @@ const DashboardHeader = ({ user }) => {
       <div className="header-container">
         <Link to="/dashboard" className="header-logo">
           <img 
-            src="/lovable-uploads/ticket-icon-purple.svg" 
+            src="/lovable-uploads/0859a779-d4bb-47a6-9f22-1e2c2b6498a7.png" 
             alt="Cuencos" 
             className="logo-icon" 
           />
-          <span className="logo-text">Cuencos</span>
         </Link>
         
         <nav className="dashboard-nav">
           <Link to="/dashboard" className="nav-item">
-            <BarChart2 className="nav-icon" />
+            <img 
+              src="/lovable-uploads/f7b0388e-b525-439e-bd9f-f75673f8fe89.png" 
+              alt="Dashboard" 
+              className="nav-icon" 
+            />
             <span className="nav-text">Dashboard</span>
           </Link>
           <Link to="/dashboard/management" className="nav-item">
-            <Ticket className="nav-icon" />
+            <img 
+              src="/lovable-uploads/7e83847f-48e6-435e-acbd-e3b33bbe865b.png" 
+              alt="Gerenciamento" 
+              className="nav-icon" 
+            />
             <span className="nav-text">Gerenciamento</span>
           </Link>
           <div 
@@ -38,8 +46,11 @@ const DashboardHeader = ({ user }) => {
             onClick={() => setProfileOpen(!profileOpen)}
           >
             <div className="nav-item">
-              <User className="nav-icon" />
-              <span className="nav-text">{user?.nome || 'Perfil'}</span>
+              <img 
+                src="/lovable-uploads/47ae5152-5c24-4e41-9c18-8fa227e7eb18.png" 
+                alt="Perfil" 
+                className="nav-icon" 
+              />
               <ChevronDown className="dropdown-icon" />
             </div>
             

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -22,6 +23,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import NotFound from './pages/NotFound';
 import DashboardPage from './pages/DashboardPage';
+import DashboardManagementPage from './pages/DashboardManagementPage';
 
 // Importar o utilitário para verificar disponibilidade do localStorage
 import { isAvailable } from './lib/storage';
@@ -81,10 +83,11 @@ const App = () => {
                 <Route path="/favorites" element={<FavoritesPage />} />
                 <Route path="/search" element={<SearchResultsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/dashboard/*" element={<DashboardPage />} />
+                <Route path="/dashboard/management" element={<DashboardManagementPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
+            <Toaster />
           </ThemeProvider>
         </FavoritesProvider>
       </AuthProvider>

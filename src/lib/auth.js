@@ -1,3 +1,4 @@
+
 // User authentication with localStorage
 import { setItem, getItem, removeItem } from './storage';
 
@@ -24,11 +25,15 @@ const initializeUsers = () => {
           name: "Frontend Developer",
           password: "admin123", // In a real app, this would be hashed
           phone: "+5521888776655",
-        }  
-
-
-        // Email: organizador@cuencos.com
-        // Senha: admin123
+        },
+        {
+          id: "organizador@cuencos.com",
+          email: "organizador@cuencos.com",
+          name: "Organizador Cuencos",
+          password: "admin123", // In a real app, this would be hashed
+          phone: "+5521777665544",
+          tipo: "organizador"
+        }
       ];
       
       setItem(USERS_KEY, defaultUsers);
@@ -61,7 +66,8 @@ export const loginUser = (email, password) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        phone: user.phone
+        phone: user.phone,
+        tipo: user.tipo || 'cliente' // Default to 'cliente' if tipo is not set
       };
       
       setItem(CURRENT_USER_KEY, sessionUser);
@@ -104,6 +110,7 @@ export const registerUser = (userData) => {
     const newUser = {
       id: userData.email, // Using email as ID
       ...userData,
+      tipo: userData.tipo || 'cliente', // Default to 'cliente' if tipo is not set
       createdAt: new Date().toISOString(),
     };
     
@@ -155,5 +162,17 @@ export const updateUser = (userId, updatedData) => {
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
     return { success: false, message: "Erro ao atualizar usuário" };
+  }
+};
+
+// Check if user is an organizer
+export const isOrganizer = (userId) => {
+  try {
+    const users = getUsers();
+    const user = users.find(u => u.id === userId);
+    return user && user.tipo === 'organizador';
+  } catch (error) {
+    console.error("Erro ao verificar tipo de usuário:", error);
+    return false;
   }
 };
