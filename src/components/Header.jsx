@@ -59,45 +59,46 @@ const Header = () => {
   // Se chegou aqui, o usuário está logado e verá o menu de usuário autenticado
   return (
     <header className="navbar">
-      <div className="navbar-section logo-container">
-        <Link to="/">
+      <div className="navbar-content">
+        <Link to="/" className="navbar-logo">
           <img 
-            src="/lovable-uploads/logo-preta-ingresso.svg" 
+            src="/lovable-uploads/fee83771-ef35-43dc-ac79-f030ffeafafa.png" 
             alt="Cuencos Logo" 
-            className="logo" 
+            className="logo-icon" 
           />
-        </Link>
-      </div>
-      
-      <div className="menu-toggle" onClick={openMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      
-      <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
-        <div className="close-menu" onClick={closeMenu}></div>
-        <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-          <img src="/images/heart-icon.png" alt="Favoritos" className="nav-icon" />
-          <span>Favoritos</span>
-        </Link>
-        <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-          <img src="/images/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
-          <span>Meus Ingressos</span>
+          <span className="logo-text">Cuencos</span>
         </Link>
         
-        {/* Adicionando o botão de alternância de papel aqui */}
-        <div className="nav-item" onClick={closeMenu}>
-          <RoleSwitcher />
+        <div className="menu-toggle" onClick={openMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
         
-        <Link to="/account" className="nav-item" onClick={closeMenu}>
-          <img src="/lovable-uploads/profile-dropdown.png" alt="Perfil" className="nav-icon" />
-          <span>Perfil ({firstName})</span>
-        </Link>
-        <button onClick={handleLogout} className="nav-item logout-button">
-          <span>Sair</span>
-        </button>
+        <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
+          <div className="close-menu" onClick={closeMenu}></div>
+          <Link to="/favorites" className="nav-item" onClick={closeMenu}>
+            <img src="/images/heart-icon.png" alt="Favoritos" className="nav-icon" />
+            <span>Favoritos</span>
+          </Link>
+          <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
+            <img src="/images/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
+            <span>Meus Ingressos</span>
+          </Link>
+          
+          {/* Adicionando o botão de alternância de papel aqui */}
+          <div className="nav-item" onClick={closeMenu}>
+            <RoleSwitcher />
+          </div>
+          
+          <Link to="/account" className="nav-item" onClick={closeMenu}>
+            <img src="/lovable-uploads/profile-dropdown.png" alt="Perfil" className="nav-icon" />
+            <span>Perfil ({firstName})</span>
+          </Link>
+          <button onClick={handleLogout} className="nav-item logout-button">
+            <span>Sair</span>
+          </button>
+        </div>
       </div>
     </header>
   );
