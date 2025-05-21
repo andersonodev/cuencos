@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
 import { useToast } from '../components/ui/use-toast';
@@ -147,8 +146,8 @@ export const AuthProvider = ({ children }) => {
     return user && user.tipo === 'organizador';
   };
 
-  // Nova função para alternar entre papéis de usuário
-  const switchUserRole = () => {
+  // Função atualizada para alternar entre papéis de usuário com redirecionamento
+  const switchUserRole = (navigate) => {
     try {
       // Se o usuário atual é organizador, voltamos para usuário comum
       if (isOrganizer()) {
@@ -166,6 +165,11 @@ export const AuthProvider = ({ children }) => {
           variant: "success"
         });
         
+        // Redireciona para a página inicial
+        if (navigate) {
+          navigate('/');
+        }
+        
         return { success: true };
       } 
       // Se é um usuário comum que estava como organizador antes, voltamos para organizador
@@ -180,6 +184,11 @@ export const AuthProvider = ({ children }) => {
           description: "Agora você está navegando como organizador",
           variant: "success"
         });
+        
+        // Redireciona para o dashboard quando voltar para organizador
+        if (navigate) {
+          navigate('/dashboard');
+        }
         
         return { success: true };
       } else {
@@ -221,4 +230,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-

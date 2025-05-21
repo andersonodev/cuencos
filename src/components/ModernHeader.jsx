@@ -61,10 +61,12 @@ const ModernHeader = () => {
                     <span className="hidden sm:inline">Dashboard</span>
                   </Link>
                 )}
-                {/* Botão de alternância de papel - Mostrar somente se o usuário for organizador ou tiver papel anterior de organizador */}
-                {(isOrganizer() || user.previousRole === 'organizador') && (
-                  <RoleSwitcher />
-                )}
+                {/* Botão de alternância de papel - Com design melhorado */}
+                <div className="mx-2">
+                  {(isOrganizer() || user.previousRole === 'organizador') && (
+                    <RoleSwitcher />
+                  )}
+                </div>
                 <Link to="/account" className="header-link">
                   <User className="h-5 w-5" />
                 </Link>

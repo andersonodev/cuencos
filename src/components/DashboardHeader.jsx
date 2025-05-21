@@ -45,8 +45,10 @@ const DashboardHeader = ({ user }) => {
             <span className="nav-text">Gerenciamento</span>
           </Link>
           
-          {/* Botão de alternância de papel */}
-          <RoleSwitcher />
+          {/* Botão de alternância de papel com design melhorado */}
+          <div className="mx-2">
+            <RoleSwitcher />
+          </div>
           
           <div 
             className="profile-dropdown"
