@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -59,7 +58,7 @@ const Header = () => {
   // Se chegou aqui, o usuário está logado e verá o menu de usuário autenticado
   return (
     <header className="navbar">
-      <div className="navbar-content">
+      <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           <img 
             src="/lovable-uploads/fee83771-ef35-43dc-ac79-f030ffeafafa.png" 
@@ -75,14 +74,14 @@ const Header = () => {
           <span></span>
         </div>
         
-        <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
+        <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
           <div className="close-menu" onClick={closeMenu}></div>
           <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-            <img src="/images/heart-icon.png" alt="Favoritos" className="nav-icon" />
+            <img src="../public/star.png" alt="Favoritos" className="nav-icon" />
             <span>Favoritos</span>
           </Link>
           <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-            <img src="/images/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
+            <img src="../public/ion_ticket.png" alt="Meus Ingressos" className="nav-icon" />
             <span>Meus Ingressos</span>
           </Link>
           
@@ -92,7 +91,7 @@ const Header = () => {
           </div>
           
           <Link to="/account" className="nav-item" onClick={closeMenu}>
-            <img src="/lovable-uploads/profile-dropdown.png" alt="Perfil" className="nav-icon" />
+            <img src="../public/profilebutton.png" alt="Perfil" className="nav-icon" />
             <span>Perfil ({firstName})</span>
           </Link>
           <button onClick={handleLogout} className="nav-item logout-button">

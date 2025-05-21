@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
+import { toast } from '../components/ui/use-toast';
+import '../styles/checkout.css'; // Importando os novos estilos
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -73,7 +75,6 @@ const CheckoutPage = () => {
     if (!formData.phone.trim()) {
       newErrors.phone = 'Preencha este campo.';
     }
-    
     if (!acceptTerms) {
       newErrors.terms = 'Você precisa aceitar os termos.';
     }
@@ -98,6 +99,12 @@ const CheckoutPage = () => {
       
       localStorage.setItem('checkoutInfo', JSON.stringify(checkoutInfo));
       navigate('/success');
+    } else if (errors.terms) {
+      // Se houver erro nos termos, rolar para o checkbox
+      const termsElement = document.getElementById('terms');
+      if (termsElement) {
+        termsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   };
   
@@ -166,18 +173,19 @@ const CheckoutPage = () => {
             </div>
           </div>
           
-          <div className="flex items-center mt-4 mb-8">
+          <div className={`flex items-center mt-4 mb-8 ${errors.terms ? 'terms-error' : ''}`}>
             <input
               type="checkbox"
               id="terms"
               checked={acceptTerms}
               onChange={(e) => setAcceptTerms(e.target.checked)}
-              className="mr-2"
+              className={`mr-2 ${errors.terms ? 'ring-2 ring-red-500' : ''}`}
             />
             <label htmlFor="terms" className="text-white">
               Eu aceito os <span className="text-blue-400">Terms de Uso</span> e li a <span className="text-blue-400">Política de Privacidade</span>
             </label>
           </div>
+          {errors.terms && (<p className="text-red-500 text-sm mb-4">{errors.terms}</p>)}
           
           <div className="border-t border-cuencos-gray pt-4 pb-4">
             <div className="flex justify-between text-lg text-white">

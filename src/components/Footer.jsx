@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,7 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <Link to="/" className="text-cuencos-purple font-bold text-2xl flex items-center mb-4">
-              <img src="/logo.png" alt="Cuencos" className="h-8 mr-2" />
+              <img 
+                src="/lovable-uploads/logo-cuencos-roxa.png" 
+                alt="Cuencos" 
+                className="h-8 mr-2" 
+              />
               Cuencos
             </Link>
             <p className="text-sm text-gray-400 mb-4">

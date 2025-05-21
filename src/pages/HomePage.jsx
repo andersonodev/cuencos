@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getEvents } from '../lib/events';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header'; // Usando o Header ao invés de GuestNavbar
+import Header from '../components/Header';
 import EventCard from '../components/EventCard';
-import { ChevronLeft, ChevronRight } from 'lucide-react'; // Adicionando a importação dos ícones
+import EventFilter from '../components/EventFilter';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import '../styles/homepage.css';
 
 const HomePage = () => {
@@ -12,6 +13,13 @@ const HomePage = () => {
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  
+  useEffect(() => {
+    // Inicializar com eventos não rascunho
+    setFilteredEvents(events.filter(event => !event.isDraft));
+  }, [events]);
+  
   const heroEvents = [
     {
       id: 1,
@@ -56,20 +64,6 @@ const HomePage = () => {
     document.body.style.overflow = ''; // Restaura rolagem
   };
   
-  // Fecha o menu ao redimensionar a tela para desktop
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768 && isMenuOpen) {
-        closeMenu();
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isMenuOpen]);
-
   // Autoplay para o carousel
   useEffect(() => {
     const interval = setInterval(() => {
@@ -78,6 +72,45 @@ const HomePage = () => {
     
     return () => clearInterval(interval);
   }, [activeSlide]);
+  
+  // Função para lidar com a mudança de filtros
+  const handleFilterChange = (filters) => {
+    const allEvents = events.filter(event => !event.isDraft);
+    let filtered = allEvents;
+    
+    // Aplicar filtro de busca
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(event => 
+        event.title.toLowerCase().includes(searchLower) || 
+        (event.description && event.description.toLowerCase().includes(searchLower))
+      );
+    }
+    
+    // Aplicar filtro de localização
+    if (filters.location && filters.location !== '') {
+      filtered = filtered.filter(event => 
+        event.location && event.location.includes(filters.location)
+      );
+    }
+    
+    // Aplicar filtro de data
+    if (filters.date && filters.date !== '') {
+      // Implementação da filtragem por data será feita na função searchEvents
+      // que já foi definida no arquivo de eventos
+      const { searchEvents } = require('../lib/events');
+      filtered = searchEvents('', '', filters.date).filter(event => filtered.includes(event));
+    }
+    
+    // Aplicar filtro de categoria
+    if (filters.category && filters.category !== '') {
+      filtered = filtered.filter(event => 
+        event.category === filters.category
+      );
+    }
+    
+    setFilteredEvents(filtered);
+  };
 
   return (
     <>
@@ -126,22 +159,11 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section className="filtro">
-          <div className="filtro-box">
-            <div className="filtro-item">
-              <span className="filtro-label">Search Event</span>
-              <span className="filtro-valor">Jogos</span>
-              <div className="filtro-linha"></div>
-            </div>
-            <div className="filtro-item">
-              <span className="filtro-label">Local</span>
-              <span className="filtro-valor">Todos</span>
-              <div className="filtro-linha"></div>
-            </div>
-            <div className="filtro-item">
-              <span className="filtro-label">Data</span>
-              <span className="filtro-valor dropdown">Qualquer Data</span>
-              <div className="filtro-linha"></div>
+        {/* Filtro centralizado com sobreposição ao banner */}
+        <section className="filtro-section">
+          <div className="container mx-auto px-4 relative">
+            <div className="filtro-wrapper">
+              <EventFilter onFilterChange={handleFilterChange} />
             </div>
           </div>
         </section>
@@ -166,11 +188,23 @@ const HomePage = () => {
           </div>
 
           <div className="eventos-grid">
-            {events.slice(0, 6).map(event => (
-              <EventCard key={event.id} event={event} />
-            ))}
+            {filteredEvents.length > 0 ? (
+              filteredEvents.slice(0, 6).map(event => (
+                <EventCard key={event.id} event={event} />
+              ))
+            ) : (
+              <div className="no-events-found">
+                <p>Nenhum evento encontrado com os filtros selecionados.</p>
+                <button 
+                  onClick={() => setFilteredEvents(events.filter(event => !event.isDraft))}
+                  className="reset-filters-btn"
+                >
+                  Limpar filtros
+                </button>
+              </div>
+            )}
           </div>
-
+          
           <div className="explorar">
             <button>Explorar Mais</button>
           </div>
@@ -179,7 +213,7 @@ const HomePage = () => {
         <footer className="footer">
           <div className="footer-content">
             <div className="footer-col">
-              <img src="/images/logo-cuencos-roxa.png" alt="Logo Cuencos" className="footer-logo" />
+              <img src="" alt="Logo Cuencos" className="footer-logo" />
               <p>
                 Cuencos é uma plataforma de autoatendimento para venda de ingressos que conecta
                 universitários a eventos criados por e para a comunidade acadêmica.

@@ -1,72 +1,69 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu } from 'lucide-react';
-import '../styles/guest-navbar.css';
+import '../styles/navbar.css';
+import '../styles/mobile-menu.css';
 
 const GuestNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // Função para abrir o menu mobile
-  const toggleMenu = () => {
-    setIsMenuOpen(prev => !prev);
-    if (!isMenuOpen) {
-      document.body.style.overflow = 'hidden'; // Impede rolagem quando menu está aberto
-    } else {
-      document.body.style.overflow = ''; // Restaura rolagem
-    }
+  // Função para abrir o menu
+  const openMenu = () => {
+    setIsMenuOpen(true);
+    document.body.classList.add('menu-open');
+    document.body.style.overflow = 'hidden'; // Impede rolagem quando menu está aberto
   };
-  
-  // Fechar o menu ao redimensionar a tela para desktop
+
+  // Função para fechar o menu
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.classList.remove('menu-open');
+    document.body.style.overflow = ''; // Restaura rolagem
+  };
+
+  // Fecha o menu ao redimensionar a tela para desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768 && isMenuOpen) {
-        setIsMenuOpen(false);
-        document.body.style.overflow = '';
+        closeMenu();
       }
     };
-    
+
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [isMenuOpen]);
 
   return (
-    <nav className="guest-navbar">
-      <div className="guest-navbar-container">
-        {/* Logo à esquerda */}
-        <Link to="/" className="guest-navbar-logo">
+    <header className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
           <img 
-            src="/lovable-uploads/8691761d-980f-4d45-a8e1-3b999701c70f.png" 
-            alt="Logo" 
+            src="/lovable-uploads/fee83771-ef35-43dc-ac79-f030ffeafafa.png" 
+            alt="Cuencos Logo" 
             className="logo-icon" 
           />
           <span className="logo-text">Cuencos</span>
         </Link>
         
-        {/* Botão de hambúrguer para mobile */}
-        <button 
-          className="mobile-menu-toggle" 
-          onClick={toggleMenu}
-          aria-label="Menu"
-          aria-expanded={isMenuOpen}
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-        
-        {/* Navegação à direita */}
-        <div className={`guest-navbar-links ${isMenuOpen ? 'active' : ''}`}>
-          <Link to="/sell" className="nav-link" onClick={() => isMenuOpen && toggleMenu()}>
-            Venda aqui
-          </Link>
-          <Link to="/login" className="login-button" onClick={() => isMenuOpen && toggleMenu()}>
-            Login
-          </Link>
+        <div className="menu-toggle" onClick={openMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
         
-        {/* Overlay para quando o menu mobile estiver aberto */}
-        {isMenuOpen && <div className="mobile-overlay" onClick={toggleMenu}></div>}
+        <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
+          <div className="close-menu" onClick={closeMenu}></div>
+          <Link to="/login" className="nav-item" onClick={closeMenu}>
+            <span>Venda aqui</span>
+          </Link>
+          <Link to="/login" className="nav-item login-button" onClick={closeMenu}>
+            <span>Login</span>
+          </Link>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

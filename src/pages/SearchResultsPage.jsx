@@ -1,103 +1,145 @@
-
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import ModernHeader from '../components/ModernHeader';
-import ModernFooter from '../components/ModernFooter';
-import SearchFilters from '../components/SearchFilters';
+import { useLocation, Link } from 'react-router-dom';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import EventCard from '../components/EventCard';
-import { mockEvents } from '../lib/mockEvents';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon } from 'lucide-react';
+import SearchBar from '../components/SearchBar';
+import SearchFilters from '../components/SearchFilters';
+import { searchEvents, getEvents } from '../lib/events';
+import { ArrowLeft } from 'lucide-react';
 
 const SearchResultsPage = () => {
   const location = useLocation();
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const searchParams = new URLSearchParams(location.search);
   
+  const initialFilters = {
+    q: searchParams.get('q') || '',
+    location: searchParams.get('location') || '',
+    date: searchParams.get('date') || '',
+  };
+  
+  const [filters, setFilters] = useState(initialFilters);
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Carregar eventos baseado nos filtros
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const searchTerm = query.get('q') || 'Jogos';
+    const loadEvents = () => {
+      setIsLoading(true);
+      
+      try {
+        // Usar a função searchEvents para filtrar os eventos
+        const filteredEvents = searchEvents(
+          filters.q,
+          filters.location,
+          filters.date
+        );
+        
+        setEvents(filteredEvents);
+      } catch (error) {
+        console.error("Erro ao buscar eventos:", error);
+        setEvents([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Simulate loading
-    setLoading(true);
-    setTimeout(() => {
-      setResults(mockEvents);
-      setLoading(false);
-    }, 500);
+    loadEvents();
+  }, [filters]);
+  
+  // Atualizar filtros quando os parâmetros de URL mudam
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setFilters({
+      q: params.get('q') || '',
+      location: params.get('location') || '',
+      date: params.get('date') || '',
+    });
   }, [location.search]);
-
+  
+  // Aplicar filtros adicionais
+  const applyDateFilter = (dateFilter) => {
+    setFilters(prev => ({
+      ...prev,
+      date: dateFilter
+    }));
+  };
+  
+  // Aplicar filtros de categoria
+  const applyCategoryFilter = (category) => {
+    // Implementação futura
+  };
+  
   return (
-    <div className="flex flex-col min-h-screen bg-cuencos-black">
-      <ModernHeader />
+    <div className="min-h-screen bg-black">
+      <Header />
       
-      {/* Banner Principal */}
-      <div className="bg-gradient-to-r from-cuencos-purple to-cuencos-darkPurple py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl text-white font-bold">
-            Resultados da busca por "<span>Jogos</span>"
-          </h1>
+      <main className="container mx-auto px-4 py-8">
+        {/* Barra de navegação/voltar */}
+        <div className="mb-6">
+          <Link to="/" className="flex items-center text-white hover:text-gray-300">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar à página inicial
+          </Link>
         </div>
-      </div>
-      
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Mobile Filters Trigger */}
-          <div className="md:hidden mb-4">
-            <Sheet>
-              <SheetTrigger className="w-full bg-cuencos-gray text-white py-3 flex items-center justify-center gap-2 rounded-md">
-                <MenuIcon className="w-5 h-5" />
-                <span>Filtros</span>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] p-0 bg-cuencos-black">
-                <SearchFilters />
-              </SheetContent>
-            </Sheet>
-          </div>
+        
+        {/* Barra de pesquisa */}
+        <div className="mb-6">
+          <SearchBar defaultValues={filters} />
+        </div>
+        
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar com filtros */}
+          <aside className="w-full md:w-64 flex-shrink-0">
+            <SearchFilters 
+              selectedDate={filters.date}
+              onDateFilterChange={applyDateFilter}
+            />
+          </aside>
           
-          {/* Desktop Sidebar */}
-          <div className="hidden md:block w-full md:w-64 shrink-0">
-            <div className="sticky top-24">
-              <SearchFilters />
-            </div>
-          </div>
-          
-          {/* Results Area */}
+          {/* Resultados da busca */}
           <div className="flex-grow">
-            {/* Sort Dropdown */}
-            <div className="flex justify-end mb-6">
-              <div className="relative">
-                <label className="text-gray-400 mr-2">Organizar por</label>
-                <select className="appearance-none bg-gray-800 border border-gray-700 rounded-lg py-2 pl-4 pr-10 text-white">
-                  <option>Relevância</option>
-                  <option>Data: Mais Próxima</option>
-                  <option>Preço: Menor</option>
-                  <option>Preço: Maior</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white top-6">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
+            <h1 className="text-3xl font-bold text-white mb-4">
+              {filters.q 
+                ? `Resultados para "${filters.q}"` 
+                : "Todos os eventos"}
+            </h1>
             
-            {/* Events Grid */}
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cuencos-purple"></div>
+            {filters.location && (
+              <p className="text-gray-400 mb-4">
+                Local: {filters.location}
+              </p>
+            )}
+            
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {results.map(event => (
+            ) : events.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {events.map(event => (
                   <EventCard key={event.id} event={event} />
                 ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-gray-900 rounded-lg">
+                <p className="text-2xl text-white mb-4">Nenhum evento encontrado</p>
+                <p className="text-gray-400 mb-6">
+                  Tente ajustar seus filtros de busca ou explorar todas as categorias.
+                </p>
+                <Link 
+                  to="/"
+                  className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-md inline-block"
+                >
+                  Ver todos os eventos
+                </Link>
               </div>
             )}
           </div>
         </div>
       </main>
       
-      <ModernFooter />
+      <Footer />
     </div>
   );
 };

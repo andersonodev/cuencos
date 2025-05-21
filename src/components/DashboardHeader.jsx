@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut, ChevronDown, Settings, User } from 'lucide-react';
@@ -21,10 +20,11 @@ const DashboardHeader = ({ user }) => {
       <div className="header-container">
         <Link to="/dashboard" className="header-logo">
           <img 
-            src="/lovable-uploads/0859a779-d4bb-47a6-9f22-1e2c2b6498a7.png" 
+            src="../public/logo-roxa-pura.png" 
             alt="Cuencos" 
             className="logo-icon" 
           />
+          <span className="logo-text">Cuencos</span>
         </Link>
         
         <nav className="dashboard-nav">

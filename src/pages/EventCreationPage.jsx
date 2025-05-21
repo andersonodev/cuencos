@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ModernHeader from '../components/ModernHeader';
+import DashboardHeader from '../components/DashboardHeader';
 import Footer from '../components/Footer';
 import EditionStep from '../components/eventCreation/EditionStep';
 import CoverStep from '../components/eventCreation/CoverStep';
@@ -333,7 +333,7 @@ const EventCreationPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      <ModernHeader />
+      <DashboardHeader user={user} />
       
       <div className="flex-grow px-4 sm:px-6 md:px-8 lg:px-16 py-8 max-w-7xl mx-auto w-full">
         <div className="mb-6">

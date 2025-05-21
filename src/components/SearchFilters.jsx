@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const SearchFilters = () => {
+const SearchFilters = ({ selectedDate, onDateFilterChange }) => {
   const dateFilters = [
     { id: 'today', label: 'Hoje' },
     { id: 'tomorrow', label: 'Amanhã' },
@@ -19,8 +18,17 @@ const SearchFilters = () => {
     { id: 'academic', label: 'Comunidade Acadêmica' },
   ];
 
+  const handleDateFilterChange = (e) => {
+    const { id, checked } = e.target;
+    if (checked) {
+      onDateFilterChange(id);
+    } else {
+      onDateFilterChange('');
+    }
+  };
+
   return (
-    <div className="bg-cuencos-black p-6">
+    <div className="bg-zinc-800 p-6 rounded-xl">
       <h2 className="text-xl font-semibold text-white mb-6">Filtros</h2>
       
       <div className="mb-8">
@@ -31,7 +39,9 @@ const SearchFilters = () => {
               <input
                 type="checkbox"
                 id={filter.id}
-                className="w-4 h-4 mr-3 accent-cuencos-purple"
+                checked={selectedDate === filter.id}
+                onChange={handleDateFilterChange}
+                className="w-4 h-4 mr-3 accent-purple-600"
               />
               <label htmlFor={filter.id} className="text-white text-sm cursor-pointer">
                 {filter.label}
@@ -51,7 +61,7 @@ const SearchFilters = () => {
               <input
                 type="checkbox"
                 id={filter.id}
-                className="w-4 h-4 mr-3 accent-cuencos-purple"
+                className="w-4 h-4 mr-3 accent-purple-600"
               />
               <label htmlFor={filter.id} className="text-white text-sm cursor-pointer">
                 {filter.label}

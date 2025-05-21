@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import ModernHeader from '../components/ModernHeader';
+import Header from '../components/Header'; // Alterado de ModernHeader para Header
 import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
@@ -37,7 +37,7 @@ const EventDetailsPage = () => {
   if (!event) {
     return (
       <div className="flex flex-col min-h-screen">
-        <ModernHeader />
+        <Header /> {/* Substituído ModernHeader por Header */}
         <div className="container mx-auto py-12 px-4 text-center">
           <h1 className="text-3xl font-bold mb-4 text-white">Evento não encontrado</h1>
           <Link to="/" className="text-cuencos-purple hover:underline">Voltar para a página inicial</Link>
@@ -92,7 +92,7 @@ const EventDetailsPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-cuencos-black">
-      <ModernHeader />
+      <Header /> {/* Substituído ModernHeader por Header */}
       
       {/* Event Banner */}
       <div className="container mx-auto px-4 pt-6">

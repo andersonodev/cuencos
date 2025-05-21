@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { registerUser } from '../lib/auth'; // Importando a função de registro
+import { registerUser } from '../lib/auth';
 import { toast } from '../components/ui/use-toast';
 import '../styles/register.css';
 
@@ -80,21 +79,22 @@ const RegisterPage = () => {
   
   return (
     <div className="register-container">
-      {/* Logo à esquerda */}
+      {/* Logo no canto superior esquerdo */}
       <div className="logo">
-        <img src="/images/logo-cuencos.png" alt="Logo Cuencos" />
+        <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
+        <span className="logo-text">Cuencos</span>
       </div>
       
-      {/* Texto promocional à esquerda */}
+      {/* Texto promocional */}
       <div className="promo-text">
-        <p>{isOrganizerRegistration 
-          ? "Crie sua conta de organizador e comece a criar seus próprios eventos!" 
-          : "Crie sua conta e seja avisado sobre promoções e novas festas!"}</p>
+        <p>
+          Crie sua conta e conecte-se a experiências universitárias únicas e inesquecíveis.
+        </p>
       </div>
       
-      {/* Card de cadastro */}
+      {/* Card de registro */}
       <div className="register-card">
-        <h1>{isOrganizerRegistration ? "CADASTRE-SE COMO ORGANIZADOR" : "CADASTRE-SE!"}</h1>
+        <h1>{isOrganizerRegistration ? "Cadastro de Organizador" : "Crie sua conta"}</h1>
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">

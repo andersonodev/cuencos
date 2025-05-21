@@ -76,20 +76,22 @@ const LoginPage = () => {
   
   return (
     <div className="login-container">
-      {/* Logo à esquerda */}
+      {/* Logo no canto superior esquerdo */}
       <div className="logo">
-        <img src="/images/logo-cuencos.png" alt="Logo Cuencos" />
+        <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
+        <span className="logo-text">Cuencos</span>
       </div>
       
-      {/* Texto promocional à esquerda */}
+      {/* Texto promocional */}
       <div className="promo-text">
-        <p>Encontre as melhores festas universitárias com facilidade e a qualquer hora!</p>
+        <p>
+          Conectando você a experiências universitárias únicas e inesquecíveis.
+        </p>
       </div>
       
       {/* Card de login */}
       <div className="login-card">
-        <h1>FAÇA LOGIN!</h1>
-        
+        <h1>Acesse sua conta</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email ou Nome de Usuário</label>

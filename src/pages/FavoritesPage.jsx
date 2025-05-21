@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
-import ModernHeader from '../components/ModernHeader';
+import Header from '../components/Header'; // Alterado de ModernHeader para Header
 import Footer from '../components/Footer';
 import EventCard from '../components/EventCard';
 import { ArrowLeft } from 'lucide-react';
@@ -48,7 +47,7 @@ const FavoritesPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      <ModernHeader />
+      <Header /> {/* Substituído ModernHeader por Header */}
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">

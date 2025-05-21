@@ -1,4 +1,3 @@
-
 // Mock data for events with localStorage persistence
 const EVENTS_STORAGE_KEY = 'cuencos_events';
 
@@ -198,13 +197,75 @@ export const getPopularEvents = (limit = 5) => {
 };
 
 // Search events with filters
-export const searchEvents = (term, location, date) => {
-  const events = getEvents();
-  // Implementação simplificada de busca
+export const searchEvents = (term, location, dateFilter) => {
+  const events = getEvents().filter(event => !event.isDraft);
+  
+  // Função para filtrar por data
+  const filterByDate = (event) => {
+    if (!dateFilter) return true;
+    
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    
+    // Extrair data do evento - formato esperado: "09 de Maio de 2025"
+    const [day, _, month, __, year] = event.date.split(' ');
+    
+    // Mapeamento de meses em português para números
+    const monthMap = {
+      'janeiro': 0, 'fevereiro': 1, 'março': 2, 'abril': 3,
+      'maio': 4, 'junho': 5, 'julho': 6, 'agosto': 7, 
+      'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
+    };
+    
+    // Criar objeto Date para a data do evento
+    const eventDate = new Date(parseInt(year), monthMap[month.toLowerCase()], parseInt(day));
+    
+    switch(dateFilter) {
+      case 'today':
+        return eventDate.toDateString() === today.toDateString();
+      case 'tomorrow':
+        return eventDate.toDateString() === tomorrow.toDateString();
+      case 'this-week': {
+        // Obter o primeiro e último dia da semana atual
+        const firstDay = new Date(today);
+        firstDay.setDate(today.getDate() - today.getDay()); // Domingo
+        const lastDay = new Date(firstDay);
+        lastDay.setDate(firstDay.getDate() + 6); // Sábado
+        
+        return eventDate >= firstDay && eventDate <= lastDay;
+      }
+      case 'weekend': {
+        // Verifica se o dia da semana é sábado (6) ou domingo (0)
+        const day = eventDate.getDay();
+        return day === 0 || day === 6;
+      }
+      case 'this-month':
+        return eventDate.getMonth() === today.getMonth() && eventDate.getFullYear() === today.getFullYear();
+      case 'next-month': {
+        const nextMonth = new Date(today);
+        nextMonth.setMonth(today.getMonth() + 1);
+        
+        return eventDate.getMonth() === nextMonth.getMonth() && eventDate.getFullYear() === nextMonth.getFullYear();
+      }
+      default:
+        return true;
+    }
+  };
+  
+  // Aplicar todos os filtros
   return events.filter(event => 
-    (!term || event.title.toLowerCase().includes(term.toLowerCase())) &&
-    (!location || event.location.toLowerCase().includes(location.toLowerCase())) &&
-    (!date || event.date.includes(date))
+    // Filtro de termo (título ou descrição)
+    (!term || 
+      event.title.toLowerCase().includes(term.toLowerCase()) ||
+      (event.description && event.description.toLowerCase().includes(term.toLowerCase()))) &&
+    
+    // Filtro de localização
+    (!location || location === 'Todos' || 
+      event.location.toLowerCase().includes(location.toLowerCase())) &&
+    
+    // Filtro de data
+    filterByDate(event)
   );
 };
 

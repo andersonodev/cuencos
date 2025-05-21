@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { CalendarDays, Share2, Download, PlusCircle, BarChart, Layers, ChevronDown } from 'lucide-react';
-import DashboardHeader from '../components/DashboardHeader';
+import { CalendarDays, Share2, Download, ChevronDown, PlusCircle } from 'lucide-react';
 import Footer from '../components/Footer';
-import { getEvents } from '../lib/events';
+import DashboardHeader from '../components/DashboardHeader';
 import { toast } from '../components/ui/use-toast';
 import dashboardData from '../data/dashboardData.json';
 import '../styles/dashboard.css';
@@ -154,6 +153,11 @@ const DashboardPage = () => {
     },
   };
 
+  const handlePeriodChange = (period) => {
+    setSelectedPeriod(period);
+    toast.success(`Período alterado para ${period === 'month' ? 'Mês' : period === 'week' ? 'Semana' : 'Dia'}`);
+  };
+
   if (isLoading) {
     return <div className="dashboard-loading">Carregando...</div>;
   }
@@ -164,8 +168,7 @@ const DashboardPage = () => {
       
       <div className="dashboard-content">
         <div className="dashboard-welcome">
-          <h1>Bem-vindo ao Dashboard, {user.nome}!</h1>
-          <p>Aqui você gerencia todos os seus eventos.</p>
+          <h1>Dashboard</h1>
         </div>
 
         {/* Filtro de eventos */}
@@ -178,25 +181,25 @@ const DashboardPage = () => {
           <div className="period-filters">
             <button 
               className={selectedPeriod === 'day' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('day')}
+              onClick={() => handlePeriodChange('day')}
             >
               Dia
             </button>
             <button 
               className={selectedPeriod === 'week' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('week')}
+              onClick={() => handlePeriodChange('week')}
             >
               Semana
             </button>
             <button 
               className={selectedPeriod === 'month' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('month')}
+              onClick={() => handlePeriodChange('month')}
             >
               Mês
             </button>
             <button 
               className={selectedPeriod === 'semester' ? 'active' : ''} 
-              onClick={() => setSelectedPeriod('semester')}
+              onClick={() => handlePeriodChange('semester')}
             >
               Semestre
             </button>
@@ -209,7 +212,7 @@ const DashboardPage = () => {
         
         {/* Dashboard Grid */}
         <div className="dashboard-grid">
-          {/* Gráfico de visitas */}
+          {/* Gráfico de visitas - ocupa span 3 */}
           <div className="dashboard-card visits-chart">
             <div className="card-header">
               <h2>Visitas à página - Abril</h2>
@@ -228,44 +231,29 @@ const DashboardPage = () => {
               <Line data={lineChartData} options={lineChartOptions} />
             </div>
           </div>
-          
-          {/* Resumo de vendas */}
-          <div className="sales-summary">
-            <div className="summary-card total-sales">
-              <div className="summary-icon">₪</div>
-              <div className="summary-content">
-                <h3>Total de vendas</h3>
-                <div className="summary-value">R${vendasAbril.total.toLocaleString('pt-BR')}</div>
-                <div className="summary-trend positive">
-                  <span>+{vendasAbril.crescimento}%</span> desde o mês passado
-                </div>
-              </div>
+
+          {/* Card de resumo de vendas - ocupa span 1 */}
+          <div className="dashboard-card sales-summary">
+            <div className="card-header">
+              <h2>Vendas em Abril</h2>
+              <p className="card-subtitle">Resumo de vendas de Abril</p>
             </div>
             
-            <div className="summary-card products-sold">
-              <div className="summary-icon">✓</div>
-              <div className="summary-content">
-                <h3>Produtos vendidos</h3>
-                <div className="summary-value">{vendasAbril.produtosVendidos}</div>
-                <div className="summary-trend positive">
-                  <span>+{vendasAbril.crescimentoProdutos}%</span> desde o mês passado
-                </div>
-              </div>
-            </div>
-            
-            <div className="summary-card new-customers">
-              <div className="summary-icon">♦</div>
-              <div className="summary-content">
-                <h3>Novos clientes</h3>
-                <div className="summary-value">{vendasAbril.novosClientes}</div>
-                <div className={`summary-trend ${vendasAbril.crescimentoClientes > 0 ? 'positive' : 'negative'}`}>
-                  <span>{vendasAbril.crescimentoClientes > 0 ? '+' : ''}{vendasAbril.crescimentoClientes}%</span> desde o mês passado
+            <div className="summary-cards">
+              <div className="summary-card">
+                <div className="summary-icon">₪</div>
+                <div className="summary-content">
+                  <div className="summary-label">Valor total</div>
+                  <div className="summary-value">R${vendasAbril.total.toLocaleString('pt-BR')}</div>
+                  <div className="summary-trend positive">
+                    <span>+{vendasAbril.crescimento}% desde o mês anterior</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Produtos mais vendidos */}
+          {/* Produtos mais vendidos - ocupa span 2 */}
           <div className="dashboard-card popular-products">
             <div className="card-header">
               <h2>Produtos mais vendidos</h2>
@@ -277,26 +265,49 @@ const DashboardPage = () => {
               </div>
             </div>
             
-            <div className="popular-products-list">
+            <div className="products-table">
+              <div className="table-header">
+                <div className="col-position">#</div>
+                <div className="col-name">Nome</div>
+                <div className="col-popularity">Popularidade</div>
+                <div className="col-sales">Vendas</div>
+              </div>
+              
               {eventosPopulares.map((event, index) => (
-                <div key={index} className="product-item">
-                  <div className="product-name">{event.nome}</div>
-                  <div className="product-bar-container">
-                    <div 
-                      className="product-bar" 
-                      style={{ width: `${event.popularidade}%` }}
-                    ></div>
+                <div key={index} className="table-row">
+                  <div className="col-position">{index + 1}</div>
+                  <div className="col-name" title={event.nome}>{event.nome}</div>
+                  <div className="col-popularity">
+                    <div className="progress-container">
+                      <div 
+                        className="progress-bar" 
+                        style={{ 
+                          width: `${event.popularidade}%`, 
+                          backgroundColor: event.id === "01" ? "#F0C05A" : "#4DB5FF" 
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="product-percentage">{event.popularidade}%</div>
+                  <div className="col-sales">
+                    <span 
+                      className="sales-badge"
+                      style={{ 
+                        backgroundColor: event.id === "01" ? "rgba(240, 192, 90, 0.2)" : "rgba(77, 181, 255, 0.2)",
+                        color: event.id === "01" ? "#F0C05A" : "#4DB5FF"
+                      }}
+                    >
+                      {event.popularidade}%
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           
-          {/* Distribuição da receita */}
+          {/* Distribuição da receita - ocupa span 2 */}
           <div className="dashboard-card revenue-distribution">
             <div className="card-header">
-              <h2>Distribuição da receita (Abril)</h2>
+              <h2>Distribuição da receita - Abril</h2>
             </div>
             <div className="pie-chart-container">
               <Pie data={pieChartData} options={pieChartOptions} />
