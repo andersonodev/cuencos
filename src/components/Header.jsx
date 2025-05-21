@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -51,6 +52,9 @@ const Header = () => {
     return <GuestNavbar />;
   }
   
+  // Get the first name safely
+  const firstName = user && user.name ? user.name.split(' ')[0] : 'Usuário';
+  
   // Se chegou aqui, o usuário está logado e verá o menu de usuário autenticado
   return (
     <header className="navbar">
@@ -82,7 +86,7 @@ const Header = () => {
         </Link>
         <Link to="/account" className="nav-item" onClick={closeMenu}>
           <img src="/lovable-uploads/profile-dropdown.png" alt="Perfil" className="nav-icon" />
-          <span>Perfil ({user.name.split(' ')[0]})</span>
+          <span>Perfil ({firstName})</span>
         </Link>
         <button onClick={handleLogout} className="nav-item logout-button">
           <span>Sair</span>

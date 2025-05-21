@@ -7,9 +7,14 @@ import Footer from '../components/Footer';
 
 const AccountPage = () => {
   const { user, updateUser } = useAuth();
+  
+  // Safe extraction of name parts
+  const firstName = user?.name ? user.name.split(' ')[0] : '';
+  const lastName = user?.name ? user.name.split(' ').slice(1).join(' ') : '';
+  
   const [formData, setFormData] = React.useState({
-    firstName: user?.name.split(' ')[0] || '',
-    lastName: user?.name.split(' ').slice(1).join(' ') || '',
+    firstName: firstName,
+    lastName: lastName,
     phone: user?.phone || '',
     address: user?.address || '',
     city: user?.city || ''
