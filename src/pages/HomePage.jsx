@@ -179,7 +179,7 @@ const HomePage = () => {
         <footer className="footer">
           <div className="footer-content">
             <div className="footer-col">
-              <img src="/lovable-uploads/logo-cuencos-roxa.png" alt="Logo Cuencos" className="footer-logo" />
+              <img src="/images/logo-cuencos-roxa.png" alt="Logo Cuencos" className="footer-logo" />
               <p>
                 Cuencos é uma plataforma de autoatendimento para venda de ingressos que conecta
                 universitários a eventos criados por e para a comunidade acadêmica.

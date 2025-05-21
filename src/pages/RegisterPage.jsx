@@ -64,7 +64,7 @@ const RegisterPage = () => {
     <div className="register-container">
       {/* Logo à esquerda */}
       <div className="logo">
-        <img src="/lovable-uploads/logo_preta.png" alt="Logo Cuencos" />
+        <img src="/images/logo-cuencos.png" alt="Logo Cuencos" />
       </div>
       
       {/* Texto promocional à esquerda */}
@@ -152,7 +152,7 @@ const RegisterPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/lovable-uploads/google.png" alt="Google" />
+          <img src="/images/google-icon.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         

@@ -33,7 +33,7 @@ const GuestNavbar = () => {
       <div className="guest-navbar-container">
         {/* Logo à esquerda */}
         <Link to="/" className="guest-navbar-logo">
-          <img src="/images/logo-roxa-pura.png" alt="Logo" className="logo-icon" />
+          <img src="/images/logo-cuencos.png" alt="Logo" className="logo-icon" />
           <span className="logo-text">Cuencos</span>
         </Link>
         

@@ -1,6 +1,5 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser, isOrganizer as authIsOrganizer } from '../lib/auth';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
 import { useToast } from '../components/ui/use-toast';
 
 // Criar contexto de autenticação
@@ -19,9 +18,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadUser = () => {
       try {
+        // Verifica primeiro o usuário no localStorage diretamente (caminho mais rápido)
+        const localStorageUser = localStorage.getItem('usuarioLogado');
+        if (localStorageUser) {
+          const parsedUser = JSON.parse(localStorageUser);
+          console.log("Usuário recuperado do localStorage:", parsedUser);
+          setUser(parsedUser);
+          setLoading(false);
+          return;
+        }
+
+        // Se não encontrou no localStorage diretamente, tenta com getCurrentUser
         const currentUser = getCurrentUser();
         if (currentUser) {
-          console.log("Usuário autenticado carregado:", currentUser);
+          console.log("Usuário autenticado carregado via getCurrentUser:", currentUser);
+          
+          // Garante que o usuário também esteja em 'usuarioLogado'
+          localStorage.setItem('usuarioLogado', JSON.stringify(currentUser));
+          
           setUser(currentUser);
         } else {
           console.log("Nenhum usuário autenticado encontrado");
@@ -43,35 +57,28 @@ export const AuthProvider = ({ children }) => {
       
       if (loggedInUser) {
         console.log("Login bem-sucedido:", loggedInUser);
+        
+        // Garantir que o usuário seja salvo no localStorage em ambos os formatos
+        localStorage.setItem('usuarioLogado', JSON.stringify(loggedInUser));
+        
         setUser(loggedInUser);
-        toast({
-          title: "Login realizado com sucesso!",
-          variant: "success"
-        });
         return { success: true, user: loggedInUser };
       } else {
         console.log("Login falhou: credenciais inválidas");
-        toast({
-          title: "Credenciais inválidas",
-          variant: "destructive"
-        });
         return { success: false, message: "Credenciais inválidas" };
       }
     } catch (error) {
       console.error("Erro no login:", error);
-      toast({
-        title: "Erro ao fazer login",
-        description: error.message || "Ocorreu um erro inesperado",
-        variant: "destructive"
-      });
       return { success: false, message: "Erro ao fazer login" };
     }
   };
 
-  // Função de logout
+  // Função de logout - atualizada para remover ambas as chaves
   const logout = () => {
     try {
+      // Limpar tanto o usuário normal quanto o organizador
       logoutUser();
+      localStorage.removeItem('usuarioLogado');
       setUser(null);
       console.log("Logout bem-sucedido");
       toast({
@@ -110,7 +117,7 @@ export const AuthProvider = ({ children }) => {
 
   // Função de atualização do usuário
   const updateUser = (userData) => {
-    if (!user) return { success: false };
+    if (!user) return { success: false, message: "Nenhum usuário logado" };
     
     const result = authUpdateUser(user.id, userData);
     if (result.success) {

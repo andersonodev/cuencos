@@ -61,7 +61,7 @@ const EventCard = ({ event }) => {
             aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
             <img 
-              src="/lovable-uploads/interestedbutton.png" 
+              src="/images/heart-icon.png" 
               alt="Favorito" 
               className={`favorite-icon ${favorite ? 'active' : ''}`}
             />

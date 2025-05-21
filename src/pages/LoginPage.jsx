@@ -5,15 +5,16 @@ import { toast } from '../components/ui/use-toast';
 import '../styles/login.css';
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
-  
-  // Estado para armazenar os valores dos campos
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showOrganizadorInfo, setShowOrganizadorInfo] = useState(false);
   
   // Obter a página para onde redirecionar após o login
   const from = location.state?.from || '/';
@@ -21,7 +22,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       toast({
         title: "Erro no login",
         description: "Por favor, preencha todos os campos.",
@@ -29,38 +30,31 @@ const LoginPage = () => {
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
     try {
-      // Verificação especial para login de organizador
-      if (email === 'organizador@cuencos.com' && password === 'admin123') {
-        // Armazenar dados do organizador no localStorage
-        localStorage.setItem('usuarioLogado', JSON.stringify({
-          tipo: 'organizador',
-          nome: 'Organizador Cuencos',
-          email: 'organizador@cuencos.com'
-        }));
-        
-        toast({
-          title: "Login realizado!",
-          description: "Bem-vindo, Organizador Cuencos!",
-        });
-        
-        navigate('/dashboard');
-        return;
+      // Credenciais para login como organizador (para facilitar os testes)
+      if (formData.email === 'organizador@cuencos.com' && formData.password === 'admin123') {
+        console.log("Tentando login como organizador:", formData.email);
       }
       
-      // Login regular para outros usuários
-      const result = await login(email, password);
+      const result = login(formData.email, formData.password);
       
       if (result.success) {
         toast({
           title: "Login realizado com sucesso!",
           description: `Bem-vindo de volta, ${result.user.name?.split(' ')[0] || result.user.email}!`,
         });
-        // Redireciona para a página anterior ou home
-        navigate(from, { replace: true });
+        
+        // Verificar explicitamente se é um organizador para redirecionar
+        if (result.user.tipo === 'organizador') {
+          console.log("Redirecionando para dashboard (organizador)");
+          navigate('/dashboard', { replace: true });
+        } else {
+          // Se não for organizador, redirecionar para a página anterior ou home
+          console.log("Redirecionando para página anterior (usuário regular)");
+          navigate(from, { replace: true });
+        }
       } else {
         toast({
           title: "Erro no login",
@@ -84,7 +78,7 @@ const LoginPage = () => {
     <div className="login-container">
       {/* Logo à esquerda */}
       <div className="logo">
-        <img src="/images/logo-roxa-pura.png" alt="Logo Cuencos" />
+        <img src="/images/logo-cuencos.png" alt="Logo Cuencos" />
       </div>
       
       {/* Texto promocional à esquerda */}
@@ -94,7 +88,7 @@ const LoginPage = () => {
       
       {/* Card de login */}
       <div className="login-card">
-        <h1>BEM-VINDO DE VOLTA!</h1>
+        <h1>FAÇA LOGIN!</h1>
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -102,8 +96,8 @@ const LoginPage = () => {
             <input
               type="text"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               disabled={isLoading}
               placeholder="fronted ou johnfrontend@gmail.com"
             />
@@ -115,8 +109,8 @@ const LoginPage = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
                 placeholder="admin123"
               />
@@ -144,7 +138,7 @@ const LoginPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/images/google.png" alt="Google" />
+          <img src="/images/google-icon.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         
@@ -152,6 +146,25 @@ const LoginPage = () => {
         <div className="signup-link">
           <span>Ainda não tem cadastro? </span>
           <Link to="/register">CLIQUE AQUI</Link>
+        </div>
+        
+        {/* Info sobre organizador */}
+        <div className="login-info">
+          <button 
+            type="button" 
+            className="info-button"
+            onClick={() => setShowOrganizadorInfo(!showOrganizadorInfo)}
+          >
+            Fazer login como organizador? Clique aqui
+          </button>
+          
+          {showOrganizadorInfo && (
+            <div className="organizador-info">
+              <p>Para testar como organizador, use:</p>
+              <p>Email: organizador@teste.com</p>
+              <p>Senha: senha123</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

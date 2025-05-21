@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
@@ -36,7 +35,7 @@ const ModernHeader = () => {
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
               <img 
-                src="/images/interestedbutton.png" 
+                src="/images/heart-icon.png" 
                 alt="Favoritos"
                 className="header-icon" 
                 style={{ width: "18px", height: "18px" }}

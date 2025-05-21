@@ -73,11 +73,11 @@ const Header = () => {
       <div className={`navbar-section navbar-end ${isMenuOpen ? 'active' : ''}`}>
         <div className="close-menu" onClick={closeMenu}></div>
         <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-          <img src="/lovable-uploads/interestedbutton.png" alt="Favoritos" className="nav-icon" />
+          <img src="/images/heart-icon.png" alt="Favoritos" className="nav-icon" />
           <span>Favoritos</span>
         </Link>
         <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-          <img src="/lovable-uploads/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
+          <img src="/images/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
           <span>Meus Ingressos</span>
         </Link>
         <Link to="/account" className="nav-item" onClick={closeMenu}>

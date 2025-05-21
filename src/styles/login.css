@@ -243,6 +243,35 @@ a {
   text-decoration: underline;
 }
 
+/* Estilos para informação do organizador */
+.login-info {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.info-button {
+  background: none;
+  border: none;
+  color: #A200FF;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.organizador-info {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: rgba(162, 0, 255, 0.1);
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.organizador-info p {
+  margin: 5px 0;
+}
+
 /* Responsividade */
 @media (max-width: 1200px) {
   .promo-text {

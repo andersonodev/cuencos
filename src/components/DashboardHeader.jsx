@@ -1,15 +1,16 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut, ChevronDown, Settings, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard-header.css';
 
 const DashboardHeader = ({ user }) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
+  const { logout } = useAuth();
   
   const handleLogout = () => {
-    localStorage.removeItem('usuarioLogado');
+    logout();
     navigate('/');
   };
   

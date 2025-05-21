@@ -147,6 +147,7 @@
 .chart-container {
   height: calc(100% - 50px);
   width: 100%;
+  position: relative;
 }
 
 /* Cards de resumo */
@@ -272,6 +273,7 @@
 .pie-chart-container {
   height: 250px;
   width: 100%;
+  padding: 10px;
 }
 
 .total-percentage {
@@ -322,16 +324,6 @@
   .visits-chart {
     grid-column: span 2;
   }
-  
-  .sales-summary {
-    grid-column: span 2;
-    flex-direction: row;
-  }
-  
-  .summary-card {
-    flex: 1;
-    height: 150px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -356,13 +348,7 @@
   }
   
   .visits-chart,
-  .sales-summary,
-  .popular-products,
   .revenue-distribution {
     grid-column: span 1;
-  }
-  
-  .sales-summary {
-    flex-direction: column;
   }
 }
