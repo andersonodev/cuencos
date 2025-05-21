@@ -192,10 +192,13 @@ export const AuthProvider = ({ children }) => {
         
         return { success: true };
       } else {
+        // Usuário não tem papel de organizador e deseja se tornar um
+        // Isso será tratado no componente RoleSwitcher, redirecionando para registro
+        
         toast({
-          title: "Não é possível alternar",
-          description: "Você não tem permissão para alternar para organizador",
-          variant: "destructive"
+          title: "Redirecionando para cadastro",
+          description: "Você será redirecionado para se cadastrar como organizador",
+          variant: "info"
         });
         
         return { success: false };

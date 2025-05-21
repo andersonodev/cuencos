@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { registerUser } from '../lib/auth'; // Importando a função de registro
 import { toast } from '../components/ui/use-toast';
 import '../styles/register.css';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    phone: ''  // Adicionando campo de telefone para completar o cadastro
+    phone: '',
+    tipo: 'cliente'  // Valor padrão: cliente
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Verifica se há um parâmetro de consulta para definir o tipo de usuário
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('role') === 'organizer') {
+      setFormData(prev => ({ ...prev, tipo: 'organizador' }));
+    }
+  }, [location]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +59,12 @@ const RegisterPage = () => {
       });
       
       // Redireciona para a página inicial após cadastro bem-sucedido
-      navigate('/');
+      // Se for organizador, redireciona para o dashboard
+      if (formData.tipo === 'organizador') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
     } else {
       toast({
         title: "Erro no cadastro",
@@ -60,6 +76,8 @@ const RegisterPage = () => {
     setIsLoading(false);
   };
   
+  const isOrganizerRegistration = formData.tipo === 'organizador';
+  
   return (
     <div className="register-container">
       {/* Logo à esquerda */}
@@ -69,12 +87,14 @@ const RegisterPage = () => {
       
       {/* Texto promocional à esquerda */}
       <div className="promo-text">
-        <p>Crie sua conta e seja avisado sobre promoções e novas festas!</p>
+        <p>{isOrganizerRegistration 
+          ? "Crie sua conta de organizador e comece a criar seus próprios eventos!" 
+          : "Crie sua conta e seja avisado sobre promoções e novas festas!"}</p>
       </div>
       
       {/* Card de cadastro */}
       <div className="register-card">
-        <h1>CADASTRE-SE!</h1>
+        <h1>{isOrganizerRegistration ? "CADASTRE-SE COMO ORGANIZADOR" : "CADASTRE-SE!"}</h1>
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -134,6 +154,13 @@ const RegisterPage = () => {
               />
             </div>
           </div>
+          
+          {/* Campo oculto para o tipo */}
+          <input 
+            type="hidden" 
+            name="tipo" 
+            value={formData.tipo} 
+          />
           
           <button 
             type="submit" 

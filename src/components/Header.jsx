@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import GuestNavbar from './GuestNavbar';
 import '../styles/navbar.css';
 import '../styles/mobile-menu.css';
+import RoleSwitcher from './RoleSwitcher';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -84,6 +85,12 @@ const Header = () => {
           <img src="/images/ticket-icon.png" alt="Meus Ingressos" className="nav-icon" />
           <span>Meus Ingressos</span>
         </Link>
+        
+        {/* Adicionando o botão de alternância de papel aqui */}
+        <div className="nav-item" onClick={closeMenu}>
+          <RoleSwitcher />
+        </div>
+        
         <Link to="/account" className="nav-item" onClick={closeMenu}>
           <img src="/lovable-uploads/profile-dropdown.png" alt="Perfil" className="nav-icon" />
           <span>Perfil ({firstName})</span>
