@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
@@ -11,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import RoleSwitcher from './RoleSwitcher';
 
 const ModernHeader = () => {
   const { user, logout, isOrganizer } = useAuth();
@@ -58,6 +60,10 @@ const ModernHeader = () => {
                     />
                     <span className="hidden sm:inline">Dashboard</span>
                   </Link>
+                )}
+                {/* Botão de alternância de papel - Mostrar somente se o usuário for organizador ou tiver papel anterior de organizador */}
+                {(isOrganizer() || user.previousRole === 'organizador') && (
+                  <RoleSwitcher />
                 )}
                 <Link to="/account" className="header-link">
                   <User className="h-5 w-5" />

@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { loginUser as authLogin, getCurrentUser, logoutUser, registerUser as authRegister, updateUser as authUpdateUser } from '../lib/auth';
 import { useToast } from '../components/ui/use-toast';
@@ -12,6 +13,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [previousRole, setPreviousRole] = useState(null);
   const { toast } = useToast();
 
   // Carregar usuário da sessão ao montar o componente
@@ -145,6 +147,61 @@ export const AuthProvider = ({ children }) => {
     return user && user.tipo === 'organizador';
   };
 
+  // Nova função para alternar entre papéis de usuário
+  const switchUserRole = () => {
+    try {
+      // Se o usuário atual é organizador, voltamos para usuário comum
+      if (isOrganizer()) {
+        // Salvamos o papel atual para poder retornar depois
+        setPreviousRole(user.tipo);
+        
+        // Atualizamos temporariamente o tipo de usuário para "cliente"
+        const updatedUser = { ...user, tipo: 'cliente' };
+        localStorage.setItem('usuarioLogado', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        
+        toast({
+          title: "Modo usuário ativado",
+          description: "Agora você está navegando como um usuário comum",
+          variant: "success"
+        });
+        
+        return { success: true };
+      } 
+      // Se é um usuário comum que estava como organizador antes, voltamos para organizador
+      else if (previousRole === 'organizador') {
+        const updatedUser = { ...user, tipo: 'organizador' };
+        localStorage.setItem('usuarioLogado', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setPreviousRole(null);
+        
+        toast({
+          title: "Modo organizador ativado",
+          description: "Agora você está navegando como organizador",
+          variant: "success"
+        });
+        
+        return { success: true };
+      } else {
+        toast({
+          title: "Não é possível alternar",
+          description: "Você não tem permissão para alternar para organizador",
+          variant: "destructive"
+        });
+        
+        return { success: false };
+      }
+    } catch (error) {
+      console.error("Erro ao alternar papel do usuário:", error);
+      toast({
+        title: "Erro ao alternar perfil",
+        description: "Ocorreu um erro ao tentar alternar o tipo de usuário",
+        variant: "destructive"
+      });
+      return { success: false };
+    }
+  };
+
   // Valores fornecidos pelo contexto
   const value = {
     user,
@@ -153,7 +210,9 @@ export const AuthProvider = ({ children }) => {
     registerUser,
     updateUser,
     loading,
-    isOrganizer
+    isOrganizer,
+    switchUserRole,
+    previousRole
   };
 
   return (

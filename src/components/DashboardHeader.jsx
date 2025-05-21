@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut, ChevronDown, Settings, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard-header.css';
+import RoleSwitcher from './RoleSwitcher';
 
 const DashboardHeader = ({ user }) => {
   const [profileOpen, setProfileOpen] = useState(false);
@@ -42,6 +44,10 @@ const DashboardHeader = ({ user }) => {
             />
             <span className="nav-text">Gerenciamento</span>
           </Link>
+          
+          {/* Botão de alternância de papel */}
+          <RoleSwitcher />
+          
           <div 
             className="profile-dropdown"
             onClick={() => setProfileOpen(!profileOpen)}
