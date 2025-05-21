@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '../components/ui/use-toast';
+import { Heart } from 'lucide-react';
 import '../styles/eventCard.css';
 
 const EventCard = ({ event }) => {
@@ -60,10 +62,8 @@ const EventCard = ({ event }) => {
             onClick={handleToggleFavorite}
             aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
-            <img 
-              src="/images/heart-icon.png" 
-              alt="Favorito" 
-              className={`favorite-icon ${favorite ? 'active' : ''}`}
+            <Heart 
+              className={`h-6 w-6 ${favorite ? 'fill-cuencos-purple text-cuencos-purple' : 'text-white'}`}
             />
           </button>
         </div>

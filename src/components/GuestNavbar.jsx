@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import '../styles/guest-navbar.css';
 
 const GuestNavbar = () => {
@@ -33,7 +35,11 @@ const GuestNavbar = () => {
       <div className="guest-navbar-container">
         {/* Logo à esquerda */}
         <Link to="/" className="guest-navbar-logo">
-          <img src="/images/logo-cuencos.png" alt="Logo" className="logo-icon" />
+          <img 
+            src="/lovable-uploads/8691761d-980f-4d45-a8e1-3b999701c70f.png" 
+            alt="Logo" 
+            className="logo-icon" 
+          />
           <span className="logo-text">Cuencos</span>
         </Link>
         
@@ -44,9 +50,7 @@ const GuestNavbar = () => {
           aria-label="Menu"
           aria-expanded={isMenuOpen}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <Menu className="h-6 w-6" />
         </button>
         
         {/* Navegação à direita */}

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PlusCircle, Edit, Eye, FileText } from "lucide-react";
-import { getEvents } from '../lib/events';
+import { getEvents, deleteEvent } from '../lib/events';
 import { useAuth } from '../context/AuthContext';
 
 const DashboardManagementPage = () => {
@@ -86,33 +86,7 @@ const DashboardManagementPage = () => {
 
   // Função para criar um novo evento
   const handleCreateEvent = () => {
-    // Criar um rascunho de evento
-    const newDraft = {
-      id: Date.now(),
-      title: "Novo Evento",
-      description: "Descrição do evento",
-      image: "/lovable-uploads/placeholder.svg",
-      isDraft: true,
-      createdAt: new Date().toISOString(),
-      createdBy: user.id
-    };
-    
-    // Adicionar ao localStorage
-    const allEvents = getEvents();
-    allEvents.push(newDraft);
-    localStorage.setItem('cuencos_events', JSON.stringify(allEvents));
-    
-    // Adicionar à lista de rascunhos
-    setDrafts([...drafts, newDraft]);
-    
-    toast({
-      title: "Rascunho criado",
-      description: "Novo evento criado com sucesso!",
-      variant: "success",
-    });
-    
-    // Redirecionar para edição (em uma implementação real)
-    // navigate(`/dashboard/management/event/${newDraft.id}/edit`);
+    navigate("/event/new");
   };
 
   // Funções para gerenciar eventos
@@ -121,27 +95,46 @@ const DashboardManagementPage = () => {
   };
 
   const handleEditEvent = (eventId) => {
-    toast({
-      title: "Função em desenvolvimento",
-      description: "A edição de eventos estará disponível em breve!",
-    });
-    // Implementação real: navigate(`/dashboard/management/event/${eventId}/edit`);
+    navigate(`/event/${eventId}`);
   };
 
   const handleEventDetails = (eventId) => {
     toast({
       title: "Função em desenvolvimento",
-      description: "Os detalhes de eventos estarão disponíveis em breve!",
+      description: "Os detalhes detalhados de vendas estarão disponíveis em breve!",
     });
-    // Implementação real: navigate(`/dashboard/management/event/${eventId}`);
   };
 
   const handleContinueEditing = (draftId) => {
-    toast({
-      title: "Função em desenvolvimento",
-      description: "A edição de rascunhos estará disponível em breve!",
-    });
-    // Implementação real: navigate(`/dashboard/management/event/${draftId}/edit`);
+    navigate(`/event/${draftId}`);
+  };
+
+  const handleDeleteEvent = (eventId) => {
+    try {
+      if (window.confirm('Tem certeza que deseja excluir este evento?')) {
+        deleteEvent(eventId);
+        
+        // Atualizar listas locais
+        if (events.find(e => e.id === eventId)) {
+          setEvents(events.filter(e => e.id !== eventId));
+        } else {
+          setDrafts(drafts.filter(d => d.id !== eventId));
+        }
+        
+        toast({
+          title: "Evento excluído",
+          description: "O evento foi excluído com sucesso",
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao excluir evento:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o evento",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {

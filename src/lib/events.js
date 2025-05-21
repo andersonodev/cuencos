@@ -156,6 +156,7 @@ export const updateEvent = (id, eventData) => {
     events[index] = {
       ...events[index],
       ...eventData,
+      id: id, // Ensure the ID doesn't get overwritten
       updatedAt: new Date().toISOString()
     };
     
@@ -205,6 +206,63 @@ export const searchEvents = (term, location, date) => {
     (!location || event.location.toLowerCase().includes(location.toLowerCase())) &&
     (!date || event.date.includes(date))
   );
+};
+
+// Convert a file to base64
+export const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+};
+
+// Save an event image
+export const saveEventImage = async (file, eventId) => {
+  try {
+    if (!file) return null;
+    
+    // For a real app, this would upload to a server
+    // For our mock, we'll convert to base64 and store it
+    const base64 = await fileToBase64(file);
+    
+    // In a real app, we might store this in a separate images collection
+    // For now, we'll add an entry to localStorage
+    const imageKey = `event_image_${eventId}`;
+    localStorage.setItem(imageKey, base64);
+    
+    return base64; // Return the base64 data URL
+  } catch (error) {
+    console.error("Erro ao salvar imagem:", error);
+    return null;
+  }
+};
+
+// Get an event image
+export const getEventImage = (eventId) => {
+  try {
+    const imageKey = `event_image_${eventId}`;
+    return localStorage.getItem(imageKey);
+  } catch (error) {
+    console.error("Erro ao obter imagem:", error);
+    return null;
+  }
+};
+
+// Check if an image meets minimum dimensions
+export const validateImageDimensions = (imageSrc, minWidth = 1170, minHeight = 504) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const isValid = img.width >= minWidth && img.height >= minHeight;
+      resolve(isValid);
+    };
+    img.onerror = () => {
+      resolve(false);
+    };
+    img.src = imageSrc;
+  });
 };
 
 // Make sure events are initialized when this module is imported

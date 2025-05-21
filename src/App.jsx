@@ -24,6 +24,7 @@ import SearchResultsPage from './pages/SearchResultsPage';
 import NotFound from './pages/NotFound';
 import DashboardPage from './pages/DashboardPage';
 import DashboardManagementPage from './pages/DashboardManagementPage';
+import EventCreationPage from './pages/EventCreationPage';
 
 // Importar o utilitário para verificar disponibilidade do localStorage
 import { isAvailable } from './lib/storage';
@@ -84,6 +85,7 @@ const App = () => {
                 <Route path="/search" element={<SearchResultsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/dashboard/management" element={<DashboardManagementPage />} />
+                <Route path="/event/:id" element={<EventCreationPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
