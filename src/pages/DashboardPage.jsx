@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Line, Pie } from 'recharts';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { CalendarDays, Share2, Download, ChevronDown, PlusCircle, ChartBar, ShoppingBag, UserPlus } from 'lucide-react';
+import { CalendarDays, Share2, Download, ChevronDown, PlusCircle, BarChart3, ShoppingBag, UserPlus } from 'lucide-react';
 import Footer from '../components/Footer';
 import DashboardHeader from '../components/DashboardHeader';
 import { toast } from '../components/ui/use-toast';
@@ -313,7 +312,7 @@ const DashboardPage = () => {
           <div className="dashboard-card sales-summary">
             <div className="summary-card">
               <div className="summary-icon">
-                <ChartBar size={24} />
+                <BarChart3 size={24} />
               </div>
               <div className="summary-content">
                 <h3>Valor total</h3>
