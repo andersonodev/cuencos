@@ -1,3 +1,8 @@
+
 .logo-text {
-  color: black;
+  color: #A200FF;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
 }

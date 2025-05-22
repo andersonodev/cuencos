@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { getFavorites, toggleFavorite as toggleFavoriteInStorage, isFavorite as checkIsFavorite } from '../lib/favorites';
