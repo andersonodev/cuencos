@@ -386,32 +386,6 @@ body.menu-open .menu-toggle span:nth-child(3) {
   height: 24px;
 }
 
-/* Carousel Indicators */
-.carousel-indicators {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 12px;
-  z-index: 10;
-}
-
-.carousel-indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.carousel-indicator.active {
-  background-color: #ff0a8a;
-  transform: scale(1.2);
-}
-
 /* FILTRO */
 .filtro {
   background-color: #c63bfa;

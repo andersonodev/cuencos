@@ -86,7 +86,7 @@ const Header = () => {
           </Link>
           
           {/* Adicionando o botão de alternância de papel aqui */}
-          <div className="nav-item" onClick={closeMenu}>
+          <div className="nav-item">
             <RoleSwitcher />
           </div>
           

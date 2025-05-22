@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
@@ -67,6 +66,7 @@ const ModernHeader = () => {
                     <RoleSwitcher />
                   )}
                 </div>
+                
                 <Link to="/account" className="header-link">
                   <User className="h-5 w-5" />
                 </Link>

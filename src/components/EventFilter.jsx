@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, X, ChevronDown } from 'lucide-react';
 import { estadosBrasil } from '../lib/constants';
 import '../styles/eventFilter.css';
 
 const EventFilter = ({ onFilterChange, className = '' }) => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: '',
     location: '',
@@ -12,6 +14,21 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
   });
   
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile devices
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,8 +49,23 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Notificar o componente pai sobre a mudança dos filtros (se necessário)
     if (onFilterChange) {
       onFilterChange(filters);
+    }
+    
+    // Construir query params para a navegação
+    const queryParams = new URLSearchParams();
+    
+    if (filters.search) queryParams.append('q', filters.search);
+    if (filters.location) queryParams.append('location', filters.location);
+    if (filters.date) queryParams.append('date', filters.date);
+    if (filters.category) queryParams.append('category', filters.category);
+    
+    // Navegar para a página de busca com os parâmetros aplicados
+    if (queryParams.toString()) {
+      navigate(`/search?${queryParams.toString()}`);
     }
   };
   
@@ -56,16 +88,16 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
     { value: '', label: 'Qualquer Data' },
     { value: 'today', label: 'Hoje' },
     { value: 'tomorrow', label: 'Amanhã' },
-    { value: 'this-week', label: 'Esta Semana' },
-    { value: 'weekend', label: 'Fim de Semana' },
-    { value: 'this-month', label: 'Este Mês' },
-    { value: 'next-month', label: 'Próximo Mês' }
+    { value: 'this-week', label: isMobile ? 'Esta Sem.' : 'Esta Semana' },
+    { value: 'weekend', label: isMobile ? 'Fim Sem.' : 'Fim de Semana' },
+    { value: 'this-month', label: isMobile ? 'Este Mês' : 'Este Mês' },
+    { value: 'next-month', label: isMobile ? 'Próx. Mês' : 'Próximo Mês' }
   ];
   
   const categoryOptions = [
-    { value: '', label: 'Todas Categorias' },
+    { value: '', label: isMobile ? 'Todas' : 'Todas Categorias' },
     { value: 'athletics', label: 'Atléticas' },
-    { value: 'party', label: 'Festas & Shows' },
+    { value: 'party', label: isMobile ? 'Festas' : 'Festas & Shows' },
     { value: 'academic', label: 'Acadêmico' },
     { value: 'cultural', label: 'Cultural' },
     { value: 'sports', label: 'Esportivo' }
@@ -80,14 +112,14 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
           <div className="filter-search-container">
             <div className="search-input-wrapper">
               <div className="search-icon-wrapper">
-                <Search className="search-icon" size={20} />
+                <Search className="search-icon" size={isMobile ? 16 : 18} />
               </div>
               <input
                 type="text"
                 name="search"
                 value={filters.search}
                 onChange={handleInputChange}
-                placeholder="Buscar eventos"
+                placeholder={isMobile ? "Buscar" : "Buscar eventos"}
                 className="search-input"
               />
               {filters.search && (
@@ -97,15 +129,18 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                   className="clear-input-button"
                   aria-label="Limpar busca"
                 >
-                  <X size={16} />
+                  <X size={isMobile ? 12 : 14} />
                 </button>
               )}
             </div>
             
             <button type="button" className="filter-toggle-btn" onClick={() => setIsExpanded(!isExpanded)}>
-              <Filter size={18} />
-              <span>{isExpanded ? 'Menos Filtros' : 'Mais Filtros'}</span>
-              <ChevronDown size={16} className={`toggle-icon ${isExpanded ? 'rotate' : ''}`} />
+              <Filter size={isMobile ? 14 : 16} />
+              {!isMobile && (
+                <span className="hidden sm:inline">{isExpanded ? 'Menos Filtros' : 'Mais Filtros'}</span>
+              )}
+              <span className="sm:hidden">{isExpanded ? 'Menos' : 'Filtros'}</span>
+              <ChevronDown size={isMobile ? 12 : 14} className={`toggle-icon ${isExpanded ? 'rotate' : ''}`} />
             </button>
           </div>
           
@@ -113,7 +148,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
           <div className={`expanded-filters ${isExpanded ? 'show' : ''}`}>
             <div className="filter-group location-filter">
               <div className="filter-label">
-                <MapPin size={18} />
+                <MapPin size={isMobile ? 16 : 18} />
                 <span>Local</span>
               </div>
               <div className="select-wrapper">
@@ -126,17 +161,17 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                   <option value="">Todo o Brasil</option>
                   {estadosBrasil.map(estado => (
                     <option key={estado.sigla} value={estado.sigla}>
-                      {estado.nome}
+                      {isMobile ? estado.sigla : estado.nome}
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="select-icon" />
+                <ChevronDown size={isMobile ? 14 : 16} className="select-icon" />
               </div>
             </div>
             
             <div className="filter-group date-filter">
               <div className="filter-label">
-                <Calendar size={18} />
+                <Calendar size={isMobile ? 16 : 18} />
                 <span>Data</span>
               </div>
               <div className="select-wrapper">
@@ -152,7 +187,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="select-icon" />
+                <ChevronDown size={isMobile ? 14 : 16} className="select-icon" />
               </div>
             </div>
             
@@ -173,7 +208,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="select-icon" />
+                <ChevronDown size={isMobile ? 14 : 16} className="select-icon" />
               </div>
             </div>
           </div>
@@ -181,11 +216,11 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
           {/* Botões de ação */}
           <div className={`filter-actions ${isExpanded ? 'show' : ''}`}>
             <button type="button" onClick={clearFilters} className="clear-filter-btn">
-              Limpar Filtros
+              Limpar
             </button>
             <button type="submit" className="apply-filter-btn">
-              <span>Aplicar Filtros</span>
-              <Search size={16} className="btn-icon" />
+              <span>Aplicar</span>
+              <Search size={isMobile ? 14 : 16} className="btn-icon" />
             </button>
           </div>
         </form>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -25,6 +24,7 @@ import NotFound from './pages/NotFound';
 import DashboardPage from './pages/DashboardPage';
 import DashboardManagementPage from './pages/DashboardManagementPage';
 import EventCreationPage from './pages/EventCreationPage';
+import ComingSoonPage from './pages/ComingSoonPage';
 
 // Importar o utilitário para verificar disponibilidade do localStorage
 import { isAvailable } from './lib/storage';
@@ -86,6 +86,7 @@ const App = () => {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/dashboard/management" element={<DashboardManagementPage />} />
                 <Route path="/event/:id" element={<EventCreationPage />} />
+                <Route path="/coming-soon" element={<ComingSoonPage />} /> {/* Nova rota */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

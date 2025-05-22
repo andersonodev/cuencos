@@ -82,7 +82,7 @@ const RegisterPage = () => {
       {/* Logo no canto superior esquerdo */}
       <div className="logo">
         <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
-        <span className="logo-text">Cuencos</span>
+        <span className="logo-text" style={{color: 'black'}}>Cuencos</span>
       </div>
       
       {/* Texto promocional */}
@@ -94,7 +94,14 @@ const RegisterPage = () => {
       
       {/* Card de registro */}
       <div className="register-card">
-        <h1>{isOrganizerRegistration ? "Cadastro de Organizador" : "Crie sua conta"}</h1>
+        {isOrganizerRegistration ? (
+          <h1>Cadastro de Organizador</h1>
+        ) : (
+          <div>
+            <div className="start-message">VAMOS COMEÇAR</div>
+            <div className="register-heading">Cadastre-se!</div>
+          </div>
+        )}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">

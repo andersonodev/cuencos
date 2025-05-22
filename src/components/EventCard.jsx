@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
@@ -37,14 +36,14 @@ const EventCard = ({ event }) => {
       return;
     }
     
-    const result = toggleFavorite(event);
-    if (result) {
-      toast({
-        title: favorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
-        description: favorite ? "O evento foi removido dos seus favoritos" : "O evento foi adicionado aos seus favoritos",
-        variant: favorite ? "default" : "success"
-      });
-    }
+    // Correção: Passando o ID do evento em vez do objeto evento completo
+    const result = toggleFavorite(event.id);
+    
+    toast({
+      title: favorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
+      description: favorite ? "O evento foi removido dos seus favoritos" : "O evento foi adicionado aos seus favoritos",
+      variant: favorite ? "default" : "success"
+    });
   };
   
   return (

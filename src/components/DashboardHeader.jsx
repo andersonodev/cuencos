@@ -46,7 +46,7 @@ const DashboardHeader = ({ user }) => {
           </Link>
           
           {/* Botão de alternância de papel com design melhorado */}
-          <div className="mx-2">
+          <div className="mx-2 flex items-center">
             <RoleSwitcher />
           </div>
           

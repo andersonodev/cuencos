@@ -79,7 +79,7 @@ const LoginPage = () => {
       {/* Logo no canto superior esquerdo */}
       <div className="logo">
         <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
-        <span className="logo-text">Cuencos</span>
+        <span className="logo-text" style={{color: 'black'}}>Cuencos</span>
       </div>
       
       {/* Texto promocional */}
@@ -92,6 +92,12 @@ const LoginPage = () => {
       {/* Card de login */}
       <div className="login-card">
         <h1>Acesse sua conta</h1>
+        
+        {/* Mensagem de boas-vindas */}
+        <div className="welcome-message">
+          BEM-VINDO DE VOLTA!
+        </div>
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email ou Nome de Usuário</label>
@@ -155,9 +161,9 @@ const LoginPage = () => {
           <button 
             type="button" 
             className="info-button"
-            onClick={() => setShowOrganizadorInfo(!showOrganizadorInfo)}
+            onClick={() => navigate('/coming-soon')}
           >
-            Fazer login como organizador? Clique aqui
+            Se cadastrar como organizador? Clique aqui
           </button>
           
           {showOrganizadorInfo && (

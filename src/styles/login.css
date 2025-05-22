@@ -37,6 +37,9 @@ a {
   background-position: center;
   position: relative;
   overflow: hidden;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
 }
 
 /* Overlay semitransparente roxo */
@@ -88,27 +91,31 @@ a {
 /* Card de login */
 .login-card {
   position: absolute;
-  bottom: 2%; /* Modificado: mudado de -1% para 2% para subir o card */
-  right: 5%;
-  width: 550px;
-  height: 670px; /* Modificado: reduzido de 700px para 670px */
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 50px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  bottom: 5px;  /* Modificado: reduzido de 20px para 5px para esconder mais na parte inferior */
+  right: 10%;
+  width: 500px;
+  height: auto;  /* Alterado para auto para se ajustar ao conteúdo */
+  min-height: 670px;  /* Definido altura mínima para manter a aparência */
+  background: white;
+  border-radius: 12px;  /* Restaurado border-radius em todos os cantos */
+  padding: 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start; /* Alterado de space-between para flex-start para melhor controle do espaçamento */
 }
 
-.login-card h1 {
+/* Mensagem de boas-vindas */
+.welcome-message {
+  text-align: left; /* Alterado de center para left */
   font-family: "Zen Kaku Gothic Antique", sans-serif;
-  font-size: 30px;
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #000000;
+  font-size: 16px;
+  font-weight: bold; /* Adicionado: texto em negrito */
+  color: #666;
+  margin-bottom: 25px;
+  margin-top: -15px; /* Para ajustar espaçamento após o título */
+  padding-left: 5px; /* Adicionado: espaçamento para não colar totalmente na borda */
 }
 
 /* Form styles */
@@ -207,7 +214,7 @@ a {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  margin-bottom: 15px; /* Modificado: reduzido de 25px para 15px */
+  margin-bottom: 30px; /* Aumentado de 15px para 30px para criar mais espaço acima dos links */
   cursor: pointer;
 }
 
@@ -225,27 +232,24 @@ a {
 .signup-link {
   text-align: center;
   font-size: 14px;
-  margin-top: auto; /* Empurra o link para o final do card - igual ao login-link do registro */
+  margin-top: 0; /* Removido margin-top: auto para não empurrar para o final */
+  margin-bottom: 15px; /* Adicionado espaçamento abaixo */
   padding-top: 10px;
 }
 
 .signup-link span {
-  color: #333;
+  color: #000; /* Modificado de #333 para preto */
 }
 
 .signup-link a {
   font-weight: bold;
-  color: #000;
+  color: #A200FF; /* Modificado de #000 para roxo */
   text-decoration: none;
-}
-
-.signup-link a:hover {
-  text-decoration: underline;
 }
 
 /* Estilos para informação do organizador */
 .login-info {
-  margin-top: 15px;
+  margin-top: 0; /* Removido margin-top para aproximar do elemento anterior */
   text-align: center;
   font-size: 14px;
 }
@@ -262,6 +266,7 @@ a {
 
 .organizador-info {
   margin-top: 10px;
+  margin-bottom: 30px;
   padding: 10px;
   background-color: rgba(162, 0, 255, 0.1);
   border-radius: 5px;
@@ -321,9 +326,8 @@ a {
   
   .logo-text {
     font-size: 22px;
+    color: #000000;
   }
-
-
   
   .logo img {
     width: 70px;
@@ -502,4 +506,8 @@ a {
   .promo-text p {
     font-size: 22px;
   }
+}
+
+.logo-text {
+  color: black;
 }

@@ -145,18 +145,6 @@ const HomePage = () => {
           <button className="hero-carousel-control next" onClick={nextSlide} aria-label="Próximo slide">
             <ChevronRight className="carousel-arrow" />
           </button>
-          
-          {/* Indicadores do carousel */}
-          <div className="carousel-indicators">
-            {heroEvents.map((_, index) => (
-              <button 
-                key={index}
-                className={`carousel-indicator ${index === activeSlide ? 'active' : ''}`}
-                onClick={() => setActiveSlide(index)}
-                aria-label={`Ir para slide ${index + 1}`}
-              />
-            ))}
-          </div>
         </section>
 
         {/* Filtro centralizado com sobreposição ao banner */}
