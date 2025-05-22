@@ -54,7 +54,9 @@ const mockData = {
   },
   eventosPopulares: [
     { id: "01", nome: "PUC IN RIO", popularidade: 84 },
-    { id: "02", nome: "Engenharias Paranaense 2025", popularidade: 44 }
+    { id: "02", nome: "Engenharias Paranaense 2025", popularidade: 44 },
+    { id: "03", nome: "Festa Junina Universitária", popularidade: 32 },
+    { id: "04", nome: "Calourada 2025.1", popularidade: 28 }
   ]
 };
 
@@ -99,6 +101,7 @@ const DashboardPage = () => {
     };
 
     loadData();
+    setTimeout(() => setIsLoading(false), 500); // Pequeno delay para mostrar o loading
   }, []);
 
   // Verificar se o usuário está logado e é um organizador
@@ -117,7 +120,6 @@ const DashboardPage = () => {
       }
 
       setUser(loggedUser);
-      setIsLoading(false);
     } catch (error) {
       console.error('Erro ao verificar usuário:', error);
       navigate('/login');

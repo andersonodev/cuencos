@@ -1,3 +1,4 @@
+
 {
   "visitasAbril": {
     "labels": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"],
@@ -18,9 +19,9 @@
     "crescimentoClientes": -5
   },
   "eventosPopulares": [
-    { "nome": "PUC IN RIO", "popularidade": 84 },
-    { "nome": "Engenharias Paranaense 2025", "popularidade": 44 },
-    { "nome": "Festa Junina Universitária", "popularidade": 32 },
-    { "nome": "Calourada 2025.1", "popularidade": 28 }
+    { "nome": "PUC IN RIO", "popularidade": 84, "id": "01" },
+    { "nome": "Engenharias Paranaense 2025", "popularidade": 44, "id": "02" },
+    { "nome": "Festa Junina Universitária", "popularidade": 32, "id": "03" },
+    { "nome": "Calourada 2025.1", "popularidade": 28, "id": "04" }
   ]
 }
