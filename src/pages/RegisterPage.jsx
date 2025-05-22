@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { registerUser } from '../lib/auth';
@@ -79,10 +80,10 @@ const RegisterPage = () => {
   
   return (
     <div className="register-container">
-      {/* Logo no canto superior esquerdo */}
+      {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
-        <span className="logo-text" style={{color: 'black'}}>Cuencos</span>
+        <img src="/logocuencosloginEregistro.svg" alt="Logo Cuencos" />
+        <span className="logo-text">Cuencos</span>
       </div>
       
       {/* Texto promocional */}

@@ -1,3 +1,4 @@
+
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 @import url("https://fonts.googleapis.com/css?family=Zen+Kaku+Gothic+Antique:500,400,700|Fredoka:600|Inria+Sans:400");
 
@@ -51,7 +52,7 @@ a {
   z-index: 0;
 }
 
-/* Logo */
+/* Logo - Atualizado para alinhar logo e texto */
 .logo {
   position: absolute;
   top: 60px;
@@ -64,13 +65,14 @@ a {
 .logo img {
   width: 40px;
   height: auto;
+  margin-right: 12px;
 }
 
 .logo-text {
   font-family: "Nasalization-Regular", Helvetica, sans-serif;
-  color: #000000;
   font-size: 26px;
-  margin-left: 10px;
+  line-height: 1;
+  color: #ffffff;
 }
 
 /* Texto promocional */
@@ -310,6 +312,7 @@ a {
   
   .logo-text {
     font-size: 22px;
+    color: #ffffff;
   }
   
   .logo img {

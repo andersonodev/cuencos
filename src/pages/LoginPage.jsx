@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -76,10 +77,10 @@ const LoginPage = () => {
   
   return (
     <div className="login-container">
-      {/* Logo no canto superior esquerdo */}
+      {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="../public/logocuencosloginEregistro.svg" alt="Logo Cuencos" className="h-10 w-auto" />
-        <span className="logo-text" style={{color: 'black'}}>Cuencos</span>
+        <img src="/logocuencosloginEregistro.svg" alt="Logo Cuencos" />
+        <span className="logo-text">Cuencos</span>
       </div>
       
       {/* Texto promocional */}

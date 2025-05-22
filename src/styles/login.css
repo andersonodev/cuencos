@@ -1,3 +1,4 @@
+
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 @import url("https://fonts.googleapis.com/css?family=Zen+Kaku+Gothic+Antique:500,400,700|Fredoka:600|Inria+Sans:400");
 
@@ -54,7 +55,7 @@ a {
   z-index: 0;
 }
 
-/* Logo */
+/* Logo - Atualizado para alinhar logo e texto */
 .logo {
   position: absolute;
   top: 60px;
@@ -65,8 +66,16 @@ a {
 }
 
 .logo img {
-  width: 180px; /* Mantendo o tamanho aumentado da logo */
+  width: 40px;
   height: auto;
+  margin-right: 12px;
+}
+
+.logo-text {
+  font-family: "Nasalization-Regular", Helvetica, sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  color: #ffffff;
 }
 
 /* Texto promocional */
@@ -326,11 +335,11 @@ a {
   
   .logo-text {
     font-size: 22px;
-    color: #000000;
+    color: #ffffff;
   }
   
   .logo img {
-    width: 70px;
+    width: 35px;
   }
 }
 
@@ -506,8 +515,4 @@ a {
   .promo-text p {
     font-size: 22px;
   }
-}
-
-.logo-text {
-  color: black;
 }

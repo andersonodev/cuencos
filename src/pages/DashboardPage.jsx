@@ -371,7 +371,7 @@ const DashboardPage = () => {
           
           {/* Container para Cards de KPIs e Gráfico de Pizza */}
           <div className="metrics-container">
-            {/* Cards de KPIs e Métricas */}
+            {/* Cards de KPIs e Métricas - Atualizado conforme solicitado */}
             <div className="dashboard-card sales-summary">
               <div className="card-header">
                 <h2>Vendas em Abril</h2>
@@ -380,39 +380,39 @@ const DashboardPage = () => {
               
               <div className="metrics-cards">
                 <div className="summary-card">
-                  <div className="summary-icon" style={{ backgroundColor: "rgba(184, 74, 247, 0.15)" }}>
+                  <div className="summary-icon magenta">
                     <BarChart3 size={24} />
                   </div>
                   <div className="summary-content">
                     <div className="summary-value">R$ {dashboardData.vendasAbril.total.toLocaleString('pt-BR')}</div>
                     <h3>Venda total</h3>
-                    <div className="summary-trend positive">
+                    <div className="summary-trend magenta">
                       <span>+{dashboardData.vendasAbril.crescimento}% desde o mês anterior</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="summary-card">
-                  <div className="summary-icon" style={{ backgroundColor: "rgba(74, 144, 247, 0.15)" }}>
+                  <div className="summary-icon purple">
                     <ShoppingBag size={24} />
                   </div>
                   <div className="summary-content">
                     <div className="summary-value">{dashboardData.vendasAbril.produtosVendidos}</div>
                     <h3>Produtos Vendidos</h3>
-                    <div className="summary-trend positive">
+                    <div className="summary-trend purple">
                       <span>+{dashboardData.vendasAbril.crescimentoProdutos}% desde ontem</span>
                     </div>
                   </div>
                 </div>
                 
                 <div className="summary-card">
-                  <div className="summary-icon" style={{ backgroundColor: "rgba(255, 111, 214, 0.15)" }}>
+                  <div className="summary-icon purple">
                     <UserPlus size={24} />
                   </div>
                   <div className="summary-content">
                     <div className="summary-value">{dashboardData.vendasAbril.novosClientes}</div>
                     <h3>Novos clientes</h3>
-                    <div className="summary-trend positive">
+                    <div className="summary-trend purple">
                       <span>+{dashboardData.vendasAbril.crescimentoClientes}% desde o mês anterior</span>
                     </div>
                   </div>
