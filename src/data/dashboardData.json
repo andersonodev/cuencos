@@ -16,7 +16,7 @@
     "produtosVendidos": 98,
     "crescimentoProdutos": 2,
     "novosClientes": 12,
-    "crescimentoClientes": -5
+    "crescimentoClientes": 3
   },
   "eventosPopulares": [
     { "nome": "PUC IN RIO", "popularidade": 84, "id": "01" },
