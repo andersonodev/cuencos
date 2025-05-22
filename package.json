@@ -1,9 +1,9 @@
 {
-  "name": "react-replica-renditions",
+  "name": "cuencos",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://seu-usuario-github.github.io/react-replica-renditions",
+  "homepage": "https://anderson-cuencos.github.io/cuencos",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

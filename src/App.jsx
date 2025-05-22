@@ -68,7 +68,7 @@ const App = () => {
               </div>
             )}
             
-            <Router basename="/react-replica-renditions">
+            <Router basename="/cuencos">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/events/:id" element={<EventDetailsPage />} />
