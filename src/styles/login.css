@@ -1,4 +1,4 @@
-
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 @import url("https://fonts.googleapis.com/css?family=Zen+Kaku+Gothic+Antique:500,400,700|Fredoka:600|Inria+Sans:400");
 
@@ -55,28 +55,8 @@ a {
   z-index: 0;
 }
 
-/* Logo - Atualizado para alinhar logo e texto */
-.logo {
-  position: absolute;
-  top: 60px;
-  left: 10%;
-  display: flex;
-  align-items: center;
-  z-index: 2;
-}
+/* Logo - Atualizado conforme especificações */
 
-.logo img {
-  width: 40px;
-  height: auto;
-  margin-right: 12px;
-}
-
-.logo-text {
-  font-family: "Nasalization-Regular", Helvetica, sans-serif;
-  font-size: 26px;
-  line-height: 1;
-  color: #ffffff;
-}
 
 /* Texto promocional */
 .promo-text {
@@ -172,7 +152,7 @@ a {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  background-image: url('/lovable-uploads/eyepassword.png');
+  background-image: url('.././public/icons8-google.png');
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -336,6 +316,7 @@ a {
   .logo-text {
     font-size: 22px;
     color: #ffffff;
+
   }
   
   .logo img {

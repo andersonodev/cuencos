@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from "./components/ui/toaster"; // Corrigido o caminho de importação
 import { AuthProvider } from './context/AuthContext';
@@ -68,7 +68,7 @@ const App = () => {
               </div>
             )}
             
-            <BrowserRouter>
+            <Router basename="/react-replica-renditions">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/events/:id" element={<EventDetailsPage />} />
@@ -89,7 +89,7 @@ const App = () => {
                 <Route path="/coming-soon" element={<ComingSoonPage />} /> {/* Nova rota */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
+            </Router>
             <Toaster />
           </ThemeProvider>
         </FavoritesProvider>

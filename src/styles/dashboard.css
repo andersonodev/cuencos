@@ -1,6 +1,6 @@
 .dashboard-page {
   min-height: 100vh;
-  background-color: #111111;
+  background-color: #000000;
   color: white;
   display: flex;
   flex-direction: column;
@@ -8,7 +8,7 @@
 
 .dashboard-content {
   flex: 1;
-  padding: 2rem 2% 2rem 5%;
+  padding: 2rem 2% 2rem 2%;
   max-width: 1800px;
   margin-left: auto;
   margin-right: auto;
@@ -17,6 +17,7 @@
 
 .dashboard-welcome {
   margin-bottom: 2rem;
+  display: none; /* Ocultando conforme imagem */
 }
 
 .dashboard-welcome h1 {
@@ -73,7 +74,9 @@
 
 .period-filters button.active {
   background-color: #b43eff;
-  color: #fff;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(180, 62, 255, 0.5);
 }
 
 .period-filters button.select-date {
@@ -90,8 +93,7 @@
 /* Grid de dashboard */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: auto;
+  grid-template-columns: repeat(12, 1fr);
   gap: 1.5rem;
   padding-right: 2%;
 }
@@ -99,9 +101,9 @@
 /* Card comum */
 .dashboard-card {
   background-color: #1A1A1A;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .card-header {
@@ -147,250 +149,573 @@
   color: #fff;
 }
 
-/* Gráfico de visitas */
+/* Gráfico de visitas - redesenhado */
 .visits-chart {
-  grid-column: span 4;
+  grid-column: span 12;
   grid-row: span 1;
-  height: 350px;
+  height: auto;
+  padding: 24px;
+  background-color: #1E1E1E;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.visits-chart .card-header {
+  margin-bottom: 12px;
+}
+
+.visits-chart .card-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f2f2f2;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .chart-container {
-  height: calc(100% - 50px);
   width: 100%;
+  height: 380px;
+  margin-top: 10px;
+  font-family: 'Inter', 'Roboto', sans-serif;
   position: relative;
+}
+
+/* Estilos para o gráfico e seus componentes */
+.recharts-surface {
+  overflow: visible;
+}
+
+.recharts-line-curve {
+  stroke: #cc00ff !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 6px rgba(204, 0, 255, 0.6));
+}
+
+.recharts-area {
+  fill: url(#colorVisits) !important;
+}
+
+.recharts-reference-line line {
+  stroke: #ff8d4d !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 3 3 !important;
+}
+
+.recharts-cartesian-axis-line {
+  stroke: #333333;
+  stroke-opacity: 0.2;
+}
+
+.recharts-cartesian-grid-horizontal line {
+  stroke: #333333 !important;
+  stroke-opacity: 0.2 !important;
+}
+
+.recharts-cartesian-grid-vertical line {
+  stroke: transparent !important;
+}
+
+.recharts-xAxis .recharts-cartesian-axis-tick-value {
+  font-size: 12px;
+  fill: #AAAAAA !important;
+}
+
+.recharts-yAxis .recharts-cartesian-axis-tick-value {
+  font-size: 12px;
+  fill: #AAAAAA !important;
+}
+
+/* Ponto de destaque (dia 15) */
+.highlight-dot {
+  fill: #ff2d55 !important;
+  stroke: #ffffff !important;
+  stroke-width: 2px !important;
+  r: 6px !important;
+}
+
+.highlight-line {
+  stroke: #ffb347 !important;
+  stroke-dasharray: 3 3;
+  stroke-width: 1px !important;
+  stroke-opacity: 0.8 !important;
+}
+
+/* Tooltip customizado */
+.visits-chart-tooltip {
+  background-color: #333333;
+  border: 1px solid #cc00ff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 0 10px rgba(204, 0, 255, 0.5);
+}
+
+.visits-chart-tooltip p {
+  margin: 0;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.visits-chart-tooltip .day {
+  font-weight: 700;
+  color: #cc00ff;
+}
+
+.visits-chart-tooltip .value {
+  margin-top: 2px;
+}
+
+/* Estilos para a legenda do eixo X */
+.x-axis-label {
+  text-anchor: middle;
+  font-size: 14px;
+  fill: #AAAAAA;
+  font-weight: 500;
 }
 
 /* Container de métricas */
 .metrics-container {
-  grid-column: span 4;
+  grid-column: span 12;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
-/* Cards de resumo - Atualizado conforme solicitado */
+/* Gráfico de distribuição de receita - Aprimorado */
+.revenue-distribution {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1A1A1A;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.revenue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.revenue-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.revenue-period {
+  font-weight: 600;
+  color: #b43eff;
+  background-color: rgba(180, 62, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-container {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.legend-container {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  color: #f0f0f0;
+  font-size: 0.875rem;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.legend-text {
+  display: flex;
+  align-items: center;
+}
+
+.legend-value {
+  margin-left: auto;
+  font-weight: 500;
+}
+
+/* Cards de resumo - Aprimorado */
 .sales-summary {
   display: flex;
   flex-direction: column;
+  background-color: #1A1A1A;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.sales-summary .card-header {
-  margin-bottom: 2rem;
+.sales-header {
+  margin-bottom: 1.5rem;
 }
 
-.sales-summary h2 {
+.sales-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
-.sales-summary .card-subtitle {
+.sales-header p {
   font-size: 0.95rem;
   color: #aaa;
 }
 
 .metrics-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  flex: 1;
+  margin-top: 1.5rem;
 }
 
 .summary-card {
-  background-color: #1e1e1e;
+  background-color: #121212;
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
-  align-items: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  height: 100%;
+  border-left: 3px solid transparent;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .summary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(184, 74, 247, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Primeiro card - Vendas */
+.summary-card:nth-child(1) {
+  border-left-color: #FF41B4;
+}
+
+/* Segundo card - Produtos */
+.summary-card:nth-child(2) {
+  border-left-color: #A341FD;
+}
+
+/* Terceiro card - Clientes */
+.summary-card:nth-child(3) {
+  border-left-color: #41AEFF;
 }
 
 .summary-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  background-color: rgba(184, 74, 247, 0.15);
-  border-radius: 0.75rem;
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  margin-right: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.summary-icon svg {
-  color: #b43eff;
+.icon-sale {
+  background-color: rgba(255, 65, 180, 0.15);
 }
 
-.summary-icon.magenta svg {
-  color: #f0f;
+.icon-sale svg {
+  color: #FF41B4;
 }
 
-.summary-icon.purple svg {
-  color: #a0f;
+.icon-product {
+  background-color: rgba(163, 65, 253, 0.15);
+}
+
+.icon-product svg {
+  color: #A341FD;
+}
+
+.icon-customer {
+  background-color: rgba(65, 174, 255, 0.15);
+}
+
+.icon-customer svg {
+  color: #41AEFF;
 }
 
 .summary-content {
-  flex: 1;
-}
-
-.summary-content h3 {
-  font-size: 0.95rem;
-  color: #aaa;
-  margin-bottom: 0.25rem;
-  order: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .summary-value {
   font-size: 1.75rem;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 0.5rem;
-  order: 1;
+  margin-bottom: 0.25rem;
+}
+
+.color-sale {
+  color: #FF41B4;
+}
+
+.color-product {
+  color: #A341FD;
+}
+
+.color-customer {
+  color: #41AEFF;
+}
+
+.summary-label {
+  font-size: 0.95rem;
+  color: #aaa;
+  margin-bottom: 0.75rem;
 }
 
 .summary-trend {
   font-size: 0.85rem;
   color: #aaa;
-  order: 3;
+  margin-top: auto;
 }
 
-.summary-trend span {
-  font-weight: 600;
-}
-
-.summary-trend.positive span {
+.trend-positive {
   color: #4caf50;
 }
 
-.summary-trend.negative span {
-  color: #f44336;
+.trend-sale {
+  color: #FF41B4;
 }
 
-.summary-trend.magenta span {
-  color: #f0f;
+.trend-product {
+  color: #A341FD;
 }
 
-.summary-trend.purple span {
-  color: #a0f;
+.trend-customer {
+  color: #41AEFF;
 }
 
-/* Products Table Styling */
+/* Products Table Styling - Atualizado */
 .popular-products {
-  grid-column: span 4;
+  grid-column: span 12;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background-color: #1A1A1A;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.popular-products .card-header {
+  margin-bottom: 1.5rem;
+}
+
+.popular-products .card-header h2 {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.5rem;
 }
 
 .products-table {
   width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .table-header {
   display: grid;
-  grid-template-columns: 2fr 8fr 12fr 3fr;
-  padding: 0.75rem 1rem;
-  background-color: #222;
-  border-radius: 0.5rem;
-  margin-bottom: 0.75rem;
-  font-weight: 500;
-  color: #aaa;
-  font-size: 0.875rem;
+  grid-template-columns: 60px minmax(200px, 2fr) 3fr 100px;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Table Row Styling */
+.table-header > div {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
 .table-row {
   display: grid;
-  grid-template-columns: 2fr 8fr 12fr 3fr;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  grid-template-columns: 60px minmax(200px, 2fr) 3fr 100px;
   align-items: center;
-  background-color: #1e1e1e;
-  margin-bottom: 0.5rem;
-  transition: background-color 0.2s ease;
-}
-
-.table-row:hover {
-  background-color: #242424;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .col-position {
+  padding: 0 1rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: #aaa;
 }
 
 .col-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 500;
+  padding: 0 1rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+
+.col-popularity {
+  padding: 0 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .progress-container {
   width: 100%;
-  height: 10px;
-  background-color: #333;
-  border-radius: 5px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
   overflow: hidden;
+  margin-right: 1.2rem;
 }
 
 .progress-bar {
   height: 100%;
-  border-radius: 5px;
-  transition: width 0.7s ease-in-out;
+  border-radius: 3px;
+  transition: width 0.6s ease-in-out;
+}
+
+.progress-bar.high {
+  background-color: #fbbf24;
+}
+
+.progress-bar.medium {
+  background-color: #99f6e4;
 }
 
 .col-sales {
-  text-align: right;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
 }
 
 .sales-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
   font-size: 0.75rem;
-  background-color: #333;
-  color: #fff;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
 }
 
-/* Gráfico de distribuição de receita */
-.revenue-distribution {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.sales-badge.high {
+  background-color: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.3);
 }
 
-.pie-chart-container {
-  flex: 1;
-  height: 200px;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 1rem;
+.sales-badge.medium {
+  background-color: rgba(153, 246, 228, 0.15);
+  border-color: rgba(153, 246, 228, 0.3);
 }
 
-.total-percentage {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: auto;
+/* Tooltip personalizado aprimorado */
+.custom-tooltip {
+  background-color: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(162, 0, 255, 0.5);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  pointer-events: none;
 }
 
-.legend-item {
+.tooltip-label {
+  font-weight: 500;
+  white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.875rem;
+  justify-content: space-between;
 }
 
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.tooltip-label strong {
+  margin-right: 8px;
+  color: #b43eff;
+}
+
+/* Melhorias para o hover do gráfico de linha */
+.recharts-tooltip-cursor {
+  stroke: rgba(180, 62, 255, 0.3) !important;
+  stroke-width: 2px !important;
+}
+
+.recharts-active-dot {
+  filter: drop-shadow(0 0 4px rgba(180, 62, 255, 0.5));
+}
+
+/* Ajuste para gráfico de linha */
+.recharts-cartesian-grid-horizontal line, .recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08) !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgba(35, 35, 35, 0.95) !important;
+  border-color: rgba(162, 0, 255, 0.5) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.recharts-tooltip-label, .recharts-tooltip-item-name, .recharts-tooltip-item-value {
+  color: #fff !important;
+}
+
+/* Linha de referência para o pico de tráfego */
+.peak-reference-line {
+  stroke: #ff2d55;
+  stroke-width: 1.5px;
+  stroke-dasharray: 3 3;
+}
+
+.peak-reference-label {
+  fill: #ff2d55;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.recharts-reference-line line {
+  stroke: #ff2d55 !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 3 3 !important;
+}
+
+.recharts-reference-line-label {
+  fill: #ff2d55 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
 }
 
 /* Loading */
@@ -457,6 +782,16 @@
   }
 }
 
+@media (max-width: 992px) {
+  .metrics-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .legend-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-content {
     padding: 1.5rem;
@@ -500,8 +835,105 @@
   }
   
   .summary-icon {
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .summary-value {
+    font-size: 1.5rem;
+  }
+  
+  .summary-label {
+    font-size: 0.875rem;
+  }
+  
+  .summary-trend {
+    font-size: 0.75rem;
+  }
+}
+
+/* Responsividade da tabela */
+@media (max-width: 1024px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 50px minmax(150px, 1.5fr) 2fr 80px;
+  }
+  
+  .progress-container {
     margin-right: 1rem;
   }
+  
+  .sales-badge {
+    min-width: 3rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 40px minmax(120px, 1fr) 1.5fr 70px;
+  }
+  
+  .col-position,
+  .col-name,
+  .col-popularity,
+  .col-sales {
+    padding: 0 0.5rem;
+  }
+  
+  .sales-badge {
+    min-width: 2.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popular-products {
+    padding: 1rem;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: 30px 1fr 70px;
+  }
+  
+  .col-popularity {
+    display: none;
+  }
+  
+  .col-name {
+    font-size: 0.75rem;
+  }
+  
+  .sales-badge {
+    min-width: 2rem;
+    padding: 0.25rem;
+    font-size: 0.65rem;
+  }
+}
+
+/* Melhorias para a legenda do gráfico de distribuição de receita */
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+/* Ajustes para o período selecionado */
+.revenue-period {
+  font-weight: 600;
+  color: #b43eff;
+  background-color: rgba(180, 62, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+/* Animações para mudanças de dados */
+.summary-value, .legend-value {
+  transition: all 0.3s ease;
 }

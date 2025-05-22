@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.logo-text {
+  color: black;
+  font-family: Nasalization;
+  font-size: 25px;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

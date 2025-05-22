@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardHeader from '../components/DashboardHeader';
@@ -296,16 +295,18 @@ const DashboardManagementPage = () => {
                         <TableCell className="text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                           {event.nome}
                         </TableCell>
-                        <TableCell className="py-4">
-                          <div className="w-full h-[6px] bg-gray-800 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${event.color}`} 
-                              style={{ width: `${event.popularidade}%`, transition: 'width 1s ease-in-out' }} 
-                            />
+                        <TableCell className="py-4 w-full relative">
+                          <div className="flex items-center w-full">
+                            <div className="w-full h-[6px] bg-gray-800 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full ${event.color}`} 
+                                style={{ width: `${event.popularidade}%`, transition: 'width 1s ease-in-out' }} 
+                              />
+                            </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className={`text-right px-2 py-1 rounded ${event.popularidade >= 80 ? 'bg-amber-900/30 text-amber-500' : 'bg-cyan-900/30 text-cyan-400'}`}>
+                        <TableCell className="text-right whitespace-nowrap">
+                          <div className={`px-2 py-1 rounded ${event.popularidade >= 80 ? 'bg-amber-900/30 text-amber-500' : 'bg-cyan-900/30 text-cyan-400'}`}>
                             {event.popularidade}%
                           </div>
                         </TableCell>

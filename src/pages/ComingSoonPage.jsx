@@ -242,10 +242,6 @@ const ComingSoonPage = () => {
         </div>
       </div>
       
-      {/* Logo */}
-      <div className="logo">
-        <img src="../public/logo-roxa-pura.png" alt="Logo" />
-      </div>
     </div>
   );
 };

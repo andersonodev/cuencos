@@ -30,7 +30,7 @@ const DashboardHeader = ({ user }) => {
         <nav className="dashboard-nav">
           <Link to="/dashboard" className="nav-item">
             <img 
-              src="/lovable-uploads/f7b0388e-b525-439e-bd9f-f75673f8fe89.png" 
+              src="../public/iconeDashboard.png" 
               alt="Dashboard" 
               className="nav-icon" 
             />
@@ -38,7 +38,7 @@ const DashboardHeader = ({ user }) => {
           </Link>
           <Link to="/dashboard/management" className="nav-item">
             <img 
-              src="/lovable-uploads/7e83847f-48e6-435e-acbd-e3b33bbe865b.png" 
+              src="../public/ion_ticket.png" 
               alt="Gerenciamento" 
               className="nav-icon" 
             />
@@ -56,7 +56,7 @@ const DashboardHeader = ({ user }) => {
           >
             <div className="nav-item">
               <img 
-                src="/lovable-uploads/47ae5152-5c24-4e41-9c18-8fa227e7eb18.png" 
+                src="../public/profilebutton.png" 
                 alt="Perfil" 
                 className="nav-icon" 
               />

@@ -187,7 +187,7 @@ const RegisterPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/images/google-icon.png" alt="Google" />
+          <img src="../public/icons8-google.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         

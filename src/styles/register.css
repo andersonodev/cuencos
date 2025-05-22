@@ -52,28 +52,6 @@ a {
   z-index: 0;
 }
 
-/* Logo - Atualizado para alinhar logo e texto */
-.logo {
-  position: absolute;
-  top: 60px;
-  left: 10%;
-  display: flex;
-  align-items: center;
-  z-index: 2;
-}
-
-.logo img {
-  width: 40px;
-  height: auto;
-  margin-right: 12px;
-}
-
-.logo-text {
-  font-family: "Nasalization-Regular", Helvetica, sans-serif;
-  font-size: 26px;
-  line-height: 1;
-  color: #ffffff;
-}
 
 /* Texto promocional */
 .promo-text {

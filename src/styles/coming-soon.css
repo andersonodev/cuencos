@@ -236,10 +236,6 @@ html, body {
   z-index: 10;
 }
 
-.logo img {
-  height: 2.5rem;
-  width: auto;
-}
 
 /* Tech background effects - optimized for mobile */
 .tech-background {
@@ -445,9 +441,6 @@ html, body {
     margin-bottom: 2rem;
   }
   
-  .logo img {
-    height: 3rem;
-  }
   
   .actions {
     flex-direction: row;
@@ -511,9 +504,7 @@ html, body {
     max-width: 80%;
   }
   
-  .logo img {
-    height: 3.5rem;
-  }
+
   
   .code-line {
     font-size: 1rem;

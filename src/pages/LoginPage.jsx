@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '../components/ui/use-toast';
 import '../styles/login.css';
+import '../styles/global.css';
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -147,7 +148,7 @@ const LoginPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/images/google-icon.png" alt="Google" />
+          <img src="../public/icons8-google.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         
