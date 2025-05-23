@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import { toast } from '../components/ui/use-toast';
-import '../styles/checkout.css'; // Importando os novos estilos
+import '../styles/checkout.css';
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ const CheckoutPage = () => {
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
-    phone: user?.phone || '',
   });
   const [errors, setErrors] = useState({});
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -72,9 +71,6 @@ const CheckoutPage = () => {
       newErrors.email = 'Email inválido.';
     }
     
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Preencha este campo.';
-    }
     if (!acceptTerms) {
       newErrors.terms = 'Você precisa aceitar os termos.';
     }
@@ -156,19 +152,6 @@ const CheckoutPage = () => {
                   onChange={handleChange}
                 />
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-              </div>
-              
-              <div>
-                <label className="block text-gray-400 mb-1">Celular</label>
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Coloque aqui seu numero com DDD"
-                  className="w-full bg-cuencos-gray text-white p-3 rounded-md"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
             </div>
           </div>

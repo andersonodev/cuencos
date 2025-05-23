@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
-import { Ticket, User, ChevronDown, LogOut } from 'lucide-react';
+import { Ticket, User, ChevronDown, LogOut, Heart, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ const ModernHeader = () => {
         <div className="header-container">
           <Link to="/" className="header-logo">
             <img 
-              src="/lovable-uploads/0859a779-d4bb-47a6-9f22-1e2c2b6498a7.png" 
+              src="/logo-cuencos-roxa.png" 
               alt="Cuencos" 
               className="header-logo-icon" 
             />
@@ -35,12 +35,7 @@ const ModernHeader = () => {
           
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
-              <img 
-                src="/images/heart-icon.png" 
-                alt="Favoritos"
-                className="header-icon" 
-                style={{ width: "18px", height: "18px" }}
-              />
+              <Heart className="h-4 w-4" />
               <span className="hidden sm:inline">Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="header-link flex items-center gap-1">
@@ -51,12 +46,7 @@ const ModernHeader = () => {
               <>
                 {isOrganizer() && (
                   <Link to="/dashboard" className="header-link flex items-center gap-1">
-                    <img 
-                      src="/lovable-uploads/f7b0388e-b525-439e-bd9f-f75673f8fe89.png" 
-                      alt="Dashboard"
-                      className="header-icon" 
-                      style={{ width: "18px", height: "18px" }}
-                    />
+                    <LayoutDashboard className="h-4 w-4" />
                     <span className="hidden sm:inline">Dashboard</span>
                   </Link>
                 )}

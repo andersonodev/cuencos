@@ -68,7 +68,7 @@ const App = () => {
               </div>
             )}
             
-            <Router basename="/cuencos">
+            <Router>
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/events/:id" element={<EventDetailsPage />} />

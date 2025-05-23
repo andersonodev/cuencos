@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -107,7 +106,7 @@ const TicketStep = ({ onSave, initialData, onBack }) => {
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-cuencos-purple rounded-full flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/64c67169-d363-40f5-95fa-32f189608e66.png"
+                  src="/assets/ticket-icon.png"
                   alt="Ticket" 
                   className="w-8 h-8"
                 />

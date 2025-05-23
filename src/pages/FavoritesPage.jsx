@@ -57,7 +57,7 @@ const FavoritesPage = () => {
             </Link>
             <h1 className="text-3xl font-bold text-white">
               <img 
-                src="/lovable-uploads/interestedbutton.png" 
+                src="/assets/heart-icon.png" 
                 alt="Ícone de favoritos" 
                 className="inline-block mr-2 h-8 w-8 align-text-bottom"
               />

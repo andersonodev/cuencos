@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header'; // Alterado de ModernHeader para Header
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getEventById, getEvents } from '../lib/events';
 import { toggleFavorite, isFavorite } from '../lib/favorites';
 import { hasTicketForEvent } from '../lib/tickets';
-import { Share2, Clock, MapPin, Calendar, Ticket } from 'lucide-react';
+import { Share2, Clock, MapPin, Calendar, Ticket, Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
@@ -37,7 +30,7 @@ const EventDetailsPage = () => {
   if (!event) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header /> {/* Substituído ModernHeader por Header */}
+        <Header />
         <div className="container mx-auto py-12 px-4 text-center">
           <h1 className="text-3xl font-bold mb-4 text-white">Evento não encontrado</h1>
           <Link to="/" className="text-cuencos-purple hover:underline">Voltar para a página inicial</Link>
@@ -92,7 +85,7 @@ const EventDetailsPage = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-cuencos-black">
-      <Header /> {/* Substituído ModernHeader por Header */}
+      <Header />
       
       {/* Event Banner */}
       <div className="container mx-auto px-4 pt-6">
@@ -115,9 +108,8 @@ const EventDetailsPage = () => {
               onClick={handleToggleFavorite}
               className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
             >
-              <img 
-                src="/lovable-uploads/interestedbutton.png"
-                className={`w-6 h-6 ${isFav ? 'opacity-100 brightness-125' : 'opacity-80'}`}
+              <Heart 
+                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-white'}`}
                 alt="Favoritar"
               />
             </button>

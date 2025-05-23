@@ -40,7 +40,7 @@ const GuestNavbar = () => {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           <img 
-            src="/lovable-uploads/fee83771-ef35-43dc-ac79-f030ffeafafa.png" 
+            src="/assets/logo.png" 
             alt="Cuencos Logo" 
             className="logo-icon" 
           />

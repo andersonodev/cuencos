@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -15,7 +14,6 @@ const AccountPage = () => {
   const [formData, setFormData] = React.useState({
     firstName: firstName,
     lastName: lastName,
-    phone: user?.phone || '',
     address: user?.address || '',
     city: user?.city || ''
   });
@@ -34,7 +32,6 @@ const AccountPage = () => {
     // Update user info
     updateUser({
       name: `${formData.firstName} ${formData.lastName}`,
-      phone: formData.phone,
       address: formData.address,
       city: formData.city
     });
@@ -137,16 +134,6 @@ const AccountPage = () => {
                   <p className="text-sm text-gray-400 mb-4">These details are private and only used to contact you for ticketing or prizes.</p>
                   
                   <form className="space-y-4">
-                    <div>
-                      <label className="block text-white mb-1">Celular:</label>
-                      <input
-                        type="text"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full bg-cuencos-black border border-gray-700 rounded p-2 text-white"
-                      />
-                    </div>
                     <div>
                       <label className="block text-white mb-1">Endereço:</label>
                       <input

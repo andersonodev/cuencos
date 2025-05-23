@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '../components/ui/use-toast';
 import '../styles/login.css';
 import '../styles/global.css';
+
+
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -80,7 +81,7 @@ const LoginPage = () => {
     <div className="login-container">
       {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="/logocuencosloginEregistro.svg" alt="Logo Cuencos" />
+        <img src="/assets/logo/logocuencospreta.svg" alt="Logo Cuencos" />
         <span className="logo-text">Cuencos</span>
       </div>
       
@@ -148,7 +149,7 @@ const LoginPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="../public/icons8-google.png" alt="Google" />
+          <img src="/assets/google-icon.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         

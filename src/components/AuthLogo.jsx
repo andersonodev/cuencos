@@ -5,10 +5,11 @@ const AuthLogo = () => {
   return (
     <Link to="/" className="logo">
       <img 
-        src="/lovable-uploads/logo-cuencos-roxa.png" 
+        src="/assets/logo-cuencos-roxa.png" 
         alt="Logo Cuencos" 
         className="h-10 w-auto"
       />
+      
       <span className="logo-text">Cuencos</span>
     </Link>
   );

@@ -25,19 +25,19 @@ const HomePage = () => {
       id: 1,
       title: "PUC IN RIO",
       description: "Quem aí não perde uma festa da MAIOR DA CAPITAL? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
-      image: "/lovable-uploads/4d09bc83-a8f8-4a0c-aebc-e51cd1526dee.png",
+      image: "/hero1.png", // Caminho atualizado para a pasta public
     },
     {
       id: 2,
       title: "BAILE DO MAGNA",
       description: "Venha curtir a melhor festa universitária do semestre! Uma noite inesquecível com as melhores atrações.",
-      image: "/lovable-uploads/3e8b36aa-1f23-4483-97b1-67d9521b5e6a.png",
+      image: "/hero2.png", // Caminho atualizado para a pasta public
     },
     {
       id: 3,
       title: "CALOURADA 2025.1",
       description: "A festa de boas-vindas aos calouros que vai agitar o campus! Não perca essa celebração incrível.",
-      image: "/lovable-uploads/68619dad-8ba1-48be-8d77-8858c3151a75.png",
+      image: "/hero3.png", // Caminho atualizado para a pasta public
     }
   ];
   
@@ -201,7 +201,7 @@ const HomePage = () => {
         <footer className="footer">
           <div className="footer-content">
             <div className="footer-col">
-              <img src="" alt="Logo Cuencos" className="footer-logo" />
+              <img src="/footer-logo.png" alt="Logo Cuencos" className="footer-logo" /> {/* Caminho atualizado */}
               <p>
                 Cuencos é uma plataforma de autoatendimento para venda de ingressos que conecta
                 universitários a eventos criados por e para a comunidade acadêmica.

@@ -61,7 +61,7 @@ const Header = () => {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           <img 
-            src="/lovable-uploads/fee83771-ef35-43dc-ac79-f030ffeafafa.png" 
+            src="/assets/logo.png" 
             alt="Cuencos Logo" 
             className="logo-icon" 
           />
@@ -77,11 +77,11 @@ const Header = () => {
         <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
           <div className="close-menu" onClick={closeMenu}></div>
           <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-            <img src="../public/star.png" alt="Favoritos" className="nav-icon" />
+            <img src="/assets/star.png" alt="Favoritos" className="nav-icon" />
             <span>Favoritos</span>
           </Link>
           <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-            <img src="../public/ion_ticket.png" alt="Meus Ingressos" className="nav-icon" />
+            <img src="/assets/ticket.png" alt="Meus Ingressos" className="nav-icon" />
             <span>Meus Ingressos</span>
           </Link>
           
@@ -91,7 +91,7 @@ const Header = () => {
           </div>
           
           <Link to="/account" className="nav-item" onClick={closeMenu}>
-            <img src="../public/profilebutton.png" alt="Perfil" className="nav-icon" />
+            <img src="/assets/profile.png" alt="Perfil" className="nav-icon" />
             <span>Perfil ({firstName})</span>
           </Link>
           <button onClick={handleLogout} className="nav-item logout-button">

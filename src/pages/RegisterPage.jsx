@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { registerUser } from '../lib/auth';
@@ -12,7 +11,6 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
-    phone: '',
     tipo: 'cliente'  // Valor padrão: cliente
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -82,7 +80,7 @@ const RegisterPage = () => {
     <div className="register-container">
       {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="/logocuencosloginEregistro.svg" alt="Logo Cuencos" />
+        <img src="/assets/logocuencosroxa.png" alt="Logo Cuencos" />
         <span className="logo-text">Cuencos</span>
       </div>
       
@@ -132,19 +130,6 @@ const RegisterPage = () => {
           </div>
           
           <div className="form-group">
-            <label htmlFor="phone">Telefone</label>
-            <input 
-              type="tel" 
-              id="phone" 
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              disabled={isLoading}
-              placeholder="(00) 00000-0000"
-            />
-          </div>
-          
-          <div className="form-group">
             <label htmlFor="password">Senha*</label>
             <div className="password-input">
               <input 
@@ -187,7 +172,7 @@ const RegisterPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="../public/icons8-google.png" alt="Google" />
+          <img src="/assets/google-icon.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         

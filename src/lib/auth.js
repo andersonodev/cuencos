@@ -17,7 +17,6 @@ const initializeUsers = () => {
           email: 'johnfrontend@gmail.com',
           name: 'John Frontend',
           password: 'admin123',
-          phone: "+5521999887766",
           tipo: 'usuario'
         },
         {
@@ -25,7 +24,6 @@ const initializeUsers = () => {
           email: 'organizador@cuencos.com',
           name: 'Organizador Cuencos',
           password: 'admin123',
-          phone: "+5521988776655",
           tipo: 'organizador'
         }
       ];
@@ -44,7 +42,6 @@ const initializeUsers = () => {
           email: 'organizador@cuencos.com',
           name: 'Organizador Cuencos',
           password: 'admin123',
-          phone: "+5521988776655",
           tipo: 'organizador'
         };
         
@@ -79,7 +76,6 @@ initializeUsers();
       email: 'organizador@cuencos.com',
       name: 'Organizador Cuencos',
       password: 'admin123',
-      phone: "+5521988776655",
       tipo: 'organizador'
     };
     
@@ -116,7 +112,6 @@ export const loginUser = (email, password) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        phone: user.phone,
         tipo: user.tipo || 'cliente'
       };
       
