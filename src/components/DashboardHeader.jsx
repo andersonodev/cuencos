@@ -20,7 +20,7 @@ const DashboardHeader = ({ user }) => {
       <div className="header-container">
         <Link to="/dashboard" className="header-logo">
           <img 
-            src="/assets/logo-roxa.png" 
+            src="/assets/logo/logocuencosroxa.png" 
             alt="Cuencos" 
             className="logo-icon" 
           />
@@ -30,7 +30,7 @@ const DashboardHeader = ({ user }) => {
         <nav className="dashboard-nav">
           <Link to="/dashboard" className="nav-item">
             <img 
-              src="/assets/dashboard-icon.png" 
+              src="/assets/icons/iconeDashboard.png" 
               alt="Dashboard" 
               className="nav-icon" 
             />
@@ -38,7 +38,7 @@ const DashboardHeader = ({ user }) => {
           </Link>
           <Link to="/dashboard/management" className="nav-item">
             <img 
-              src="/assets/ticket.png" 
+              src="/assets/icons/icone-ingresso" 
               alt="Gerenciamento" 
               className="nav-icon" 
             />
@@ -56,7 +56,7 @@ const DashboardHeader = ({ user }) => {
           >
             <div className="nav-item">
               <img 
-                src="/assets/profile.png" 
+                src="/assets/icons/profilebutton.png" 
                 alt="Perfil" 
                 className="nav-icon" 
               />

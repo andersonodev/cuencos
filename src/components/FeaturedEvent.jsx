@@ -22,7 +22,7 @@ const FeaturedEvent = ({ event }) => {
       {/* Imagem de fundo */}
       <div className="absolute inset-0 z-0">
         <img 
-p          src={event.image || "/assets/puc-in-rio-banner.jpg"} 
+p          src={event.image || "/assets/events/puc-in-rio.png"} 
           alt={event.title}
           className="w-full h-full object-cover opacity-60"
         />
