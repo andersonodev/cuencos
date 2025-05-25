@@ -4,12 +4,18 @@ import {
   LineChart, Line, PieChart, Pie, Tooltip, ResponsiveContainer,
   CartesianGrid, XAxis, YAxis, Cell, ReferenceLine, Sector, Area
 } from 'recharts';
-import { CalendarDays, Share2, Download, ChevronDown, PlusCircle, BarChart3, ShoppingBag, UserPlus } from 'lucide-react';
+import { CalendarDays, Share2, Download, ChevronDown, PlusCircle, BarChart3, ShoppingBag, UserPlus, Eye, Edit } from 'lucide-react';
 import Footer from '../components/Footer';
 import DashboardHeader from '../components/DashboardHeader';
 import { toast } from '../components/ui/use-toast';
 import dashboardData from '../data/dashboard.json';
 import '../styles/dashboard.css';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { 
+  Table, TableBody, TableCell, TableHead, 
+  TableHeader, TableRow 
+} from "@/components/ui/table";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -98,6 +104,10 @@ const DashboardPage = () => {
     });
   };
 
+  const handleCreateNewProduct = () => {
+    navigate('/dashboard/create-event');
+  };
+
   // Usar useMemo para evitar recálculos desnecessários
   const lineChartData = useMemo(() => prepareLineChartData(), [selectedPeriod]);
   const pieChartData = useMemo(() => preparePieChartData(), [selectedPeriod]);
@@ -151,6 +161,9 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
       <DashboardHeader user={user} />
+      
+      {/* Adicionando um espaçador para compensar o header fixo */}
+      <div className="header-spacer"></div>
       
       <div className="dashboard-content">
         <div className="dashboard-welcome">
@@ -281,48 +294,44 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Produtos mais vendidos - tabela */}
+          {/* Produtos mais vendidos - tabela conforme a imagem enviada */}
           <div className="dashboard-card popular-products">
-            <div className="card-header">
-              <h2>Produtos mais vendidos</h2>
-              <div className="card-actions">
-                <button className="action-button">
-                  <PlusCircle size={16} />
-                  Novo produto
-                </button>
-              </div>
-            </div>
+            <h2 className="mb-4 text-xl font-medium">Produtos mais vendidos</h2>
             
             <div className="products-table">
-              <div className="table-header">
-                <div className="col-position">#</div>
-                <div className="col-name">Nome</div>
-                <div className="col-popularity">Popularidade</div>
-                <div className="col-sales">Vendas</div>
-              </div>
-              
-              {popularEvents.map((event, index) => (
-                <div key={index} className="table-row">
-                  <div className="col-position">{event.id}</div>
-                  <div className="col-name" title={event.nome}>{event.nome}</div>
-                  <div className="col-popularity">
-                    <div className="progress-container">
-                      <div 
-                        className="progress-bar" 
-                        style={{ 
-                          width: `${event.popularidade}%`, 
-                          backgroundColor: event.cor
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="col-sales">
-                    <span className="sales-badge">
-                      {event.popularidade}%
-                    </span>
-                  </div>
-                </div>
-              ))}
+              <table className="w-full">
+                <thead className="text-left text-gray-400 border-b border-gray-800">
+                  <tr>
+                    <th className="py-3 px-4 font-medium">#</th>
+                    <th className="py-3 px-4 font-medium">Nome</th>
+                    <th className="py-3 px-4 font-medium w-full">Popularidade</th>
+                    <th className="py-3 px-4 font-medium text-right">Vendas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {popularEvents.map((event, index) => (
+                    <tr key={event.id} className="border-b border-gray-800">
+                      <td className="py-4 px-4 text-gray-300 font-medium">{String(index + 1).padStart(2, '0')}</td>
+                      <td className="py-4 px-4 text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                        {event.nome}
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-cuencos-purple" 
+                            style={{ width: `${event.popularidade}%`, transition: 'width 1s ease-in-out' }} 
+                          />
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <div className="inline-block bg-cuencos-purple/30 text-cuencos-purple rounded px-2 py-0.5 text-sm font-medium">
+                          {event.popularidade}%
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
           

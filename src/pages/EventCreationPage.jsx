@@ -9,7 +9,8 @@ import ReviewStep from '../components/eventCreation/ReviewStep';
 import ProgressBar from '../components/eventCreation/ProgressBar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { updateEvent, addEvent, getEventById } from '../lib/events';
+import { updateEvent, addEvent, getEventById, deleteEvent } from '../lib/events';
+import DeleteEventModal from '../components/DeleteEventModal';
 
 const EventCreationPage = () => {
   const { id } = useParams();
@@ -33,6 +34,7 @@ const EventCreationPage = () => {
     isDraft: true,
     createdBy: user?.id || user?.email
   });
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -174,6 +176,7 @@ const EventCreationPage = () => {
   const handlePublish = () => {
     try {
       const dateStr = eventData.date ? `${eventData.date} de Maio` : '09 de Maio';
+      const endDateStr = eventData.endDate ? `${eventData.endDate} de Maio` : dateStr;
       const timeStr = eventData.startTime && eventData.endTime ? 
         `${eventData.startTime} - ${eventData.endTime}` : 
         '21:00 - 04:00';
@@ -184,6 +187,7 @@ const EventCreationPage = () => {
         longDescription: eventData.description,
         category: eventData.category,
         date: dateStr,
+        endDate: endDateStr,  // Adicionado data final
         time: timeStr,
         location: eventData.location,
         image: eventData.image,
@@ -224,8 +228,8 @@ const EventCreationPage = () => {
       localStorage.removeItem('eventoDraft_capa');
       localStorage.removeItem('eventoDraft_ingresso');
       
-      // Redirect to event details
-      navigate(`/events/${eventId}`);
+      // Redirecionar para a página de gerenciamento em vez da página de detalhes do evento
+      navigate('/dashboard/management');
     } catch (error) {
       console.error('Error publishing event:', error);
       toast({
@@ -286,6 +290,39 @@ const EventCreationPage = () => {
     }
   };
 
+  const handleDeleteConfirmation = () => {
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    try {
+      if (!eventId) return;
+      
+      deleteEvent(parseInt(eventId));
+      
+      toast({
+        title: "Evento excluído",
+        description: "O evento foi excluído com sucesso",
+        variant: "success",
+      });
+      
+      setDeleteModalOpen(false);
+      
+      navigate('/dashboard/management');
+    } catch (error) {
+      console.error('Erro ao excluir evento:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o evento",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const cancelDelete = () => {
+    setDeleteModalOpen(false);
+  };
+
   const CurrentStepComponent = steps[currentStep]?.component;
 
   if (isLoading) {
@@ -300,31 +337,41 @@ const EventCreationPage = () => {
   };
 
   const handleComponentProps = () => {
+    const isEditMode = id && id !== 'new';
+    
     switch (currentStep) {
       case 0:
         return {
           onSave: handleEditionSave,
           initialData: eventData,
-          onBack: () => navigate('/dashboard/management')
+          onBack: () => navigate('/dashboard/management'),
+          onDelete: handleDeleteConfirmation,
+          isEditMode
         };
       case 1:
         return {
           onSave: handleCoverSave,
           initialData: eventData,
-          onBack: goToPreviousStep
+          onBack: goToPreviousStep,
+          onDelete: handleDeleteConfirmation,
+          isEditMode
         };
       case 2:
         return {
           onSave: handleTicketSave,
           initialData: eventData,
-          onBack: goToPreviousStep
+          onBack: goToPreviousStep,
+          onDelete: handleDeleteConfirmation,
+          isEditMode
         };
       case 3:
         return {
           eventData: eventData,
           onPublish: handlePublish,
           onSaveAsDraft: handleSaveAsDraft,
-          onBack: goToPreviousStep
+          onBack: goToPreviousStep,
+          onDelete: handleDeleteConfirmation,
+          isEditMode
         };
       default:
         return {};
@@ -339,9 +386,12 @@ const EventCreationPage = () => {
         <div className="mb-6">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center text-gray-400 hover:text-white mb-4"
+            className="flex items-center text-gray-400 hover:text-white mb-4 whitespace-nowrap"
           >
-            ← Voltar
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
           </button>
           <h1 className="text-2xl font-bold text-white">{getPageTitle()}</h1>
         </div>
@@ -358,7 +408,18 @@ const EventCreationPage = () => {
             />
           )}
         </div>
+        
+        {/* Remover botão de exclusão daqui, pois agora está em cada etapa */}
+        
       </div>
+      
+      {/* Modal de confirmação de exclusão */}
+      <DeleteEventModal 
+        isOpen={deleteModalOpen}
+        event={eventData}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+      />
       
       <Footer />
     </div>

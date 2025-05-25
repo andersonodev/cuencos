@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <Link to="/" className="text-cuencos-purple font-bold text-2xl flex items-center mb-4">
               <img 
-                src="/assets/logo-cuencos-roxa.png" 
+                src="/assets/images/logo-cuencos-roxa.png" 
                 alt="Cuencos" 
                 className="h-8 mr-2" 
               />

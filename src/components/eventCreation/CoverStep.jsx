@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
-const CoverStep = ({ onSave, initialData, onBack }) => {
+const CoverStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileInfo, setFileInfo] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -167,17 +166,39 @@ const CoverStep = ({ onSave, initialData, onBack }) => {
             type="button"
             onClick={onBack}
             variant="outline"
-            className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all"
+            className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all flex items-center whitespace-nowrap"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             Voltar
           </Button>
           
-          <Button
-            type="submit"
-            className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple"
-          >
-            Salvar e Continuar
-          </Button>
+          <div className="flex gap-3">
+            {isEditMode && (
+              <Button
+                type="button"
+                onClick={onDelete}
+                variant="outline"
+                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center whitespace-nowrap"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Excluir Evento
+              </Button>
+            )}
+            
+            <Button
+              type="submit"
+              className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple flex items-center whitespace-nowrap"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+              Salvar e Continuar
+            </Button>
+          </div>
         </div>
       </form>
     </div>

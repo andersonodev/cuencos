@@ -1,16 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import EventCard from './EventCard';
+import Container from './ui/container';
+import Grid from './ui/grid';
 
 const EventList = ({ title, events }) => {
   return (
-    <div className="py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-cuencos-purple">{title}</h2>
-          <div className="flex space-x-4">
+    <div className="py-6 md:py-8">
+      <Container>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-cuencos-purple mb-4 sm:mb-0">{title}</h2>
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
             <div className="relative">
-              <select className="appearance-none bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 pl-4 pr-8 text-white">
+              <select className="w-full sm:w-auto appearance-none bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 pl-4 pr-8 text-white">
                 <option>Dias da Semana</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
@@ -20,7 +22,7 @@ const EventList = ({ title, events }) => {
               </div>
             </div>
             <div className="relative">
-              <select className="appearance-none bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 pl-4 pr-8 text-white">
+              <select className="w-full sm:w-auto appearance-none bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 pl-4 pr-8 text-white">
                 <option>Qualquer Categoria</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
@@ -32,20 +34,20 @@ const EventList = ({ title, events }) => {
           </div>
         </div>
 
-        <div className="eventos-grid">
+        <Grid cols={4} className="mb-8">
           {events.map(event => (
             <EventCard key={event.id} event={event} />
           ))}
-        </div>
+        </Grid>
 
         {events.length > 6 && (
-          <div className="text-center mt-8">
-            <Link to="/events" className="border border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white py-2 px-8 rounded-full inline-block transition-colors">
+          <div className="text-center mt-6 md:mt-8">
+            <Link to="/events" className="border border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white py-2 px-6 md:px-8 rounded-full inline-block transition-colors">
               Explorar Mais
             </Link>
           </div>
         )}
-      </div>
+      </Container>
     </div>
   );
 };

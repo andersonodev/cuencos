@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toast } from '../components/ui/use-toast';
+import { Eye, EyeOff } from 'lucide-react';
 import '../styles/login.css';
 import '../styles/global.css';
 
@@ -81,7 +82,7 @@ const LoginPage = () => {
     <div className="login-container">
       {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="/assets/logo/logocuencospreta.svg" alt="Logo Cuencos" />
+        <img src="/assets/images/logo/logocuencospreta.svg" alt="Logo Cuencos" />
         <span className="logo-text">Cuencos</span>
       </div>
       
@@ -116,7 +117,7 @@ const LoginPage = () => {
           
           <div className="form-group">
             <label htmlFor="password">Senha</label>
-            <div className="password-input">
+            <div className="password-input-container">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -124,11 +125,20 @@ const LoginPage = () => {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
                 placeholder="admin123"
+                className="password-field"
               />
-              <span 
-                className="eye-icon"
+              <button 
+                type="button"
+                className="password-toggle-btn"
                 onClick={() => setShowPassword(!showPassword)}
-              />
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showPassword ? (
+                  <EyeOff className="eye-icon" />
+                ) : (
+                  <Eye className="eye-icon" />
+                )}
+              </button>
             </div>
           </div>
           
@@ -149,7 +159,7 @@ const LoginPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/assets/google-icon.png" alt="Google" />
+          <img src="/assets/icons/google-icon.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { registerUser } from '../lib/auth';
 import { toast } from '../components/ui/use-toast';
-import '../styles/register.css';
+import AuthLayout from '../components/ui/auth-layout';
+import '../styles/auth.css';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -77,112 +78,98 @@ const RegisterPage = () => {
   const isOrganizerRegistration = formData.tipo === 'organizador';
   
   return (
-    <div className="register-container">
-      {/* Logo alinhada com o texto */}
-      <div className="logo">
-        <img src="/assets/logocuencosroxa.png" alt="Logo Cuencos" />
-        <span className="logo-text">Cuencos</span>
-      </div>
+    <AuthLayout
+      backgroundImage="/assets/loginimage.png"
+      promoText="Crie sua conta e conecte-se a experiências universitárias únicas e inesquecíveis."
+      cardPosition="right"
+    >
+      {isOrganizerRegistration ? (
+        <h1 className="text-center text-2xl font-medium mb-6">Cadastro de Organizador</h1>
+      ) : (
+        <div className="mb-6">
+          <div className="start-message">VAMOS COMEÇAR</div>
+          <div className="register-heading">Cadastre-se!</div>
+        </div>
+      )}
       
-      {/* Texto promocional */}
-      <div className="promo-text">
-        <p>
-          Crie sua conta e conecte-se a experiências universitárias únicas e inesquecíveis.
-        </p>
-      </div>
-      
-      {/* Card de registro */}
-      <div className="register-card">
-        {isOrganizerRegistration ? (
-          <h1>Cadastro de Organizador</h1>
-        ) : (
-          <div>
-            <div className="start-message">VAMOS COMEÇAR</div>
-            <div className="register-heading">Cadastre-se!</div>
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Nome Completo*</label>
-            <input 
-              type="text" 
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="email">Email*</label>
-            <input 
-              type="email" 
-              id="email" 
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isLoading}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="password">Senha*</label>
-            <div className="password-input">
-              <input 
-                type={showPassword ? "text" : "password"} 
-                id="password" 
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isLoading}
-                required
-              />
-              <span 
-                className="eye-icon"
-                onClick={() => setShowPassword(!showPassword)}
-              />
-            </div>
-          </div>
-          
-          {/* Campo oculto para o tipo */}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Nome Completo*</label>
           <input 
-            type="hidden" 
-            name="tipo" 
-            value={formData.tipo} 
-          />
-          
-          <button 
-            type="submit" 
-            className="continue-btn"
+            type="text" 
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             disabled={isLoading}
-          >
-            {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
-          </button>
-        </form>
-        
-        {/* Divisor "Ou" estilizado */}
-        <div className="divider-container">
-          <hr className="divider-line" />
-          <span className="divider-text">Ou</span>
-          <hr className="divider-line" />
+            required
+          />
         </div>
         
-        <div className="google-login">
-          <img src="/assets/google-icon.png" alt="Google" />
-          <span>Faça login com o Google</span>
+        <div className="form-group">
+          <label htmlFor="email">Email*</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={isLoading}
+            required
+          />
         </div>
         
-        {/* Link de login */}
-        <div className="login-link">
-          <span>Já tem login? </span>
-          <Link to="/login">FAÇA LOGIN AQUI</Link>
+        <div className="form-group">
+          <label htmlFor="password">Senha*</label>
+          <div className="password-input">
+            <input 
+              type={showPassword ? "text" : "password"} 
+              id="password" 
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
+            />
+            <span 
+              className="eye-icon"
+              onClick={() => setShowPassword(!showPassword)}
+            />
+          </div>
         </div>
+        
+        {/* Campo oculto para o tipo */}
+        <input 
+          type="hidden" 
+          name="tipo" 
+          value={formData.tipo} 
+        />
+        
+        <button 
+          type="submit" 
+          className="continue-btn"
+          disabled={isLoading}
+        >
+          {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
+        </button>
+      </form>
+      
+      <div className="divider-container">
+        <hr className="divider-line" />
+        <span className="divider-text">Ou</span>
+        <hr className="divider-line" />
       </div>
-    </div>
+      
+      <div className="google-login">
+        <img src="/assets/google-icon.png" alt="Google" />
+        <span>Faça login com o Google</span>
+      </div>
+      
+      <div className="login-link mt-4">
+        <span>Já tem login? </span>
+        <Link to="/login">FAÇA LOGIN AQUI</Link>
+      </div>
+    </AuthLayout>
   );
 };
 

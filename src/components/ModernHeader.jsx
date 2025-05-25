@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/modern-header.css';
-import { Ticket, User, ChevronDown, LogOut, Heart, LayoutDashboard } from 'lucide-react';
+import { Ticket, User, ChevronDown, LogOut, Heart, LayoutDashboard, Calendar } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
   DropdownMenu,
@@ -12,12 +12,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import RoleSwitcher from './RoleSwitcher';
+import CustomDatePicker from './ui/DatePicker';
 
 const ModernHeader = () => {
   const { user, logout, isOrganizer } = useAuth();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
   
   const handleLogout = () => {
     logout();
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    // Aqui você pode implementar a lógica para filtrar eventos pela data selecionada
+    console.log("Data selecionada:", date);
   };
 
   return (
@@ -26,28 +35,49 @@ const ModernHeader = () => {
         <div className="header-container">
           <Link to="/" className="header-logo">
             <img 
-              src="/logo-cuencos-roxa.png" 
+              src="/assets/images/logo-cuencos-roxa.png" 
               alt="Cuencos" 
               className="header-logo-icon" 
             />
             <span className="header-logo-text">Cuencos</span>
           </Link>
           
+          <div className="flex items-center gap-2 mr-4">
+            <button 
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              className="text-white bg-cuencos-purple px-3 py-1 rounded-md text-sm flex items-center gap-1"
+            >
+              <Calendar className="h-4 w-4" />
+              <span>Buscar por data</span>
+            </button>
+            
+            {showDatePicker && (
+              <div className="absolute top-16 bg-cuencos-black p-3 rounded-md shadow-lg z-50">
+                <CustomDatePicker 
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  placeholder="Selecione uma data"
+                />
+              </div>
+            )}
+          </div>
+          
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
-              <Heart className="h-4 w-4" />
+              {/* Texto movido para a esquerda e ícone para a direita */}
               <span className="hidden sm:inline">Favoritos</span>
+              <Heart className="h-4 w-4" />
             </Link>
             <Link to="/my-tickets" className="header-link flex items-center gap-1">
-              <Ticket className="h-4 w-4" />
               <span className="hidden sm:inline">Meus ingressos</span>
+              <Ticket className="h-4 w-4" />
             </Link>
             {user ? (
               <>
                 {isOrganizer() && (
                   <Link to="/dashboard" className="header-link flex items-center gap-1">
-                    <LayoutDashboard className="h-4 w-4" />
                     <span className="hidden sm:inline">Dashboard</span>
+                    <LayoutDashboard className="h-4 w-4" />
                   </Link>
                 )}
                 {/* Botão de alternância de papel - Com design melhorado */}

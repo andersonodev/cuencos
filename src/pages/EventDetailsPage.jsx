@@ -10,6 +10,14 @@ import { Share2, Clock, MapPin, Calendar, Ticket, Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext 
+} from '../components/ui/carousel';
+import '../styles/carousel.css';
 
 const EventDetailsPage = () => {
   const { id } = useParams();
@@ -248,44 +256,56 @@ const EventDetailsPage = () => {
           </div>
         </div>
         
-        {/* Related events carousel */}
+        {/* Related events carousel - SEÇÃO CORRIGIDA */}
         <div className="my-12">
           <h2 className="text-2xl font-bold text-white mb-6">Outros eventos que você pode gostar</h2>
-          
-          <div className="relative px-4">
+          <div className="relative">
             <Carousel
               opts={{
                 align: "start",
                 loop: true,
+                slidesToScroll: 1,
               }}
               className="w-full"
             >
-              <CarouselContent>
+              <CarouselContent className="-ml-2 md:-ml-4">
                 {relatedEvents.map((relEvent) => (
-                  <CarouselItem key={relEvent.id} className="sm:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={relEvent.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
                     <Link to={`/events/${relEvent.id}`} className="block">
-                      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg hover:shadow-cuencos-purple/20 transition-all duration-300 transform hover:-translate-y-1">
                         <div className="h-48 overflow-hidden">
                           <img 
                             src={relEvent.image} 
                             alt={relEvent.title} 
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                           />
                         </div>
                         <div className="p-4">
-                          <div className="text-xs font-semibold text-cuencos-purple mb-2">
-                            MAY
+                          <div className="text-xs font-semibold text-cuencos-purple mb-2 uppercase tracking-wide">
+                            {relEvent.date?.split(' ')[2] || 'MAY'}
                           </div>
-                          <h3 className="text-white font-medium line-clamp-2 mb-1">{relEvent.title}</h3>
-                          <p className="text-gray-400 text-sm line-clamp-2">{relEvent.description}</p>
+                          <h3 className="text-white font-medium line-clamp-2 mb-1 hover:text-cuencos-purple transition-colors">
+                            {relEvent.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">
+                            {relEvent.description}
+                          </p>
+                          <div className="mt-3 flex items-center justify-between">
+                            <span className="text-cuencos-purple font-semibold text-sm">
+                              R$ {relEvent.price?.toFixed(2) || '0,00'}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {relEvent.location?.split(' - ')[1] || 'Local'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </Link>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-0 bg-black/50 text-white border-none" />
-              <CarouselNext className="right-0 bg-black/50 text-white border-none" />
+              <CarouselPrevious className="-left-4 md:-left-6 bg-black/70 hover:bg-black/90 text-white border-white/20 hover:border-white/40" />
+              <CarouselNext className="-right-4 md:-right-6 bg-black/70 hover:bg-black/90 text-white border-white/20 hover:border-white/40" />
             </Carousel>
           </div>
         </div>

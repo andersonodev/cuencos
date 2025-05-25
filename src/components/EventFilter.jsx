@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, X, ChevronDown } from 'lucide-react';
 import { estadosBrasil } from '../lib/constants';
+import CustomDatePicker from './ui/DatePicker';
 import '../styles/eventFilter.css';
 
 const EventFilter = ({ onFilterChange, className = '' }) => {
@@ -9,7 +10,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
   const [filters, setFilters] = useState({
     search: '',
     location: '',
-    date: '',
+    date: null,
     category: ''
   });
   
@@ -47,6 +48,13 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
     }));
   };
   
+  const handleDateChange = (date) => {
+    setFilters(prev => ({
+      ...prev,
+      date: date
+    }));
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     
@@ -73,7 +81,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
     const emptyFilters = {
       search: '',
       location: '',
-      date: '',
+      date: null,
       category: ''
     };
     
@@ -175,18 +183,12 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                 <span>Data</span>
               </div>
               <div className="select-wrapper">
-                <select 
-                  name="date"
+                <CustomDatePicker
                   value={filters.date}
-                  onChange={handleSelectChange}
-                  className="filter-select"
-                >
-                  {dateOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={handleDateChange}
+                  placeholder="Selecione uma data"
+                  className="w-full bg-cuencos-darkPurple border-transparent focus:border-white/30"
+                />
                 <ChevronDown size={isMobile ? 14 : 16} className="select-icon" />
               </div>
             </div>

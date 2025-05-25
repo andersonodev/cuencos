@@ -1,4 +1,3 @@
-
 // Mock data for tickets with localStorage persistence
 const TICKETS_STORAGE_KEY = 'cuencos_tickets';
 
@@ -53,8 +52,13 @@ export const getTicketsByUserId = (userId) => {
 
 // Get a specific ticket by ID
 export const getTicketById = (ticketId) => {
-  const tickets = loadTickets();
-  return tickets.find(ticket => ticket.id === ticketId);
+  try {
+    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    return tickets.find(ticket => ticket.id === ticketId);
+  } catch (error) {
+    console.error('Erro ao buscar ingresso:', error);
+    return null;
+  }
 };
 
 // Check if a user has purchased a specific ticket for an event

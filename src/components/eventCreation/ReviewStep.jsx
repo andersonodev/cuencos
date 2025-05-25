@@ -1,17 +1,25 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
-const ReviewStep = ({ eventData, onPublish, onSaveAsDraft, onBack }) => {
+const ReviewStep = ({ eventData, onPublish, onSaveAsDraft, onBack, onDelete, isEditMode }) => {
   const formatDate = () => {
     if (!eventData.date) return '09 de Maio';
     return `${eventData.date} de Maio`;
   };
   
+  const formatEndDate = () => {
+    if (!eventData.endDate) return formatDate(); // Se não tiver data final, usa a inicial
+    return `${eventData.endDate} de Maio`;
+  };
+  
   const formatTime = () => {
     if (!eventData.startTime || !eventData.endTime) return '21:00 - 04:00';
     return `${eventData.startTime} - ${eventData.endTime}`;
+  };
+  
+  const isSingleDayEvent = () => {
+    return !eventData.endDate || eventData.date === eventData.endDate;
   };
   
   const handleViewAsUser = () => {
@@ -49,12 +57,29 @@ const ReviewStep = ({ eventData, onPublish, onSaveAsDraft, onBack }) => {
               <Calendar className="text-cuencos-purple mr-3 mt-0.5" size={18} />
               <div>
                 <h4 className="text-white font-medium mb-1">Data e Horário</h4>
-                <div className="flex flex-col sm:flex-row sm:items-center text-sm">
-                  <span className="text-gray-400 mr-2">{formatDate()}</span>
-                  <div className="flex items-center mt-1 sm:mt-0">
-                    <Clock className="text-cuencos-purple mr-1" size={14} />
-                    <span className="text-gray-400">{formatTime()}</span>
-                  </div>
+                <div className="flex flex-col text-sm">
+                  {isSingleDayEvent() ? (
+                    <>
+                      <span className="text-gray-400 mr-2">{formatDate()}</span>
+                      <div className="flex items-center mt-1">
+                        <Clock className="text-cuencos-purple mr-1" size={14} />
+                        <span className="text-gray-400">{formatTime()}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center">
+                        <span className="text-gray-400">Início: {formatDate()}</span>
+                        <Clock className="text-cuencos-purple ml-2 mr-1" size={14} />
+                        <span className="text-gray-400">{eventData.startTime || '21:00'}</span>
+                      </div>
+                      <div className="flex items-center mt-1">
+                        <span className="text-gray-400">Término: {formatEndDate()}</span>
+                        <Clock className="text-cuencos-purple ml-2 mr-1" size={14} />
+                        <span className="text-gray-400">{eventData.endTime || '04:00'}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -119,41 +144,51 @@ const ReviewStep = ({ eventData, onPublish, onSaveAsDraft, onBack }) => {
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
+      <div className="flex justify-between mt-8">
         <Button
-          type="button"
-          onClick={handleViewAsUser}
+          onClick={onBack}
           variant="outline"
-          className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple/10"
+          className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all flex items-center whitespace-nowrap"
         >
-          Visualizar como usuário
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Voltar
         </Button>
         
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            onClick={onBack}
-            variant="outline"
-            className="border-gray-700 text-white hover:bg-gray-800"
-          >
-            Voltar
-          </Button>
+        <div className="flex gap-3">
+          {isEditMode && (
+            <Button
+              onClick={onDelete}
+              variant="outline"
+              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center whitespace-nowrap"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Excluir Evento
+            </Button>
+          )}
           
           <Button
-            type="button"
             onClick={onSaveAsDraft}
             variant="outline"
-            className="border-cuencos-purple text-white hover:bg-cuencos-purple/20"
+            className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all flex items-center whitespace-nowrap"
           >
-            Salvar para Depois
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            Salvar como rascunho
           </Button>
           
           <Button
-            type="button"
             onClick={onPublish}
-            className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple"
+            className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple flex items-center whitespace-nowrap"
           >
-            Publicar Evento
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Publicar evento
           </Button>
         </div>
       </div>

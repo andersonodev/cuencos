@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Container from './ui/container';
 import '../styles/navbar.css';
 import '../styles/mobile-menu.css';
 
@@ -37,32 +38,34 @@ const GuestNavbar = () => {
 
   return (
     <header className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          <img 
-            src="/assets/logo/logocuencosroxa.png" 
-            alt="Cuencos Logo" 
-            className="logo-icon" 
-          />
-          <span className="logo-text">Cuencos</span>
-        </Link>
-        
-        <div className="menu-toggle" onClick={openMenu}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        
-        <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
-          <div className="close-menu" onClick={closeMenu}></div>
-          <Link to="/login" className="nav-item" onClick={closeMenu}>
-            <span>Venda aqui</span>
+      <Container padding={false}>
+        <div className="navbar-container w-full">
+          <Link to="/" className="navbar-logo">
+            <img 
+              src="/assets/logo/logocuencosroxa.png" 
+              alt="Cuencos Logo" 
+              className="logo-icon" 
+            />
+            <span className="logo-text">Cuencos</span>
           </Link>
-          <Link to="/login" className="nav-item login-button" onClick={closeMenu}>
-            <span>Login</span>
-          </Link>
+          
+          <div className="menu-toggle" onClick={openMenu}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          
+          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
+            <div className="close-menu" onClick={closeMenu}></div>
+            <Link to="/login" className="nav-item" onClick={closeMenu}>
+              <span>Venda aqui</span>
+            </Link>
+            <Link to="/login" className="nav-item login-button" onClick={closeMenu}>
+              <span>Login</span>
+            </Link>
+          </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
 };

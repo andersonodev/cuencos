@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import EventCard from '../components/EventCard';
 import EventFilter from '../components/EventFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Container from '../components/ui/container'; // Importação adicionada
 import '../styles/homepage.css';
 
 const HomePage = () => {
@@ -14,9 +15,10 @@ const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   
   useEffect(() => {
-    // Inicializar com eventos não rascunho
+    // Inicializar com todos os eventos não rascunho
     setFilteredEvents(events.filter(event => !event.isDraft));
   }, [events]);
   
@@ -112,6 +114,19 @@ const HomePage = () => {
     setFilteredEvents(filtered);
   };
 
+  // Número de eventos a exibir inicialmente
+  const initialEventsToShow = 6;
+
+  // Função para mostrar todos os eventos
+  const handleShowAllEvents = () => {
+    setShowAllEvents(true);
+  };
+
+  // Obter os eventos a serem exibidos (todos ou limitados)
+  const eventsToDisplay = showAllEvents 
+    ? filteredEvents 
+    : filteredEvents.slice(0, initialEventsToShow);
+
   return (
     <>
       <Header />
@@ -127,14 +142,16 @@ const HomePage = () => {
               className={`hero-slide ${index === activeSlide ? 'active' : ''}`}
               style={{ backgroundImage: `linear-gradient(to right, rgba(162, 0, 255, 0.7), rgba(162, 0, 255, 0.4)), url(${heroEvent.image})` }}
             >
-              <div className="hero-content">
-                <h1 className="hero-title">{heroEvent.title}</h1>
-                <p className="hero-description">{heroEvent.description}</p>
-                <div className="hero-buttons">
-                  <Link to="/login" className="btn-primary">Comprar</Link>
-                  <Link to={`/events/${heroEvent.id}`} className="btn-secondary">Saiba Mais</Link>
+              <Container>
+                <div className="hero-content">
+                  <h1 className="hero-title">{heroEvent.title}</h1>
+                  <p className="hero-description">{heroEvent.description}</p>
+                  <div className="hero-buttons">
+                    <Link to="/login" className="btn-primary">Comprar</Link>
+                    <Link to={`/events/${heroEvent.id}`} className="btn-secondary">Saiba Mais</Link>
+                  </div>
                 </div>
-              </div>
+              </Container>
             </div>
           ))}
           
@@ -149,35 +166,36 @@ const HomePage = () => {
 
         {/* Filtro centralizado com sobreposição ao banner */}
         <section className="filtro-section">
-          <div className="container mx-auto px-4 relative">
+          <Container>
             <div className="filtro-wrapper">
               <EventFilter onFilterChange={handleFilterChange} />
             </div>
-          </div>
+          </Container>
         </section>
           
         <section className="eventos">
           <div className="eventos-header">
             <h2>Eventos em alta</h2>
             <div className="eventos-filtros">
-              <select>
+              <select className="w-full sm:w-auto bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 px-4 text-white">
                 <option>Dias da Semana</option>
                 <option>Segunda</option>
                 <option>Sexta</option>
                 <option>Sábado</option>
               </select>
-              <select>
+              <select className="w-full sm:w-auto bg-white bg-opacity-10 border border-gray-600 rounded-full py-1 px-4 text-white">
                 <option>Qualquer Categoria</option>
                 <option>Festas</option>
                 <option>Shows</option>
                 <option>Eventos Acadêmicos</option>
+                <option>Esportes</option>
               </select>
             </div>
           </div>
 
           <div className="eventos-grid">
-            {filteredEvents.length > 0 ? (
-              filteredEvents.slice(0, 6).map(event => (
+            {eventsToDisplay.length > 0 ? (
+              eventsToDisplay.map(event => (
                 <EventCard key={event.id} event={event} />
               ))
             ) : (
@@ -193,41 +211,47 @@ const HomePage = () => {
             )}
           </div>
           
-          <div className="explorar">
-            <button>Explorar Mais</button>
-          </div>
+          {/* Botão "Explorar Mais" - visível apenas se houver mais eventos para mostrar */}
+          {!showAllEvents && filteredEvents.length > initialEventsToShow && (
+            <div className="explorar">
+              <button onClick={handleShowAllEvents}>Explorar Mais</button>
+            </div>
+          )}
         </section>
 
+        {/* Footer */}
         <footer className="footer">
-          <div className="footer-content">
-            <div className="footer-col">
-              <img src="/footer-logo.png" alt="Logo Cuencos" className="footer-logo" /> {/* Caminho atualizado */}
-              <p>
-                Cuencos é uma plataforma de autoatendimento para venda de ingressos que conecta
-                universitários a eventos criados por e para a comunidade acadêmica.
-              </p>
+          <Container>
+            <div className="footer-content grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
+              <div className="footer-col">
+                <img src="/footer-logo.png" alt="Logo Cuencos" className="footer-logo mb-4" />
+                <p className="text-sm md:text-base">
+                  Cuencos é uma plataforma de autoatendimento para venda de ingressos que conecta
+                  universitários a eventos criados por e para a comunidade acadêmica.
+                </p>
+              </div>
+
+              <div className="footer-col md:pl-12">
+                <h4 className="text-lg font-medium mb-4">Sobre Nós</h4>
+                <ul className="space-y-2">
+                  <li><Link to="#" className="hover:text-cuencos-purple transition-colors">Conheça o Cuencos</Link></li>
+                  <li><Link to="#" className="hover:text-cuencos-purple transition-colors">Contato</Link></li>
+                  <li><Link to="#" className="hover:text-cuencos-purple transition-colors">Política de Privacidade</Link></li>
+                  <li><Link to="#" className="hover:text-cuencos-purple transition-colors">Termos de Uso</Link></li>
+                </ul>
+              </div>
+
+              <div className="footer-col">
+                <h4 className="text-lg font-medium mb-4">Anuncie na Cuencos!</h4>
+                <p className="mb-4">Buscando anunciar num local de confiança a sua festa?</p>
+                <Link to="#" className="footer-btn bg-cuencos-purple text-white py-2 px-6 rounded-full inline-block">Anunciar Agora</Link>
+              </div>
             </div>
 
-            <div className="footer-col" style={{padding: "0 3rem 0 6rem"}}>
-              <h4>Sobre Nós</h4>
-              <ul>
-                <li><Link to="#">Conheça o Cuencos</Link></li>
-                <li><Link to="#">Contato</Link></li>
-                <li><Link to="#">Política de Privacidade</Link></li>
-                <li><Link to="#">Termos de Uso</Link></li>
-              </ul>
-            </div>
+            <hr className="footer-divider opacity-20" />
 
-            <div className="footer-col">
-              <h4>Anuncie na Cuencos!</h4>
-              <p>Buscando anunciar num local de confiança a sua festa?</p>
-              <Link to="#" className="footer-btn">Anunciar Agora</Link>
-            </div>
-          </div>
-
-          <hr className="footer-divider" />
-
-          <p className="footer-copy">Copyright © 2025 Cuencos</p>
+            <p className="footer-copy text-center py-4 text-sm">Copyright © 2025 Cuencos</p>
+          </Container>
         </footer>
       </main>
     </>

@@ -141,6 +141,46 @@ export const AuthProvider = ({ children }) => {
     return result;
   };
 
+  // Função para atualizar o email do usuário
+  const updateUserEmail = (password, newEmail) => {
+    try {
+      // Verificar se o usuário está autenticado
+      if (!user) {
+        return false;
+      }
+      
+      // Verificar se a senha está correta (simulação)
+      // Em uma aplicação real, isso seria verificado no backend
+      const storedUsers = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const userRecord = storedUsers.find(u => u.id === user.id || u.email === user.email);
+      
+      if (!userRecord || userRecord.password !== password) {
+        return false;
+      }
+      
+      // Atualizar o email do usuário no localStorage
+      const updatedUsers = storedUsers.map(u => {
+        if (u.id === user.id || u.email === user.email) {
+          return { ...u, email: newEmail };
+        }
+        return u;
+      });
+      
+      localStorage.setItem('usuarios', JSON.stringify(updatedUsers));
+      
+      // Atualizar o usuário no estado atual
+      setUser(prev => ({ ...prev, email: newEmail }));
+      
+      // Atualizar também no usuarioLogado
+      localStorage.setItem('usuarioLogado', JSON.stringify({ ...user, email: newEmail }));
+      
+      return true;
+    } catch (error) {
+      console.error("Erro ao atualizar email:", error);
+      return false;
+    }
+  };
+
   // Verificar se o usuário é organizador
   const isOrganizer = () => {
     return user && user.tipo === 'organizador';
@@ -224,7 +264,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     isOrganizer,
     switchUserRole,
-    previousRole
+    previousRole,
+    updateUserEmail // Nova função para atualizar email
   };
 
   return (

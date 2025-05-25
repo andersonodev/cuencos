@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import CategorySelect from '../ui/CategorySelect';
 import { 
   Select,
   SelectContent,
@@ -12,20 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import CustomDatePicker from '../ui/DatePicker';
 
-const EditionStep = ({ onSave, initialData, onBack }) => {
+const EditionStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     date: '',
     startTime: '',
     endTime: '',
+    endDate: '', // Novo campo para data final
     location: '',
     description: '',
   });
   
   const [errors, setErrors] = useState({});
   
+  // Converter strings de data para objetos Date
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -34,6 +37,7 @@ const EditionStep = ({ onSave, initialData, onBack }) => {
         date: initialData.date || '',
         startTime: initialData.startTime || '',
         endTime: initialData.endTime || '',
+        endDate: initialData.endDate || '',
         location: initialData.location || '',
         description: initialData.description || '',
       });
@@ -56,6 +60,22 @@ const EditionStep = ({ onSave, initialData, onBack }) => {
     // Clear error when field is being edited
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+  
+  // Manipuladores de data específicos
+  const handleDateChange = (date, field) => {
+    // Extrai o dia do objeto Date
+    const day = date.getDate();
+    
+    setFormData(prev => ({
+      ...prev,
+      [field]: day.toString() // Guarda apenas o dia como string
+    }));
+    
+    // Limpa erro se existir
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
   
@@ -136,59 +156,34 @@ const EditionStep = ({ onSave, initialData, onBack }) => {
               <span className="text-red-500 text-xs">{errors.category}</span>
             )}
           </div>
-          <Select
+          <CategorySelect
             value={formData.category}
-            onValueChange={(value) => handleSelectChange(value, 'category')}
-          >
-            <SelectTrigger 
-              className={`w-full bg-gray-900 border-gray-700 text-white ${
-                errors.category ? 'border-red-500' : ''
-              }`}
-            >
-              <SelectValue placeholder="Escolha uma categoria" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-              <SelectGroup>
-                {categories.map((category) => (
-                  <SelectItem 
-                    key={category} 
-                    value={category}
-                    className="hover:bg-gray-700 cursor-pointer"
-                  >
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            onChange={(value) => handleSelectChange(value, 'category')}
+            error={errors.category}
+          />
         </div>
         
         <h3 className="text-white text-lg mt-8">Data e Horário</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="space-y-2">
             <div className="flex items-center">
               <label htmlFor="date" className="text-white text-sm">
-                Data de começo <span className="text-red-500">*</span>
+                Data de início <span className="text-red-500">*</span>
               </label>
             </div>
-            <div className="relative">
-              <Input
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                placeholder="09/05/2025"
-                className="bg-gray-900 border-gray-700 text-white pl-10"
-              />
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cuencos-purple" size={16} />
-            </div>
+            <CustomDatePicker
+              value={formData.date ? new Date(2025, 4, parseInt(formData.date)) : null}
+              onChange={(date) => handleDateChange(date, 'date')}
+              placeholder="Selecione uma data"
+              label={null}
+            />
           </div>
           
           <div className="space-y-2">
             <div className="flex items-center">
               <label htmlFor="startTime" className="text-white text-sm">
-                Horário de Começo <span className="text-red-500">*</span>
+                Horário de início <span className="text-red-500">*</span>
               </label>
             </div>
             <div className="relative">
@@ -203,11 +198,27 @@ const EditionStep = ({ onSave, initialData, onBack }) => {
               <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cuencos-purple" size={16} />
             </div>
           </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center">
+              <label htmlFor="endDate" className="text-white text-sm">
+                Data de término <span className="text-red-500">*</span>
+              </label>
+            </div>
+            <CustomDatePicker
+              value={formData.endDate ? new Date(2025, 4, parseInt(formData.endDate)) : null}
+              onChange={(date) => handleDateChange(date, 'endDate')}
+              placeholder="Selecione uma data"
+              label={null}
+            />
+          </div>
           
           <div className="space-y-2">
             <div className="flex items-center">
               <label htmlFor="endTime" className="text-white text-sm">
-                Horário de fim <span className="text-red-500">*</span>
+                Horário de término <span className="text-red-500">*</span>
               </label>
             </div>
             <div className="relative">
@@ -275,17 +286,39 @@ const EditionStep = ({ onSave, initialData, onBack }) => {
             type="button"
             onClick={onBack}
             variant="outline"
-            className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all"
+            className="border-cuencos-purple text-cuencos-purple hover:bg-cuencos-purple hover:text-white transition-all flex items-center whitespace-nowrap"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
             Voltar
           </Button>
           
-          <Button
-            type="submit"
-            className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple"
-          >
-            Salvar e Continuar
-          </Button>
+          <div className="flex gap-3">
+            {isEditMode && (
+              <Button
+                type="button"
+                onClick={onDelete}
+                variant="outline"
+                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center whitespace-nowrap"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Excluir Evento
+              </Button>
+            )}
+            
+            <Button
+              type="submit"
+              className="bg-cuencos-purple text-white hover:bg-cuencos-darkPurple flex items-center whitespace-nowrap"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+              Salvar e Continuar
+            </Button>
+          </div>
         </div>
       </form>
     </div>

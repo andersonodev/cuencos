@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import GuestNavbar from './GuestNavbar';
+import Container from './ui/container';
 import '../styles/navbar.css';
 import '../styles/mobile-menu.css';
 import RoleSwitcher from './RoleSwitcher';
@@ -58,47 +59,50 @@ const Header = () => {
   // Se chegou aqui, o usuário está logado e verá o menu de usuário autenticado
   return (
     <header className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          <img 
-            src="/assets/logo/logocuencosroxa.png" 
-            alt="Cuencos Logo" 
-            className="logo-icon" 
-          />
-          <span className="logo-text">Cuencos</span>
-        </Link>
-        
-        <div className="menu-toggle" onClick={openMenu}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        
-        <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
-          <div className="close-menu" onClick={closeMenu}></div>
-          <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-            <img src="/assets/icons/star.png" alt="Favoritos" className="nav-icon" />
-            <span>Favoritos</span>
-          </Link>
-          <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-            <img src="/assets/ticone-ingresso.png" alt="Meus Ingressos" className="nav-icon" />
-            <span>Meus Ingressos</span>
+      <Container padding={false}>
+        <div className="navbar-container w-full">
+          <Link to="/" className="navbar-logo">
+            <img 
+              src="/assets/logo/logocuencosroxa.png" 
+              alt="Cuencos Logo" 
+              className="logo-icon" 
+            />
+            <span className="logo-text">Cuencos</span>
           </Link>
           
-          {/* Adicionando o botão de alternância de papel aqui */}
-          <div className="nav-item">
-            <RoleSwitcher />
+          <div className="menu-toggle" onClick={openMenu}>
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
           
-          <Link to="/account" className="nav-item" onClick={closeMenu}>
-            <img src="/assets/icons/profilebutton.png" alt="Perfil" className="nav-icon" />
-            <span>Perfil ({firstName})</span>
-          </Link>
-          <button onClick={handleLogout} className="nav-item logout-button">
-            <span>Sair</span>
-          </button>
+          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
+            <div className="close-menu" onClick={closeMenu}></div>
+            <Link to="/favorites" className="nav-item" onClick={closeMenu}>
+              {/* Invertendo a ordem: texto primeiro, depois o ícone */}
+              <span>Favoritos</span>
+              <img src="/assets/icons/star.png" alt="Favoritos" className="nav-icon" />
+            </Link>
+            <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
+              <span>Meus Ingressos</span>
+              <img src="/assets/icons/ticket.png" alt="Meus Ingressos" className="nav-icon" />
+            </Link>
+            
+            {/* Adicionando o botão de alternância de papel aqui */}
+            <div className="nav-item">
+              <RoleSwitcher />
+            </div>
+            
+            <Link to="/account" className="nav-item" onClick={closeMenu}>
+              <span>Perfil ({firstName})</span>
+              <img src="/assets/icons/profile.png" alt="Perfil" className="nav-icon" />
+            </Link>
+            <button onClick={handleLogout} className="nav-item logout-button">
+              <span>Sair</span>
+            </button>
+          </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
 };

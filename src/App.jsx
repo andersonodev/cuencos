@@ -23,8 +23,12 @@ import SearchResultsPage from './pages/SearchResultsPage';
 import NotFound from './pages/NotFound';
 import DashboardPage from './pages/DashboardPage';
 import DashboardManagementPage from './pages/DashboardManagementPage';
+import DashboardAccountPage from './pages/DashboardAccountPage';
+import DashboardEmailPage from './pages/DashboardEmailPage';
 import EventCreationPage from './pages/EventCreationPage';
 import ComingSoonPage from './pages/ComingSoonPage';
+import OrganizerAccountPage from './pages/OrganizerAccountPage';
+import OrganizerChangeEmailPage from './pages/OrganizerChangeEmailPage';
 
 // Importar o utilitário para verificar disponibilidade do localStorage
 import { isAvailable } from './lib/storage';
@@ -85,8 +89,15 @@ const App = () => {
                 <Route path="/search" element={<SearchResultsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/dashboard/management" element={<DashboardManagementPage />} />
+                <Route path="/dashboard/account" element={<DashboardAccountPage />} />
+                <Route path="/dashboard/email" element={<DashboardEmailPage />} />
                 <Route path="/event/:id" element={<EventCreationPage />} />
                 <Route path="/coming-soon" element={<ComingSoonPage />} /> {/* Nova rota */}
+                
+                {/* Rotas para organizador */}
+                <Route path="/dashboard/account" element={<OrganizerAccountPage />} />
+                <Route path="/dashboard/email" element={<OrganizerChangeEmailPage />} />
+                
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Router>

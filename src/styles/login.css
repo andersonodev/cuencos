@@ -39,8 +39,9 @@ a {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
-  background-size: cover;
-  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Overlay semitransparente roxo */
@@ -55,8 +56,30 @@ a {
   z-index: 0;
 }
 
-/* Logo - Atualizado conforme especificações */
+/* Logo */
+.logo {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
 
+.logo img {
+  height: 50px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-family: "Nasalization-Regular", sans-serif;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
 
 /* Texto promocional */
 .promo-text {
@@ -80,31 +103,41 @@ a {
 /* Card de login */
 .login-card {
   position: absolute;
-  bottom: 5px;  /* Modificado: reduzido de 20px para 5px para esconder mais na parte inferior */
+  bottom: 5px;
   right: 10%;
   width: 500px;
-  height: auto;  /* Alterado para auto para se ajustar ao conteúdo */
-  min-height: 670px;  /* Definido altura mínima para manter a aparência */
+  height: auto;
+  min-height: 670px;
   background: white;
-  border-radius: 12px;  /* Restaurado border-radius em todos os cantos */
+  border-radius: 12px;
   padding: 40px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Alterado de space-between para flex-start para melhor controle do espaçamento */
+  justify-content: flex-start;
+}
+
+/* Título h1 */
+.login-card h1 {
+  font-family: "Zen Kaku Gothic Antique", sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #000000;
 }
 
 /* Mensagem de boas-vindas */
 .welcome-message {
-  text-align: left; /* Alterado de center para left */
+  text-align: left;
   font-family: "Zen Kaku Gothic Antique", sans-serif;
   font-size: 16px;
-  font-weight: bold; /* Adicionado: texto em negrito */
+  font-weight: bold;
   color: #666;
   margin-bottom: 25px;
-  margin-top: -15px; /* Para ajustar espaçamento após o título */
-  padding-left: 5px; /* Adicionado: espaçamento para não colar totalmente na borda */
+  margin-top: -15px;
+  padding-left: 5px;
 }
 
 /* Form styles */
@@ -128,8 +161,8 @@ a {
   border-radius: 8px;
   font-size: 16px;
   font-family: "Zen Kaku Gothic Antique", sans-serif;
-  color: #333; /* Cor escura para o texto digitado */
-  background-color: #fff; /* Garante fundo branco para contraste */
+  color: #333;
+  background-color: #fff;
 }
 
 .form-group input:focus {
@@ -138,7 +171,7 @@ a {
 }
 
 .form-group input::placeholder {
-  color: #aaa; /* Cor mais clara para placeholder */
+  color: #aaa;
 }
 
 .password-input {
@@ -203,7 +236,7 @@ a {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  margin-bottom: 30px; /* Aumentado de 15px para 30px para criar mais espaço acima dos links */
+  margin-bottom: 30px;
   cursor: pointer;
 }
 
@@ -221,24 +254,24 @@ a {
 .signup-link {
   text-align: center;
   font-size: 14px;
-  margin-top: 0; /* Removido margin-top: auto para não empurrar para o final */
-  margin-bottom: 15px; /* Adicionado espaçamento abaixo */
+  margin-top: 0;
+  margin-bottom: 15px;
   padding-top: 10px;
 }
 
 .signup-link span {
-  color: #000; /* Modificado de #333 para preto */
+  color: #000;
 }
 
 .signup-link a {
   font-weight: bold;
-  color: #A200FF; /* Modificado de #000 para roxo */
+  color: #A200FF;
   text-decoration: none;
 }
 
 /* Estilos para informação do organizador */
 .login-info {
-  margin-top: 0; /* Removido margin-top para aproximar do elemento anterior */
+  margin-top: 0;
   text-align: center;
   font-size: 14px;
 }
@@ -249,24 +282,22 @@ a {
   color: #A200FF;
   text-decoration: underline;
   cursor: pointer;
-  font-size: 13px;
-  padding: 0;
+  font-size: 14px;
 }
 
 .organizador-info {
   margin-top: 10px;
-  margin-bottom: 30px;
   padding: 10px;
-  background-color: rgba(162, 0, 255, 0.1);
+  background-color: #f9f3ff;
   border-radius: 5px;
-  font-size: 12px;
 }
 
 .organizador-info p {
   margin: 5px 0;
+  font-size: 12px;
 }
 
-/* Responsividade */
+/* Responsividade - Ajustes para diferentes tamanhos de tela */
 @media (max-width: 1200px) {
   .promo-text {
     left: 5%;
@@ -278,88 +309,82 @@ a {
   }
   
   .login-card {
-    width: 550px;
-    height: auto;
-    min-height: 580px;
+    right: 5%;
+    width: 450px;
+    padding: 30px;
   }
 }
 
 @media (max-width: 992px) {
   .promo-text {
-    top: 15%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     text-align: center;
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto;
+    top: 30%;
+    max-width: 80%;
   }
   
   .login-card {
-    width: 90%;
-    max-width: 550px;
-    bottom: 1%;
-    right: 50%;
-    transform: translateX(50%);
-    padding: 30px;
-    height: auto;
-    min-height: 580px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: 50px;
+    width: 80%;
+    max-width: 500px;
   }
   
   .logo {
     top: 20px;
-    left: 20px;
-    right: auto;
-    width: auto;
   }
   
   .logo-text {
     font-size: 22px;
-    color: #ffffff;
-
   }
   
   .logo img {
-    width: 35px;
+    height: 40px;
   }
 }
 
 @media (max-width: 768px) {
   .login-container {
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
     height: auto;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
   }
   
   .promo-text {
     position: relative;
-    top: 100px;
-    width: 90%;
-    max-width: none;
+    top: 90px;
+    left: 0;
     transform: none;
-    left: auto;
-    margin: 0 auto;
+    margin: 0 auto 30px;
+    padding: 0 20px;
+    max-width: 100%;
+    width: 100%;
+    text-align: center;
   }
   
   .login-card {
     position: relative;
-    width: 90%;
-    max-width: none;
-    height: auto;
-    min-height: 500px;
-    margin: 150px auto 30px;
-    right: auto;
     bottom: auto;
+    left: auto;
     transform: none;
-    border-radius: 15px;
+    margin: 120px auto 30px;
+    width: 90%;
+    max-width: 450px;
+    min-height: auto;
+    padding: 25px;
   }
   
   .logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    left: 0;
+    position: fixed;
+    top: 15px;
+    left: 20px;
+    transform: none;
   }
   
   h1 {
@@ -378,7 +403,8 @@ a {
 
 @media (max-width: 576px) {
   .logo {
-    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .promo-text {
@@ -386,13 +412,13 @@ a {
   }
   
   .promo-text p {
-    font-size: 20px;
+    font-size: 24px;
   }
   
   .login-card {
-    width: 95%;
+    width: calc(100% - 30px);
     padding: 20px;
-    margin-top: 120px;
+    margin-top: 100px;
   }
   
   h1 {
@@ -403,8 +429,8 @@ a {
     font-size: 13px;
   }
   
-  .divider {
-    margin: 20px 0;
+  .divider-container {
+    margin: 15px 0;
   }
   
   .google-login {
@@ -415,23 +441,23 @@ a {
     font-size: 14px;
   }
   
-  .signup-link {
+  .signup-link, .login-info {
     font-size: 13px;
   }
 }
 
-/* Corrigir problemas de viewport em dispositivos muito pequenos */
 @media (max-height: 650px) and (max-width: 768px) {
   .login-container {
     height: auto;
-    min-height: 100%;
+    padding-top: 0;
+    padding-bottom: 20px;
   }
   
   .login-card {
-    margin-top: 100px;
-    margin-bottom: 20px;
-    padding: 15px;
-    min-height: 450px;
+    margin: 100px auto 20px;
+    min-height: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
   
   .promo-text {
@@ -439,61 +465,50 @@ a {
   }
   
   .promo-text p {
-    font-size: 18px;
+    font-size: 22px;
   }
 }
 
-/* Orientação horizontal em dispositivos móveis */
-@media (max-height: 450px) and (orientation: landscape) {
-  .login-container {
-    height: auto;
-    min-height: 100%;
+@media (max-height: 700px) {
+  .login-card {
+    min-height: auto;
+    bottom: 20px;
   }
   
-  .logo {
-    position: relative;
-    top: 10px;
-    margin-bottom: 10px;
+  .promo-text {
+    top: 45%;
+  }
+  
+  .promo-text p {
+    font-size: 24px;
+  }
+}
+
+/* Para telas pequenas em orientação paisagem */
+@media (max-width: 767px) and (orientation: landscape) {
+  .login-container {
+    height: auto;
+    min-height: 100vh;
+    padding: 30px 0;
   }
   
   .promo-text {
     position: relative;
-    top: 0;
-    margin: 0 auto 20px;
+    top: 40px;
+    margin-bottom: 10px;
   }
   
   .login-card {
     position: relative;
-    margin: 10px auto 20px;
-    min-height: 400px;
+    bottom: auto;
+    margin: 70px auto 30px;
   }
   
-  h1 {
-    margin-bottom: 10px;
+  .logo {
+    position: absolute;
   }
   
   .form-group {
     margin-bottom: 15px;
-  }
-  
-  .divider {
-    margin: 15px 0;
-  }
-}
-
-/* Para telas muito pequenas */
-@media (max-height: 700px) {
-  .login-card {
-    transform: translateX(50%) scale(0.9);
-    transform-origin: bottom center;
-    bottom: 5%; /* Modificado: aumentado para garantir visibilidade */
-  }
-  
-  .promo-text {
-    top: 15%;
-  }
-  
-  .promo-text p {
-    font-size: 22px;
   }
 }

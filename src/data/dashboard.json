@@ -1,168 +1,210 @@
 {
   "filtros": {
     "day": {
-      "label": "Dia",
+      "label": "Hoje",
       "descritor": "Hoje"
     },
     "week": {
-      "label": "Semana",
-      "descritor": "Últimos 7 dias" 
+      "label": "Esta Semana", 
+      "descritor": "Esta Semana"
     },
     "month": {
-      "label": "Mês",
-      "descritor": "Abril 2025"
+      "label": "Este Mês",
+      "descritor": "Maio 2025"
     },
     "semester": {
-      "label": "Semestre",
+      "label": "Este Semestre",
       "descritor": "1º Semestre 2025"
-    }
-  },
-  "day": {
-    "visitas": {
-      "labels": ["08h", "10h", "12h", "14h", "16h", "18h", "20h", "22h", "00h"],
-      "dados": [25, 48, 87, 65, 120, 139, 165, 187, 152],
-      "pico": {
-        "dia": "22h",
-        "valor": 187
-      }
-    },
-    "distribuicaoReceita": {
-      "labels": ["Engenharias Paranaense", "PUC IN RIO"],
-      "dados": [95, 5],
-      "cores": ["#b43eff", "#4DB5FF"]
-    },
-    "eventosPopulares": [
-      { "id": "01", "nome": "PUC IN RIO", "popularidade": 92, "cor": "#b43eff" },
-      { "id": "02", "nome": "Engenharias Paranaense", "popularidade": 60, "cor": "#4DB5FF" },
-      { "id": "03", "nome": "BLACKOUT - Submundo 707", "popularidade": 48, "cor": "#ffbe0b" },
-      { "id": "04", "nome": "Clubhouse (Open Bar)", "popularidade": 35, "cor": "#ff5765" },
-      { "id": "05", "nome": "Ressaca dos Campeões", "popularidade": 22, "cor": "#00a6fb" }
-    ],
-    "vendasAbril": {
-      "total": 2184,
-      "crescimento": 12.8,
-      "produtosVendidos": 38,
-      "crescimentoProdutos": 3.7,
-      "novosClientes": 15,
-      "crescimentoClientes": 9.5
-    }
-  },
-  "week": {
-    "visitas": {
-      "labels": ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
-      "dados": [375, 420, 450, 520, 680, 790, 510],
-      "pico": {
-        "dia": "Sábado",
-        "valor": 790
-      }
-    },
-    "distribuicaoReceita": {
-      "labels": ["Engenharias Paranaense", "PUC IN RIO", "Calourada 2025.1"],
-      "dados": [65, 28, 7],
-      "cores": ["#b43eff", "#4DB5FF", "#00c781"]
-    },
-    "eventosPopulares": [
-      { "id": "01", "nome": "PUC IN RIO", "popularidade": 87, "cor": "#b43eff" },
-      { "id": "02", "nome": "Engenharias Paranaense", "popularidade": 74, "cor": "#4DB5FF" },
-      { "id": "03", "nome": "BLACKOUT - Submundo 707", "popularidade": 63, "cor": "#ffbe0b" },
-      { "id": "04", "nome": "Calourada 2025.1", "popularidade": 52, "cor": "#00c781" },
-      { "id": "05", "nome": "Baile do Magna", "popularidade": 48, "cor": "#ff5765" }
-    ],
-    "vendasAbril": {
-      "total": 12980,
-      "crescimento": 22.5,
-      "produtosVendidos": 234,
-      "crescimentoProdutos": 15.8,
-      "novosClientes": 78,
-      "crescimentoClientes": 18.2
     }
   },
   "month": {
     "visitas": {
       "labels": ["1", "5", "10", "15", "20", "25", "30"],
-      "dados": [1200, 1800, 2200, 3100, 2800, 3600, 3200],
+      "dados": [120, 185, 290, 410, 380, 520, 450],
       "pico": {
         "dia": "25",
-        "valor": 3600
+        "valor": 520
       }
     },
     "distribuicaoReceita": {
-      "labels": ["Engenharias Paranaense", "PUC IN RIO"],
-      "dados": [92, 8],
-      "cores": ["#b43eff", "#4DB5FF"]
+      "labels": ["PUC IN RIO", "Festival Gastronômico", "Rave Eletrônica", "Startup Weekend", "Outros"],
+      "dados": [35, 25, 20, 12, 8],
+      "cores": ["#ff6b35", "#f7931e", "#00b4d8", "#9d4edd", "#06ffa5"]
     },
     "eventosPopulares": [
-      { "id": "01", "nome": "PUC IN RIO", "popularidade": 84, "cor": "#b43eff" },
-      { "id": "02", "nome": "Engenharias Paranaense", "popularidade": 44, "cor": "#4DB5FF" },
-      { "id": "03", "nome": "BLACKOUT - Submundo 707", "popularidade": 35, "cor": "#ffbe0b" },
-      { "id": "04", "nome": "Clubhouse (Open Bar)", "popularidade": 22, "cor": "#ff5765" },
-      { "id": "05", "nome": "Baile do Magna", "popularidade": 18, "cor": "#00a6fb" }
+      {
+        "id": 1,
+        "nome": "PUC IN RIO",
+        "popularidade": 84,
+        "cor": "#ff6b35"
+      },
+      {
+        "id": 19,
+        "nome": "Festival Gastronômico Universitário",
+        "popularidade": 67,
+        "cor": "#f7931e"
+      },
+      {
+        "id": 20,
+        "nome": "Rave Eletrônica Universitária",
+        "popularidade": 89,
+        "cor": "#00b4d8"
+      },
+      {
+        "id": 10,
+        "nome": "Startup Weekend Universitário",
+        "popularidade": 58,
+        "cor": "#9d4edd"
+      },
+      {
+        "id": 12,
+        "nome": "Festival de Bandas Universitárias",
+        "popularidade": 72,
+        "cor": "#06ffa5"
+      }
     ],
     "vendasAbril": {
-      "total": 58920,
-      "crescimento": 37.5,
-      "produtosVendidos": 1245,
-      "crescimentoProdutos": 24.8,
-      "novosClientes": 320,
-      "crescimentoClientes": 32.5
+      "total": 1247500,
+      "crescimento": 23.5,
+      "produtosVendidos": 2847,
+      "crescimentoProdutos": 18.2,
+      "novosClientes": 1689,
+      "crescimentoClientes": 31.7
+    }
+  },
+  "week": {
+    "visitas": {
+      "labels": ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"],
+      "dados": [85, 92, 78, 105, 134, 156, 98],
+      "pico": {
+        "dia": "Sab",
+        "valor": 156
+      }
+    },
+    "distribuicaoReceita": {
+      "labels": ["Eventos Noturnos", "Eventos Acadêmicos", "Shows", "Esportes", "Outros"],
+      "dados": [42, 28, 18, 8, 4],
+      "cores": ["#ff6b35", "#f7931e", "#00b4d8", "#9d4edd", "#06ffa5"]
+    },
+    "eventosPopulares": [
+      {
+        "id": 1,
+        "nome": "PUC IN RIO",
+        "popularidade": 84,
+        "cor": "#ff6b35"
+      },
+      {
+        "id": 3,
+        "nome": "BAILE DO MAGNA",
+        "popularidade": 76,
+        "cor": "#f7931e"
+      },
+      {
+        "id": 7,
+        "nome": "FORRÓ UNIVERSITÁRIO DO NORDESTE",
+        "popularidade": 63,
+        "cor": "#00b4d8"
+      }
+    ],
+    "vendasAbril": {
+      "total": 287650,
+      "crescimento": 15.8,
+      "produtosVendidos": 672,
+      "crescimentoProdutos": 12.4,
+      "novosClientes": 298,
+      "crescimentoClientes": 22.1
+    }
+  },
+  "day": {
+    "visitas": {
+      "labels": ["00h", "04h", "08h", "12h", "16h", "20h", "24h"],
+      "dados": [12, 8, 15, 45, 78, 134, 89],
+      "pico": {
+        "dia": "20h",
+        "valor": 134
+      }
+    },
+    "distribuicaoReceita": {
+      "labels": ["Festa Noturna", "Evento Acadêmico", "Workshop", "Outros"],
+      "dados": [60, 25, 10, 5],
+      "cores": ["#ff6b35", "#f7931e", "#00b4d8", "#9d4edd"]
+    },
+    "eventosPopulares": [
+      {
+        "id": 1,
+        "nome": "PUC IN RIO",
+        "popularidade": 84,
+        "cor": "#ff6b35"
+      },
+      {
+        "id": 6,
+        "nome": "INTERCOMP 2025",
+        "popularidade": 91,
+        "cor": "#f7931e"
+      }
+    ],
+    "vendasAbril": {
+      "total": 45890,
+      "crescimento": 8.7,
+      "produtosVendidos": 127,
+      "crescimentoProdutos": 5.3,
+      "novosClientes": 43,
+      "crescimentoClientes": 12.8
     }
   },
   "semester": {
     "visitas": {
       "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-      "dados": [5800, 8200, 12500, 18000, 21500, 23800],
+      "dados": [2100, 2450, 2890, 3200, 3650, 4100],
       "pico": {
         "dia": "Jun",
-        "valor": 23800
+        "valor": 4100
       }
     },
     "distribuicaoReceita": {
-      "labels": ["Engenharias Paranaense", "PUC IN RIO", "Calourada 2025.1", "Outros"],
-      "dados": [48, 22, 18, 12],
-      "cores": ["#b43eff", "#4DB5FF", "#00c781", "#ffbe0b"]
+      "labels": ["Festas", "Eventos Acadêmicos", "Shows", "Esportes", "Outros"],
+      "dados": [38, 24, 22, 11, 5],
+      "cores": ["#ff6b35", "#f7931e", "#00b4d8", "#9d4edd", "#06ffa5"]
     },
     "eventosPopulares": [
-      { "id": "01", "nome": "PUC IN RIO", "popularidade": 78, "cor": "#b43eff" },
-      { "id": "02", "nome": "Engenharias Paranaense", "popularidade": 72, "cor": "#4DB5FF" },
-      { "id": "03", "nome": "Calourada 2025.1", "popularidade": 67, "cor": "#00c781" },
-      { "id": "04", "nome": "BLACKOUT - Submundo 707", "popularidade": 58, "cor": "#ffbe0b" },
-      { "id": "05", "nome": "Baile do Magna", "popularidade": 45, "cor": "#ff5765" }
+      {
+        "id": 1,
+        "nome": "PUC IN RIO",
+        "popularidade": 84,
+        "cor": "#ff6b35"
+      },
+      {
+        "id": 20,
+        "nome": "Rave Eletrônica Universitária",
+        "popularidade": 89,
+        "cor": "#f7931e"
+      },
+      {
+        "id": 12,
+        "nome": "Festival de Bandas Universitárias",
+        "popularidade": 72,
+        "cor": "#00b4d8"
+      },
+      {
+        "id": 8,
+        "nome": "Jogos Jurídicos Sulamericanos",
+        "popularidade": 45,
+        "cor": "#9d4edd"
+      },
+      {
+        "id": 6,
+        "nome": "INTERCOMP 2025",
+        "popularidade": 91,
+        "cor": "#06ffa5"
+      }
     ],
     "vendasAbril": {
-      "total": 284500,
-      "crescimento": 62.7,
-      "produtosVendidos": 5820,
-      "crescimentoProdutos": 42.3,
-      "novosClientes": 1240,
-      "crescimentoClientes": 85.4
+      "total": 7896540,
+      "crescimento": 45.3,
+      "produtosVendidos": 18567,
+      "crescimentoProdutos": 38.7,
+      "novosClientes": 12890,
+      "crescimentoClientes": 52.4
     }
-  },
-  "visitasAbril": {
-    "labels": ["1", "5", "10", "15", "20", "25", "30"],
-    "dados": [1200, 1800, 2200, 3100, 2800, 3600, 3200],
-    "pico": {
-      "dia": "25",
-      "valor": 3600
-    }
-  },
-  "distribuicaoReceita": {
-    "labels": ["Engenharias Paranaense", "PUC IN RIO"],
-    "dados": [92, 8],
-    "cores": ["#b43eff", "#4DB5FF"]
-  },
-  "eventosPopulares": [
-    { "id": "01", "nome": "PUC IN RIO", "popularidade": 84, "cor": "#b43eff" },
-    { "id": "02", "nome": "Engenharias Paranaense", "popularidade": 44, "cor": "#4DB5FF" },
-    { "id": "03", "nome": "BLACKOUT - Submundo 707", "popularidade": 35, "cor": "#ffbe0b" },
-    { "id": "04", "nome": "Clubhouse (Open Bar)", "popularidade": 22, "cor": "#ff5765" },
-    { "id": "05", "nome": "Baile do Magna", "popularidade": 18, "cor": "#00a6fb" }
-  ],
-  "vendasAbril": {
-    "total": 58920,
-    "crescimento": 37.5,
-    "produtosVendidos": 1245,
-    "crescimentoProdutos": 24.8,
-    "novosClientes": 320,
-    "crescimentoClientes": 32.5
   }
 }
