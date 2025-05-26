@@ -64,7 +64,7 @@ const Header = () => {
         <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
           <Link to="/" className="navbar-logo flex items-center gap-1">
             <img 
-              src="/assets/logo/logocuencosroxa.png" 
+              src="./assets/logo/logocuencosroxa.png" 
               alt="Cuencos Logo" 
               className="logo-icon" 
             />
@@ -80,11 +80,11 @@ const Header = () => {
           <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`} style={{ marginLeft: 'auto' }}>
             <div className="close-menu" onClick={closeMenu}></div>
             <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-              <img src="/assets/icons/star.png" alt="Favoritos" className="nav-icon" />
+              <img src="./assets/icons/star.png" alt="Favoritos" className="nav-icon" />
               <span>Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-              <img src="/assets/icons/icone-ingresso.png" alt="Meus Ingressos" className="nav-icon" />
+              <img src="./assets/icons/icone-ingresso.png" alt="Meus Ingressos" className="nav-icon" />
               <span>Meus Ingressos</span>
             </Link>
             
@@ -94,7 +94,7 @@ const Header = () => {
             </div>
             
             <Link to="/account" className="nav-item" onClick={closeMenu}>
-              <img src="/assets/icons/profilebutton.png" alt="Perfil" className="nav-icon" />
+              <img src="./assets/icons/profilebutton.png" alt="Perfil" className="nav-icon" />
               <span>Perfil ({firstName})</span>
             </Link>
             <button onClick={handleLogout} className="nav-item logout-button">

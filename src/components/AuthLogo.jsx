@@ -5,7 +5,7 @@ const AuthLogo = () => {
   return (
     <Link to="/" className="logo">
       <img 
-        src="/assets/images/logo-cuencos-roxa.png" 
+        src="./assets/images/logocuencosroxa.png" 
         alt="Logo Cuencos" 
         className="h-10 w-auto"
       />

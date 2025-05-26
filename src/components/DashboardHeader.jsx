@@ -28,11 +28,11 @@ const DashboardHeader = ({ user }) => {
       <div className="header-container" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
         <Link to="/" className="header-logo">
           <img 
-            src="/assets/logo/logocuencosroxa.png" 
+            src="./assets/logo/logocuencosroxa.png" 
             alt="Cuencos" 
             className="header-logo-icon"
             onError={(e) => {
-              e.target.src = "/assets/logo/logocuencospreta.svg";
+              e.target.src = "./assets/logo/logocuencospreta.svg";
             }}
           />
           <span id="CuencosTextOrganizador" className="header-logo-texto">Cuencos</span>
@@ -50,7 +50,7 @@ const DashboardHeader = ({ user }) => {
             <Link to="/dashboard" className="header-link menu-item">
               <div className="menu-item-content">
                 <img 
-                  src="/assets/icons/iconeDashboard.png" 
+                  src="./assets/icons/iconeDashboard.png" 
                   alt="Dashboard" 
                   className="header-icon"
                   onError={(e) => {
@@ -63,7 +63,7 @@ const DashboardHeader = ({ user }) => {
             <Link to="/dashboard/management" className="header-link menu-item">
               <div className="menu-item-content">
                 <img 
-                  src="/assets/icons/icone-ingresso.png" 
+                  src="./assets/icons/icone-ingresso.png" 
                   alt="Gerenciamento" 
                   className="header-icon"
                   onError={(e) => {

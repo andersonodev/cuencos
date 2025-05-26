@@ -27,19 +27,19 @@ const HomePage = () => {
       id: 1,
       title: "PUC IN RIO",
       description: "Quem aí não perde uma festa da MAIOR DA CAPITAL? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
-      image: "/assets/events/puc-in-rio.png", // Caminho atualizado para a pasta public
+      image: "./assets/events/puc-in-rio.png", // Caminho atualizado para a pasta public
     },
     {
       id: 2,
       title: "BAILE DO MAGNA",
       description: "Venha curtir a melhor festa universitária do semestre! Uma noite inesquecível com as melhores atrações.",
-      image: "/assets/events/baile-do-magna.png", // Caminho atualizado para a pasta public
+      image: "./assets/events/baile-do-magna.png", // Caminho atualizado para a pasta public
     },
     {
       id: 3,
       title: "CALOURADA 2025.1",
       description: "A festa de boas-vindas aos calouros que vai agitar o campus! Não perca essa celebração incrível.",
-      image: "/assets/events/calourada-brasil.png", // Caminho atualizado para a pasta public
+      image: "./assets/events/calourada-brasil.png", // Caminho atualizado para a pasta public
     }
   ];
   

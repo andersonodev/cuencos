@@ -81,7 +81,7 @@ const RegisterPage = () => {
     <div className="login-container">
       {/* Logo alinhada com o texto */}
       <div className="logo">
-        <img src="/assets/logo/logocuencospreta.svg" alt="Logo Cuencos" />
+        <img src="./assets/logo/logocuencospreta.svg" alt="Logo Cuencos" />
         <span className="logo-text">Cuencos</span>
       </div>
       
@@ -172,7 +172,7 @@ const RegisterPage = () => {
         </div>
         
         <div className="google-login">
-          <img src="/assets/icons/icon-google.png" alt="Google" />
+          <img src="./assets/icons/icon-google.png" alt="Google" />
           <span>Faça login com o Google</span>
         </div>
         
