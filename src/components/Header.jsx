@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import GuestNavbar from './GuestNavbar';
 import Container from './ui/container';
@@ -60,14 +61,14 @@ const Header = () => {
   return (
     <header className="navbar">
       <Container padding={false}>
-        <div className="navbar-container w-full">
-          <Link to="/" className="navbar-logo">
+        <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
+          <Link to="/" className="navbar-logo flex items-center gap-1">
             <img 
               src="/assets/logo/logocuencosroxa.png" 
               alt="Cuencos Logo" 
               className="logo-icon" 
             />
-            <span className="logo-text">Cuencos</span>
+            <span className="logo-text-headeruser">Cuencos</span>
           </Link>
           
           <div className="menu-toggle" onClick={openMenu}>
@@ -76,16 +77,15 @@ const Header = () => {
             <span></span>
           </div>
           
-          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
+          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`} style={{ marginLeft: 'auto' }}>
             <div className="close-menu" onClick={closeMenu}></div>
             <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-              {/* Invertendo a ordem: texto primeiro, depois o ícone */}
-              <span>Favoritos</span>
               <img src="/assets/icons/star.png" alt="Favoritos" className="nav-icon" />
+              <span>Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
+              <img src="/assets/icons/icone-ingresso.png" alt="Meus Ingressos" className="nav-icon" />
               <span>Meus Ingressos</span>
-              <img src="/assets/icons/ticket.png" alt="Meus Ingressos" className="nav-icon" />
             </Link>
             
             {/* Adicionando o botão de alternância de papel aqui */}
@@ -94,10 +94,11 @@ const Header = () => {
             </div>
             
             <Link to="/account" className="nav-item" onClick={closeMenu}>
+              <img src="/assets/icons/profilebutton.png" alt="Perfil" className="nav-icon" />
               <span>Perfil ({firstName})</span>
-              <img src="/assets/icons/profile.png" alt="Perfil" className="nav-icon" />
             </Link>
             <button onClick={handleLogout} className="nav-item logout-button">
+              <LogOut className="nav-icon" />
               <span>Sair</span>
             </button>
           </div>

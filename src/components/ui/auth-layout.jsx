@@ -44,7 +44,7 @@ const AuthLayout = ({
       )}>
         <Link to="/" className="flex items-center">
           <img 
-            src="/assets/logo/logocuencosroxa.png" 
+            src="/assets/logo/logocuencospreta.svg" 
             alt="Cuencos" 
             className="h-12 w-auto mr-2"
           />

@@ -1,11 +1,10 @@
-.logo-text {
-  color: #000000;
-  font-weight: 600;
-  margin-left: 0.5rem;
-  font-size: 1.25rem;
-  letter-spacing: 0.5px;
+.logo-text-headeruser {
+  color: #A200FF;
+  font-size: 1.7rem;
+  font-family: 'Nasalization', 'Nasalization-regular', Helvetica, sans-serif;
+  font-weight: bold;
+  margin-top: 10px;
 }
-
 
 
 /* Logo - Atualizado para alinhar logo e texto */
@@ -20,16 +19,11 @@
   z-index: 2;
 }
 
-.logo img {
-  width: auto;
-  height: 2.5rem;
-  /* width: auto; */
+.logo-icon img {
+  height: 40px; /* Altura fixa para a logo */
+  max-height: 100%; /* Garante que não ultrapasse o container */
+  width: auto; /* Mantém proporção */
+  object-fit: contain; /* Garante que a imagem seja exibida completamente */
+  vertical-align: middle; /* Ajuda no alinhamento vertical */
 }
 
-
-.logo-text {
-  color: black;
-  font-family: "Nasalization-Regular", Helvetica, sans-serif;
-  font-size: 27px;
-  margin-left: 10px;
-}

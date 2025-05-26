@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { registerUser } from '../lib/auth';
 import { toast } from '../components/ui/use-toast';
-import AuthLayout from '../components/ui/auth-layout';
 import '../styles/auth.css';
+import '../styles/login.css';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -78,98 +78,110 @@ const RegisterPage = () => {
   const isOrganizerRegistration = formData.tipo === 'organizador';
   
   return (
-    <AuthLayout
-      backgroundImage="/assets/loginimage.png"
-      promoText="Crie sua conta e conecte-se a experiências universitárias únicas e inesquecíveis."
-      cardPosition="right"
-    >
-      {isOrganizerRegistration ? (
-        <h1 className="text-center text-2xl font-medium mb-6">Cadastro de Organizador</h1>
-      ) : (
-        <div className="mb-6">
-          <div className="start-message">VAMOS COMEÇAR</div>
-          <div className="register-heading">Cadastre-se!</div>
-        </div>
-      )}
+    <div className="login-container">
+      {/* Logo alinhada com o texto */}
+      <div className="logo">
+        <img src="/assets/logo/logocuencospreta.svg" alt="Logo Cuencos" />
+        <span className="logo-text">Cuencos</span>
+      </div>
       
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Nome Completo*</label>
-          <input 
-            type="text" 
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={isLoading}
-            required
-          />
-        </div>
+      {/* Texto promocional */}
+      <div className="promo-text">
+        <p>
+          Crie sua conta e conecte-se a experiências universitárias únicas e inesquecíveis.
+        </p>
+      </div>
+      
+      {/* Card de registro */}
+      <div className="login-card">
+        {isOrganizerRegistration ? (
+          <h1 className="text-center text-2xl font-medium mb-6">Cadastro de Organizador</h1>
+        ) : (
+          <div className="mb-6">
+            <div className="welcome-message">VAMOS COMEÇAR</div>
+            <h1>Cadastre-se!</h1>
+          </div>
+        )}
         
-        <div className="form-group">
-          <label htmlFor="email">Email*</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            disabled={isLoading}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="password">Senha*</label>
-          <div className="password-input">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Nome Completo*</label>
             <input 
-              type={showPassword ? "text" : "password"} 
-              id="password" 
-              name="password"
-              value={formData.password}
+              type="text" 
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               disabled={isLoading}
               required
             />
-            <span 
-              className="eye-icon"
-              onClick={() => setShowPassword(!showPassword)}
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email">Email*</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={isLoading}
+              required
             />
           </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Senha*</label>
+            <div className="password-input">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                id="password" 
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                disabled={isLoading}
+                required
+              />
+              <span 
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            </div>
+          </div>
+          
+          {/* Campo oculto para o tipo */}
+          <input 
+            type="hidden" 
+            name="tipo" 
+            value={formData.tipo} 
+          />
+          
+          <button 
+            type="submit" 
+            className="continue-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
+          </button>
+        </form>
+        
+        <div className="divider-container">
+          <hr className="divider-line" />
+          <span className="divider-text">Ou</span>
+          <hr className="divider-line" />
         </div>
         
-        {/* Campo oculto para o tipo */}
-        <input 
-          type="hidden" 
-          name="tipo" 
-          value={formData.tipo} 
-        />
+        <div className="google-login">
+          <img src="/assets/icons/icon-google.png" alt="Google" />
+          <span>Faça login com o Google</span>
+        </div>
         
-        <button 
-          type="submit" 
-          className="continue-btn"
-          disabled={isLoading}
-        >
-          {isLoading ? "PROCESSANDO..." : "CONTINUAR"}
-        </button>
-      </form>
-      
-      <div className="divider-container">
-        <hr className="divider-line" />
-        <span className="divider-text">Ou</span>
-        <hr className="divider-line" />
+        <div className="signup-link">
+          <span>Já tem login? </span>
+          <Link to="/login">FAÇA LOGIN AQUI</Link>
+        </div>
       </div>
-      
-      <div className="google-login">
-        <img src="/assets/google-icon.png" alt="Google" />
-        <span>Faça login com o Google</span>
-      </div>
-      
-      <div className="login-link mt-4">
-        <span>Já tem login? </span>
-        <Link to="/login">FAÇA LOGIN AQUI</Link>
-      </div>
-    </AuthLayout>
+    </div>
   );
 };
 

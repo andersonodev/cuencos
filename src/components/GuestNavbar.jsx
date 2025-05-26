@@ -39,7 +39,7 @@ const GuestNavbar = () => {
   return (
     <header className="navbar">
       <Container padding={false}>
-        <div className="navbar-container w-full">
+        <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
           <Link to="/" className="navbar-logo">
             <img 
               src="/assets/logo/logocuencosroxa.png" 
@@ -55,7 +55,7 @@ const GuestNavbar = () => {
             <span></span>
           </div>
           
-          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`}>
+          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`} style={{ marginLeft: 'auto' }}>
             <div className="close-menu" onClick={closeMenu}></div>
             <Link to="/login" className="nav-item" onClick={closeMenu}>
               <span>Venda aqui</span>

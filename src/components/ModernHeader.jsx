@@ -64,20 +64,19 @@ const ModernHeader = () => {
           
           <nav className="header-nav">
             <Link to="/favorites" className="header-link flex items-center gap-1">
-              {/* Texto movido para a esquerda e ícone para a direita */}
-              <span className="hidden sm:inline">Favoritos</span>
               <Heart className="h-4 w-4" />
+              <span className="hidden sm:inline">Favoritos</span>
             </Link>
             <Link to="/my-tickets" className="header-link flex items-center gap-1">
-              <span className="hidden sm:inline">Meus ingressos</span>
               <Ticket className="h-4 w-4" />
+              <span className="hidden sm:inline">Meus ingressos</span>
             </Link>
             {user ? (
               <>
                 {isOrganizer() && (
                   <Link to="/dashboard" className="header-link flex items-center gap-1">
-                    <span className="hidden sm:inline">Dashboard</span>
                     <LayoutDashboard className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
                   </Link>
                 )}
                 {/* Botão de alternância de papel - Com design melhorado */}

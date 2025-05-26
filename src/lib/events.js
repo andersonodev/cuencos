@@ -8,7 +8,7 @@ const initialEvents = [
     title: "PUC IN RIO",
     description: "Quem ainda perde uma festa da MAIOR DA CAPITAL?? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
     longDescription: "PUC IN RIO é uma experiência única que combina música, diversão e a energia jovem universitária. Este ano, contamos com atrações nacionais, área VIP e muito mais.\n\nNão perca a oportunidade de vivenciar uma noite inesquecível com seus amigos da faculdade!",
-    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&h=600&fit=crop",
+    image: "https://images.sympla.com.br/63043ad1c38d1-xs.jpg",
     date: "09 de Maio de 2025",
     time: "21:00 - 04:00",
     location: "Em breve... - Curitiba / Paraná",

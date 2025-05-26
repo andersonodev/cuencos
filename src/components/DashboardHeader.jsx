@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, ChevronDown, Settings, User, Menu, X, LayoutDashboard, FileText, Mail } from 'lucide-react';
+import { LogOut, ChevronDown, Settings, User, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard-header.css';
 import RoleSwitcher from './RoleSwitcher';
@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 
 const DashboardHeader = ({ user }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,17 +25,20 @@ const DashboardHeader = ({ user }) => {
   
   return (
     <header className="header-modern">
-      <div className="header-container">
+      <div className="header-container" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
         <Link to="/" className="header-logo">
           <img 
-            src={import.meta.env.BASE_URL + "assets/logo/logocuencosroxa.png"} 
+            src="/assets/logo/logocuencosroxa.png" 
             alt="Cuencos" 
-            className="header-logo-icon" 
+            className="header-logo-icon"
+            onError={(e) => {
+              e.target.src = "/assets/logo/logocuencospreta.svg";
+            }}
           />
-          <span className="header-logo-text">Cuencos</span>
+          <span id="CuencosTextOrganizador" className="header-logo-texto">Cuencos</span>
         </Link>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2" style={{ marginLeft: 'auto' }}>
           <button 
             className="lg:hidden text-white p-2 hover:bg-gray-800 rounded-md"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -44,44 +47,71 @@ const DashboardHeader = ({ user }) => {
           </button>
           
           <nav className={`header-nav ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
-            <Link to="/dashboard" className="header-link flex items-center gap-1">
-              <LayoutDashboard className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
+            <Link to="/dashboard" className="header-link menu-item">
+              <div className="menu-item-content">
+                <img 
+                  src="/assets/icons/iconeDashboard.png" 
+                  alt="Dashboard" 
+                  className="header-icon"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+                <span>Dashboard</span>
+              </div>
             </Link>
-            <Link to="/dashboard/management" className="header-link flex items-center gap-1">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Gerenciamento</span>
+            <Link to="/dashboard/management" className="header-link menu-item">
+              <div className="menu-item-content">
+                <img 
+                  src="/assets/icons/icone-ingresso.png" 
+                  alt="Gerenciamento" 
+                  className="header-icon"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+                <span>Gerenciamento</span>
+              </div>
             </Link>
             
-            <div className="mx-2">
+            <div className="mx-2 menu-item">
               <RoleSwitcher />
             </div>
             
             <DropdownMenu>
-              <DropdownMenuTrigger className="header-link cursor-pointer">
-                <User className="h-5 w-5" />
-                <span className="hidden sm:inline">Perfil</span>
+              <DropdownMenuTrigger className="header-link cursor-pointer menu-item">
+                <div className="menu-item-content">
+                  <User className="header-icon" />
+                  <span>Perfil</span>
+                </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-gray-800 border-gray-700 text-white">
+              <DropdownMenuContent className="bg-gray-800 border-gray-700 text-white dropdown-menu-content">
                 <DropdownMenuLabel>Olá, {user?.name?.split(' ')[0] || user?.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-gray-700" />
                 <DropdownMenuItem 
                   className="hover:bg-gray-700 cursor-pointer focus:bg-gray-700"
                   onClick={() => navigate('/dashboard/account')}
                 >
-                  <User className="mr-2 h-4 w-4" /> Perfil
+                  <User className="h-5 w-5 mr-2" /> Perfil
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="hover:bg-gray-700 cursor-pointer focus:bg-gray-700"
                   onClick={() => navigate('/dashboard/email')}
                 >
-                  <Mail className="mr-2 h-4 w-4" /> Mudar Email
+                  <img 
+                    src="/assets/icons/icone-email.png" 
+                    alt="Email" 
+                    className="h-5 w-5 mr-2"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  /> Mudar Email
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="hover:bg-gray-700 cursor-pointer focus:bg-gray-700"
                   onClick={handleLogout}
                 >
-                  <LogOut className="mr-2 h-4 w-4" /> Sair
+                  <LogOut className="h-5 w-5 mr-2" /> Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
