@@ -42,11 +42,11 @@ const GuestNavbar = () => {
         <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
           <Link to="/" className="navbar-logo">
             <img 
-              src="/assets/logo/logocuencosroxa.png" 
+              src="./assets/logo/logocuencosroxa.png" 
               alt="Cuencos Logo" 
               className="logo-icon" 
             />
-            <span className="logo-text">Cuencos</span>
+            <span className="logo-text-visitante">Cuencos</span>
           </Link>
           
           <div className="menu-toggle" onClick={openMenu}>
