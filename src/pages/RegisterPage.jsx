@@ -192,7 +192,7 @@ const RegisterPage = () => {
           });
         }}
       >
-        <img src="/assets/icons/icon-google.png" alt="Google" className="h-5 w-5 mr-3" />
+        <img src="./assets/icons/icon-google.png" alt="Google" className="h-5 w-5 mr-3" />
         <span className="text-gray-700">Faça login com o Google</span>
       </button>
       

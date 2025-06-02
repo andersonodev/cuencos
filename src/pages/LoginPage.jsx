@@ -152,7 +152,7 @@ const LoginPage = () => {
       </div>
       
       <div className="google-login">
-        <img src="/assets/icons/icon-google.png" alt="Google" />
+        <img src="./assets/icons/icon-google.png" alt="Google" />
         <span>Faça login com o Google</span>
       </div>
       
