@@ -1,100 +1,177 @@
-// Mock data for tickets with localStorage persistence
-const TICKETS_STORAGE_KEY = 'cuencos_tickets';
+import * as ticketService from '../services/ticketService';
 
-// Load tickets from localStorage
+const TICKETS_STORAGE_KEY = 'cuencos_user_tickets';
+
+// Cache local
+let ticketsCache = null;
+
+// Gerar ID único para ticket
+const generateTicketId = () => {
+  return `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Carregar tickets do localStorage
 const loadTickets = () => {
   try {
-    const storedTickets = localStorage.getItem(TICKETS_STORAGE_KEY);
-    if (storedTickets) {
-      return JSON.parse(storedTickets);
+    if (ticketsCache) {
+      return ticketsCache;
     }
+    
+    const stored = localStorage.getItem(TICKETS_STORAGE_KEY);
+    if (stored) {
+      ticketsCache = JSON.parse(stored);
+      return ticketsCache;
+    }
+    
+    ticketsCache = [];
+    return ticketsCache;
   } catch (error) {
-    console.error("Erro ao carregar tickets do localStorage:", error);
+    console.error('Erro ao carregar tickets:', error);
+    ticketsCache = [];
+    return ticketsCache;
   }
-  return [];
 };
 
-// Save tickets to localStorage
+// Salvar tickets no localStorage
 const saveTickets = (tickets) => {
   try {
+    ticketsCache = tickets;
     localStorage.setItem(TICKETS_STORAGE_KEY, JSON.stringify(tickets));
   } catch (error) {
-    console.error("Erro ao salvar tickets no localStorage:", error);
+    console.error('Erro ao salvar tickets:', error);
   }
 };
 
-// Get the next ticket ID
-const getNextId = (tickets) => {
-  return tickets.length > 0 ? Math.max(...tickets.map(t => t.id)) + 1 : 1;
-};
-
-// Add a new ticket
-export const addTicket = (ticketData) => {
-  const tickets = loadTickets();
-  const newTicket = {
-    id: getNextId(tickets),
-    purchaseDate: new Date().toISOString(),
-    ...ticketData
-  };
-  
-  tickets.push(newTicket);
-  saveTickets(tickets);
-  return newTicket;
-};
-
-// Get tickets by user ID
-export const getTicketsByUserId = (userId) => {
-  if (!userId) return [];
-  
-  const tickets = loadTickets();
-  return tickets.filter(ticket => ticket.userId === userId);
-};
-
-// Get a specific ticket by ID
-export const getTicketById = (ticketId) => {
+// Adicionar novo ticket
+export const addTicket = async (ticketData) => {
   try {
-    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    const tickets = loadTickets();
+    
+    const newTicket = {
+      id: generateTicketId(),
+      userId: ticketData.userId,
+      eventId: parseInt(ticketData.eventId),
+      eventTitle: ticketData.eventTitle,
+      eventImage: ticketData.eventImage,
+      eventImageData: ticketData.eventImageData, // Incluir imageData
+      eventDate: ticketData.eventDate,
+      eventLocation: ticketData.eventLocation,
+      ticketType: ticketData.ticketType,
+      quantity: parseInt(ticketData.quantity) || 1,
+      attendeeName: ticketData.attendeeName,
+      attendeeEmail: ticketData.attendeeEmail,
+      attendeePhone: ticketData.attendeePhone || '',
+      purchaseDate: ticketData.purchaseDate || new Date().toISOString(),
+      status: ticketData.status || 'active',
+      createdAt: new Date().toISOString()
+    };
+    
+    tickets.push(newTicket);
+    saveTickets(tickets);
+    
+    console.log('Ticket criado:', newTicket);
+    return newTicket;
+  } catch (error) {
+    console.error('Erro ao adicionar ticket:', error);
+    throw error;
+  }
+};
+
+// Obter tickets por usuário
+export const getTicketsByUserId = async (userId) => {
+  try {
+    const tickets = loadTickets();
+    return tickets.filter(ticket => ticket.userId === userId);
+  } catch (error) {
+    console.error('Erro ao obter tickets do usuário:', error);
+    return [];
+  }
+};
+
+// Obter ticket por ID
+export const getTicketById = async (ticketId) => {
+  try {
+    const tickets = loadTickets();
     return tickets.find(ticket => ticket.id === ticketId);
   } catch (error) {
-    console.error('Erro ao buscar ingresso:', error);
+    console.error('Erro ao obter ticket por ID:', error);
     return null;
   }
 };
 
-// Check if a user has purchased a specific ticket for an event
-export const hasTicketForEvent = (userId, eventId) => {
-  if (!userId) return false;
-  
-  const userTickets = getTicketsByUserId(userId);
-  return userTickets.some(ticket => ticket.eventId === eventId);
-};
-
-// Initialize with some sample tickets for the test user
-const initializeTickets = () => {
-  const tickets = loadTickets();
-  
-  // Only initialize if there are no tickets
-  if (tickets.length === 0) {
-    // Add a sample ticket for the test user
-    const sampleTicket = {
-      id: 1,
-      userId: "johnfrontend@gmail.com",
-      eventId: 2,
-      eventTitle: "Calourada 2025.1",
-      eventImage: "/lovable-uploads/68619dad-8ba1-48be-8d77-8858c3151a75.png",
-      eventDate: "8 de Maio de 2025",
-      eventLocation: "UFRJ - Rio de Janeiro / RJ",
-      ticketType: "Lote 1",
-      quantity: 1,
-      attendeeName: "John Frontend",
-      attendeeEmail: "johnfrontend@gmail.com",
-      attendeePhone: "+5521999887766",
-      purchaseDate: new Date().toISOString()
-    };
+// Atualizar status do ticket
+export const updateTicketStatus = async (ticketId, status) => {
+  try {
+    const tickets = loadTickets();
+    const ticketIndex = tickets.findIndex(ticket => ticket.id === ticketId);
     
-    saveTickets([sampleTicket]);
+    if (ticketIndex !== -1) {
+      tickets[ticketIndex].status = status;
+      tickets[ticketIndex].updatedAt = new Date().toISOString();
+      saveTickets(tickets);
+      return tickets[ticketIndex];
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Erro ao atualizar status do ticket:', error);
+    throw error;
   }
 };
 
-// Run initialization
-initializeTickets();
+// Deletar ticket
+export const deleteTicket = async (ticketId) => {
+  try {
+    const tickets = loadTickets();
+    const filteredTickets = tickets.filter(ticket => ticket.id !== ticketId);
+    saveTickets(filteredTickets);
+    return true;
+  } catch (error) {
+    console.error('Erro ao deletar ticket:', error);
+    throw error;
+  }
+};
+
+// Obter todos os tickets (admin)
+export const getAllTickets = async () => {
+  try {
+    return loadTickets();
+  } catch (error) {
+    console.error('Erro ao obter todos os tickets:', error);
+    return [];
+  }
+};
+
+// Verificar se usuário tem ticket para evento
+export const hasTicketForEvent = async (userId, eventId) => {
+  try {
+    const tickets = await getTicketsByUserId(userId);
+    return tickets.some(ticket => 
+      ticket.eventId == eventId && ticket.status === 'active'
+    );
+  } catch (error) {
+    console.error('Erro ao verificar ticket do evento:', error);
+    return false;
+  }
+};
+
+// Limpar cache
+export const clearTicketsCache = () => {
+  ticketsCache = null;
+};
+
+// Estatísticas dos tickets
+export const getTicketStats = async (userId) => {
+  try {
+    const tickets = await getTicketsByUserId(userId);
+    return {
+      total: tickets.length,
+      active: tickets.filter(t => t.status === 'active').length,
+      used: tickets.filter(t => t.status === 'used').length,
+      cancelled: tickets.filter(t => t.status === 'cancelled').length
+    };
+  } catch (error) {
+    console.error('Erro ao obter estatísticas dos tickets:', error);
+    return { total: 0, active: 0, used: 0, cancelled: 0 };
+  }
+};

@@ -1,347 +1,608 @@
-// Mock data for events with localStorage persistence
+import * as eventService from '../services/eventService';
+
+// Chaves do localStorage
 const EVENTS_STORAGE_KEY = 'cuencos_events';
+const LOCAL_EVENTS_STORAGE_KEY = 'cuencos_local_events';
+const API_EVENTS_STORAGE_KEY = 'cuencos_api_events';
+const LAST_API_SYNC_KEY = 'cuencos_last_api_sync';
 
-// Initial mock data for events - EXPANDIDO E CORRIGIDO
-const initialEvents = [
-  {
-    id: 1,
-    title: "PUC IN RIO",
-    description: "Quem ainda perde uma festa da MAIOR DA CAPITAL?? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
-    longDescription: "PUC IN RIO é uma experiência única que combina música, diversão e a energia jovem universitária. Este ano, contamos com atrações nacionais, área VIP e muito mais.\n\nNão perca a oportunidade de vivenciar uma noite inesquecível com seus amigos da faculdade!",
-    image: "./assets/images/events/puc-in-rio.jpg",
-    date: "09 de Maio de 2025",
-    time: "21:00 - 04:00",
-    location: "Em breve... - Curitiba / Paraná",
-    price: 80.00,
-    featured: true,
-    ageRestriction: "Proibido menores de 18 anos",
-    organizers: "Associação Atlética PUC-PR",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 84,
-    category: "festa"
-  },
-  {
-    id: 2,
-    title: "Calourada 2025.1",
-    description: "Calourada da UFRJ do campus de Duque de Caxias.",
-    longDescription: "A maior festa de recepção aos calouros de 2025! Uma noite repleta de música, diversão e novas amizades. Venha fazer parte da família UFRJ!",
-    image: "./assets/images/events/calourada-2025-1.jpg",
-    date: "8 de Maio de 2025",
-    time: "20:00 - 03:00",
-    location: "UFRJ - Rio de Janeiro / RJ",
-    price: 45.00,
-    featured: false,
-    ageRestriction: "Proibido menores de 18 anos",
-    organizers: "DCE UFRJ",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 32,
-    category: "festa"
-  },
-  {
-    id: 3,
-    title: "BAILE DO MAGNA",
-    description: "O tradicional baile da faculdade que promete agitar a noite com muita música e diversão!",
-    longDescription: "Uma das festas mais aguardadas do calendário universitário. O Baile do Magna reúne estudantes de várias faculdades em uma noite épica de celebração.",
-    image: "./assets/images/events/baile-do-magna.jpg",
-    date: "15 de Maio de 2025",
-    time: "22:00 - 05:00",
-    location: "Clube Magna - São Paulo / SP",
-    price: 65.00,
-    featured: true,
-    ageRestriction: "Proibido menores de 18 anos",
-    organizers: "Magna Atlética",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 156,
-    category: "festa"
-  },
-  {
-    id: 4,
-    title: "ENGENHARIADAS PARANAENSE 2025",
-    description: "O maior evento esportivo das engenharias do Paraná está chegando!",
-    longDescription: "Três dias de competição, integração e muito networking entre os futuros engenheiros do estado. Modalidades: futebol, vôlei, basquete, natação e muito mais!",
-    image: "./assets/images/events/engenhariadas-paranaense-2025.jpg",
-    date: "22 de Junho de 2025",
-    time: "08:00 - 18:00",
-    location: "Centro Esportivo UTFPR - Curitiba / PR",
-    price: 120.00,
-    featured: false,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "UTFPR + Parceiros",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 89,
-    category: "esporte"
-  },
-  {
-    id: 5,
-    title: "FESTA DA MEDICINA UFMG",
-    description: "A festa mais aguardada do curso de medicina está de volta!",
-    longDescription: "Uma noite especial para celebrar a medicina e a vida universitária. Com decoração temática hospitalar e muito humor médico!",
-    image: "./assets/images/events/festa-da-medicina-ufmg.jpg",
-    date: "30 de Maio de 2025",
-    time: "21:30 - 04:00",
-    location: "Espaço Mineirão - Belo Horizonte / MG",
-    price: 75.00,
-    featured: false,
-    ageRestriction: "Proibido menores de 18 anos",
-    organizers: "Atlética Medicina UFMG",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 67,
-    category: "festa"
-  },
-  {
-    id: 6,
-    title: "INTERCOMP 2025",
-    description: "Competição de programação e tecnologia entre universidades!",
-    longDescription: "O maior evento de tecnologia universitária do país! Hackathon, palestras, workshops e networking com as maiores empresas de tech.",
-    image: "./assets/images/events/intercomp-2025.jpg",
-    date: "12 de Julho de 2025",
-    time: "09:00 - 22:00",
-    location: "Campus USP - São Paulo / SP",
-    price: 50.00,
-    featured: true,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "IME-USP + Tech Companies",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 234,
-    category: "academico"
-  },
-  {
-    id: 7,
-    title: "FORRÓ UNIVERSITÁRIO DO NORDESTE",
-    description: "O melhor do forró universitário em uma noite inesquecível!",
-    longDescription: "Uma celebração da cultura nordestina com as melhores bandas de forró da região. Venha dançar e se divertir ao som do melhor forró!",
-    image: "./assets/images/events/forro-universitario-do-nordeste.jpg",
-    date: "18 de Maio de 2025",
-    time: "20:00 - 02:00",
-    location: "Centro de Convenções - Fortaleza / CE",
-    price: 40.00,
-    featured: false,
-    ageRestriction: "Proibido menores de 16 anos",
-    organizers: "Movimento Forrozeiro Universitário",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 178,
-    category: "show"
-  },
-  {
-    id: 8,
-    title: "JOGOS JURÍDICOS SULAMERICANOS",
-    description: "A maior competição esportiva dos cursos de Direito da América do Sul!",
-    longDescription: "Evento histórico reunindo estudantes de Direito de todo o continente. Competições esportivas, debates jurídicos e integração internacional.",
-    image: "./assets/images/events/jogos-juridicos-sul-americanos.jpg",
-    date: "5 de Agosto de 2025",
-    time: "07:00 - 20:00",
-    location: "Complexo Esportivo UBA - Buenos Aires / Argentina",
-    price: 200.00,
-    featured: true,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "Federação Sul-Americana de Direito",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 45,
-    category: "esporte"
-  },
-  {
-    id: 9,
-    title: "HALLOWEEN UNIVERSITÁRIO SP",
-    description: "A festa de Halloween mais assombrada de São Paulo!",
-    longDescription: "Uma noite de terror e diversão! Concurso de fantasias, decoração assustadora e muito rock! Venha vestido para assustar!",
-    image: "./assets/images/events/halloween-universitario-sp.jpg",
-    date: "31 de Outubro de 2025",
-    time: "22:00 - 06:00",
-    location: "Memorial da América Latina - São Paulo / SP",
-    price: 85.00,
-    featured: false,
-    ageRestriction: "Proibido menores de 18 anos",
-    organizers: "Coletivo Halloween SP",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 92,
-    category: "festa"
-  },
-  {
-    id: 10,
-    title: "STARTUP WEEKEND UNIVERSITÁRIO",
-    description: "54 horas para criar a próxima grande startup!",
-    longDescription: "O maior evento de empreendedorismo universitário! Forme sua equipe, desenvolva sua ideia e compete por prêmios incríveis com mentoria de grandes empresários.",
-    image: "./assets/images/events/startup-weekend-universitario.jpg",
-    date: "20 de Setembro de 2025",
-    time: "18:00 - 21:00",
-    location: "Innovation Hub - Rio de Janeiro / RJ",
-    price: 80.00,
-    featured: true,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "Techstars + Google for Startups",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 167,
-    category: "academico"
-  },
-  {
-    id: 11,
-    title: "BATUKADA UNIVERSITÁRIA",
-    description: "O maior encontro de baterias universitárias do Brasil!",
-    longDescription: "Uma explosão de ritmo e energia! As melhores baterias universitárias do país se encontram para uma apresentação épica. Venha sentir o poder da percussão!",
-    image: "./assets/images/events/batukada-universitaria.jpg",
-    date: "14 de Junho de 2025",
-    time: "16:00 - 23:00",
-    location: "Sambódromo da Marquês de Sapucaí - Rio de Janeiro / RJ",
-    price: 60.00,
-    featured: false,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "Liga das Baterias Universitárias",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 203,
-    category: "show"
-  },
-  {
-    id: 12,
-    title: "FESTA JUNINA UNIVERSITÁRIA",
-    description: "Arraiá universitário com quadrilha, comidas típicas e muito forró!",
-    longDescription: "A festa junina mais animada do calendário universitário! Quadrilha maluca, comidas típicas, fogueira e muito forró para celebrar São João em grande estilo!",
-    image: "./assets/images/events/festa-junina-universitaria.jpg",
-    date: "24 de Junho de 2025",
-    time: "19:00 - 02:00",
-    location: "Campus Central UFBA - Salvador / BA",
-    price: 35.00,
-    featured: false,
-    ageRestriction: "Aberto a todas as idades",
-    organizers: "DCE UFBA",
-    createdBy: "organizador@cuencos.com",
-    isDraft: false,
-    salesCount: 156,
-    category: "festa"
-  }
-];
+// Cache em memória
+let apiEventsCache = null;
+let localEventsCache = null;
+let mergedEventsCache = null;
 
-// Load events from localStorage or use initial data
-const loadEvents = () => {
+// Função para obter ID único sequencial
+const getNextEventId = (events) => {
+  if (!events || events.length === 0) return 1000; // IDs locais começam em 1000
+  const localEvents = events.filter(e => e.id >= 1000); // Apenas eventos locais
+  if (localEvents.length === 0) return 1000;
+  const maxId = Math.max(...localEvents.map(e => parseInt(e.id) || 999));
+  return maxId + 1;
+};
+
+// Carregar eventos da API
+const loadApiEvents = async () => {
   try {
-    const stored = localStorage.getItem(EVENTS_STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
+    // Verificar se já temos cache válido da API (menos de 5 minutos)
+    const lastSync = localStorage.getItem(LAST_API_SYNC_KEY);
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+    
+    if (apiEventsCache && lastSync && parseInt(lastSync) > fiveMinutesAgo) {
+      console.log('Usando cache da API (válido por mais tempo)');
+      return apiEventsCache;
     }
-    // Save initial data if nothing exists
-    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(initialEvents));
-    return initialEvents;
-  } catch (error) {
-    console.error('Error loading events:', error);
-    return initialEvents;
+    
+    console.log('Tentando carregar eventos da API...');
+    const apiEvents = await eventService.fetchEvents();
+    
+    if (apiEvents && Array.isArray(apiEvents) && apiEvents.length > 0) {
+      apiEventsCache = apiEvents.map(event => ({
+        ...event,
+        source: 'api',
+        id: parseInt(event.id) // Garantir que ID seja número
+      }));
+      
+      // Salvar no localStorage com timestamp
+      localStorage.setItem(API_EVENTS_STORAGE_KEY, JSON.stringify(apiEventsCache));
+      localStorage.setItem(LAST_API_SYNC_KEY, Date.now().toString());
+      
+      console.log(`${apiEventsCache.length} eventos carregados da API`);
+      return apiEventsCache;
+    } else {
+      console.warn('API retornou dados vazios ou inválidos');
+    }
+  } catch (apiError) {
+    console.warn('Erro ao conectar com a API:', apiError.message);
   }
-};
-
-// Save events to localStorage
-const saveEvents = (events) => {
+  
+  // Fallback para eventos salvos da API no localStorage
   try {
-    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(events));
+    const storedApiEvents = localStorage.getItem(API_EVENTS_STORAGE_KEY);
+    if (storedApiEvents) {
+      apiEventsCache = JSON.parse(storedApiEvents);
+      console.log(`${apiEventsCache.length} eventos da API carregados do cache local`);
+      return apiEventsCache;
+    }
   } catch (error) {
-    console.error('Error saving events:', error);
+    console.error('Erro ao carregar cache da API:', error);
+    localStorage.removeItem(API_EVENTS_STORAGE_KEY);
+  }
+  
+  // Se nada funcionar, tentar dados mock como fallback para API
+  try {
+    console.log('Carregando dados mock como fallback da API...');
+    const { mockEvents } = await import('../../server/mockEventData.js');
+    if (mockEvents && mockEvents.length > 0) {
+      apiEventsCache = mockEvents.map(event => ({
+        ...event,
+        source: 'api',
+        id: parseInt(event.id)
+      }));
+      localStorage.setItem(API_EVENTS_STORAGE_KEY, JSON.stringify(apiEventsCache));
+      console.log(`${apiEventsCache.length} eventos mock carregados como API`);
+      return apiEventsCache;
+    }
+  } catch (error) {
+    console.error('Erro ao carregar dados mock:', error);
+  }
+  
+  return [];
+};
+
+// Carregar eventos locais
+const loadLocalEvents = () => {
+  try {
+    if (localEventsCache) {
+      return localEventsCache;
+    }
+    
+    const storedLocalEvents = localStorage.getItem(LOCAL_EVENTS_STORAGE_KEY);
+    if (storedLocalEvents) {
+      localEventsCache = JSON.parse(storedLocalEvents).map(event => ({
+        ...event,
+        source: 'local',
+        id: parseInt(event.id)
+      }));
+      console.log(`${localEventsCache.length} eventos locais carregados`);
+      return localEventsCache;
+    }
+    
+    localEventsCache = [];
+    return localEventsCache;
+  } catch (error) {
+    console.error('Erro ao carregar eventos locais:', error);
+    localStorage.removeItem(LOCAL_EVENTS_STORAGE_KEY);
+    localEventsCache = [];
+    return localEventsCache;
   }
 };
 
-// Get all events
-export const getEvents = () => {
-  return loadEvents().filter(event => !event.isDraft);
+// Salvar eventos locais
+const saveLocalEvents = (events) => {
+  try {
+    const localEvents = events.filter(e => e.source === 'local');
+    localEventsCache = localEvents;
+    localStorage.setItem(LOCAL_EVENTS_STORAGE_KEY, JSON.stringify(localEvents));
+    console.log(`${localEvents.length} eventos locais salvos`);
+  } catch (error) {
+    console.error('Erro ao salvar eventos locais:', error);
+  }
+};
+
+// Mesclar eventos da API e locais
+const mergeEvents = async () => {
+  try {
+    const apiEvents = await loadApiEvents();
+    const localEvents = loadLocalEvents();
+    
+    // Combinar eventos, removendo duplicatas por ID
+    const eventMap = new Map();
+    
+    // Adicionar eventos da API primeiro
+    apiEvents.forEach(event => {
+      eventMap.set(event.id, event);
+    });
+    
+    // Adicionar eventos locais (podem sobrescrever se mesmo ID)
+    localEvents.forEach(event => {
+      eventMap.set(event.id, event);
+    });
+    
+    mergedEventsCache = Array.from(eventMap.values()).sort((a, b) => {
+      // Ordenar por data de criação, mais recentes primeiro
+      const dateA = new Date(a.createdAt || a.date || 0);
+      const dateB = new Date(b.createdAt || b.date || 0);
+      return dateB - dateA;
+    });
+    
+    console.log(`Total de ${mergedEventsCache.length} eventos (${apiEvents.length} da API + ${localEvents.length} locais)`);
+    
+    // Manter compatibilidade com localStorage antigo
+    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(mergedEventsCache));
+    
+    return mergedEventsCache;
+  } catch (error) {
+    console.error('Erro ao mesclar eventos:', error);
+    return [];
+  }
+};
+
+// Get all events (apenas publicados)
+export const getEvents = async () => {
+  try {
+    const events = await mergeEvents();
+    return events.filter(event => !event.isDraft);
+  } catch (error) {
+    console.error('Erro ao obter eventos:', error);
+    return [];
+  }
 };
 
 // Get all events including drafts (for organizers)
-export const getAllEvents = () => {
-  return loadEvents();
+export const getAllEvents = async () => {
+  try {
+    return await mergeEvents();
+  } catch (error) {
+    console.error('Erro ao obter todos os eventos:', error);
+    return [];
+  }
 };
 
 // Get event by ID
-export const getEventById = (id) => {
-  const events = loadEvents();
-  return events.find(event => event.id === id);
+export const getEventById = async (id) => {
+  try {
+    console.log('Buscando evento por ID:', id);
+    const events = await mergeEvents();
+    const event = events.find(event => event.id == id || event.id === parseInt(id));
+    
+    if (event) {
+      console.log('Evento encontrado:', event.title, `(fonte: ${event.source})`);
+      return event;
+    }
+    
+    console.warn(`Evento ${id} não encontrado`);
+    return null;
+  } catch (error) {
+    console.error('Erro ao obter evento por ID:', error);
+    return null;
+  }
 };
 
 // Get events by user (organizer)
-export const getEventsByUser = (userId) => {
-  const events = loadEvents();
-  return events.filter(event => event.createdBy === userId);
+export const getEventsByUser = async (userId) => {
+  try {
+    const events = await mergeEvents();
+    return events.filter(event => event.createdBy === userId);
+  } catch (error) {
+    console.error('Erro ao obter eventos do usuário:', error);
+    return [];
+  }
 };
 
-// Add new event
-export const addEvent = (eventData) => {
-  const events = loadEvents();
-  const newEvent = {
-    ...eventData,
-    id: Math.max(...events.map(e => e.id), 0) + 1,
-    salesCount: 0,
-  };
-  events.push(newEvent);
-  saveEvents(events);
-  return newEvent;
+// Add new event - SEMPRE CRIADO LOCALMENTE
+export const addEvent = async (eventData) => {
+  try {
+    console.log('Criando novo evento local:', eventData.title);
+    
+    // Carregar eventos existentes para obter próximo ID
+    const allEvents = await mergeEvents();
+    
+    // Tratar a imagem corretamente
+    let eventImage = eventData.image;
+    let eventImageData = null;
+    
+    // Se a imagem é base64 (começa com data:), usar como imageData
+    if (eventData.image && eventData.image.startsWith('data:')) {
+      eventImageData = eventData.image;
+      eventImage = `/assets/events/event-${Date.now()}.jpg`; // Placeholder path
+    } else if (eventData.image && !eventData.image.startsWith('/assets/')) {
+      // Se não é base64 e não começa com /assets/, corrigir o caminho
+      eventImage = `/assets/events/${eventData.image.split('/').pop()}`;
+    } else if (!eventData.image) {
+      eventImage = '/assets/images/placeholder-event.jpg';
+    }
+    
+    // Criar novo evento com ID único LOCAL
+    const newEvent = {
+      id: getNextEventId(allEvents),
+      title: eventData.title || 'Novo Evento',
+      description: eventData.description || '',
+      longDescription: eventData.longDescription || eventData.description || '',
+      image: eventImage,
+      imageData: eventImageData, // Salvar a imagem em base64 se disponível
+      date: eventData.date || '09 de Maio de 2025',
+      endDate: eventData.endDate || eventData.date || '09 de Maio de 2025',
+      time: eventData.time || `${eventData.startTime || '21:00'} - ${eventData.endTime || '04:00'}`,
+      location: eventData.location || 'Local a definir',
+      price: parseFloat(eventData.ticketPrice) || 0,
+      featured: eventData.featured || false,
+      category: eventData.category || 'festa',
+      ageRestriction: eventData.ageRestriction || 'Proibido menores de 18 anos',
+      organizers: eventData.organizers || 'Organizador',
+      createdBy: eventData.createdBy || 'organizador@cuencos.com',
+      isDraft: eventData.isDraft || false,
+      salesCount: 0,
+      ticketName: eventData.ticketName || 'Ingresso Padrão',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      source: 'local',
+      // Campos adicionais do form
+      startTime: eventData.startTime || '21:00',
+      endTime: eventData.endTime || '04:00',
+      ticketType: eventData.ticketType || 'paid',
+      ticketPrice: parseFloat(eventData.ticketPrice) || 0
+    };
+    
+    // Adicionar aos eventos locais
+    const localEvents = loadLocalEvents();
+    localEvents.push(newEvent);
+    saveLocalEvents(localEvents);
+    
+    // Limpar cache mesclado para forçar re-merge
+    mergedEventsCache = null;
+    
+    console.log('Evento local criado com sucesso:', newEvent);
+    
+    // Tentar sincronizar com API silenciosamente (não bloquear se falhar)
+    try {
+      const apiEvent = await eventService.createEvent(newEvent);
+      if (apiEvent) {
+        console.log('Evento sincronizado com API');
+        // Invalidar cache da API para próxima sincronização
+        apiEventsCache = null;
+        localStorage.removeItem(LAST_API_SYNC_KEY);
+      }
+    } catch (apiError) {
+      console.warn('Erro ao sincronizar com API (evento salvo localmente):', apiError.message);
+    }
+    
+    return newEvent;
+  } catch (error) {
+    console.error('Erro ao adicionar evento:', error);
+    throw error;
+  }
 };
 
 // Update event
-export const updateEvent = (id, eventData) => {
-  const events = loadEvents();
-  const index = events.findIndex(event => event.id === id);
-  if (index !== -1) {
-    events[index] = { ...events[index], ...eventData };
-    saveEvents(events);
-    return events[index];
+export const updateEvent = async (id, eventData) => {
+  try {
+    console.log('Atualizando evento:', id);
+    
+    const allEvents = await mergeEvents();
+    const eventToUpdate = allEvents.find(e => e.id == id);
+    
+    if (!eventToUpdate) {
+      throw new Error('Evento não encontrado');
+    }
+    
+    // Tratar a imagem na atualização
+    let updatedImage = eventData.image || eventToUpdate.image;
+    let updatedImageData = eventToUpdate.imageData; // Manter existente
+    
+    // Se nova imagem foi fornecida
+    if (eventData.image && eventData.image !== eventToUpdate.image) {
+      if (eventData.image.startsWith('data:')) {
+        // Nova imagem em base64
+        updatedImageData = eventData.image;
+        updatedImage = `/assets/events/event-${Date.now()}.jpg`;
+      } else {
+        updatedImage = eventData.image;
+        updatedImageData = null; // Limpar base64 se nova imagem não é base64
+      }
+    }
+    
+    // Dados atualizados
+    const updatedEvent = {
+      ...eventToUpdate,
+      ...eventData,
+      id: parseInt(id),
+      image: updatedImage,
+      imageData: updatedImageData,
+      updatedAt: new Date().toISOString()
+    };
+    
+    if (eventToUpdate.source === 'local') {
+      // Atualizar evento local
+      const localEvents = loadLocalEvents();
+      const index = localEvents.findIndex(e => e.id == id);
+      if (index !== -1) {
+        localEvents[index] = updatedEvent;
+        saveLocalEvents(localEvents);
+      }
+    } else {
+      // Evento da API - criar versão local atualizada
+      updatedEvent.source = 'local';
+      const localEvents = loadLocalEvents();
+      localEvents.push(updatedEvent);
+      saveLocalEvents(localEvents);
+    }
+    
+    // Limpar cache mesclado
+    mergedEventsCache = null;
+    
+    console.log('Evento atualizado com sucesso');
+    
+    // Tentar sincronizar com API silenciosamente
+    try {
+      await eventService.updateEvent(id, updatedEvent);
+      console.log('Atualização sincronizada com API');
+    } catch (apiError) {
+      console.warn('Erro ao sincronizar com API (mudanças salvas localmente):', apiError.message);
+    }
+    
+    return updatedEvent;
+  } catch (error) {
+    console.error('Erro ao atualizar evento:', error);
+    throw error;
   }
-  return null;
 };
 
 // Delete event
-export const deleteEvent = (id) => {
-  const events = loadEvents();
-  const filteredEvents = events.filter(event => event.id !== id);
-  saveEvents(filteredEvents);
-  return true;
+export const deleteEvent = async (id) => {
+  try {
+    console.log('Deletando evento:', id);
+    
+    const allEvents = await mergeEvents();
+    const eventToDelete = allEvents.find(e => e.id == id);
+    
+    if (!eventToDelete) {
+      throw new Error('Evento não encontrado');
+    }
+    
+    if (eventToDelete.source === 'local') {
+      // Deletar evento local
+      const localEvents = loadLocalEvents();
+      const filteredEvents = localEvents.filter(e => e.id != id);
+      saveLocalEvents(filteredEvents);
+    } else {
+      // Evento da API - marcar como deletado localmente
+      const localEvents = loadLocalEvents();
+      localEvents.push({
+        id: parseInt(id),
+        deleted: true,
+        deletedAt: new Date().toISOString(),
+        source: 'local'
+      });
+      saveLocalEvents(localEvents);
+    }
+    
+    // Limpar cache mesclado
+    mergedEventsCache = null;
+    
+    console.log('Evento deletado com sucesso');
+    
+    // Tentar sincronizar com API silenciosamente
+    try {
+      await eventService.deleteEvent(id);
+      console.log('Deleção sincronizada com API');
+    } catch (apiError) {
+      console.warn('Erro ao sincronizar com API (deleção salva localmente):', apiError.message);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao deletar evento:', error);
+    throw error;
+  }
 };
 
 // Get featured events
-export const getFeaturedEvents = () => {
-  const events = getEvents();
-  return events.filter(event => event.featured);
+export const getFeaturedEvents = async () => {
+  try {
+    const events = await mergeEvents();
+    const featured = events.filter(event => event.featured && !event.isDraft && !event.deleted);
+    console.log(`Encontrados ${featured.length} eventos em destaque (${featured.filter(e => e.source === 'api').length} da API + ${featured.filter(e => e.source === 'local').length} locais)`);
+    return featured;
+  } catch (error) {
+    console.error('Erro ao obter eventos em destaque:', error);
+    return [];
+  }
 };
 
 // Search events
-export const searchEvents = (query) => {
-  const events = getEvents();
-  return events.filter(event => 
-    event.title.toLowerCase().includes(query.toLowerCase()) ||
-    event.description.toLowerCase().includes(query.toLowerCase()) ||
-    event.location.toLowerCase().includes(query.toLowerCase())
-  );
+export const searchEvents = async (query) => {
+  try {
+    const events = await getEvents();
+    return events.filter(event => 
+      !event.deleted &&
+      (event.title.toLowerCase().includes(query.toLowerCase()) ||
+       event.description.toLowerCase().includes(query.toLowerCase()) ||
+       event.location.toLowerCase().includes(query.toLowerCase()))
+    );
+  } catch (error) {
+    console.error('Erro na busca de eventos:', error);
+    return [];
+  }
 };
 
-// Filter events
-export const filterEvents = (filters) => {
-  let events = getEvents();
-  
-  if (filters.search) {
-    events = events.filter(event => 
-      event.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-      event.description.toLowerCase().includes(filters.search.toLowerCase())
-    );
+// Filter events - MELHORADO
+export const filterEvents = async (filters) => {
+  try {
+    console.log('filterEvents: Aplicando filtros:', filters);
+    
+    let events = await getEvents();
+    console.log('filterEvents: Total de eventos antes do filtro:', events.length);
+    
+    // Filtrar eventos deletados
+    events = events.filter(event => !event.deleted);
+    
+    if (filters.search || filters.q) {
+      const searchTerm = (filters.search || filters.q).toLowerCase().trim();
+      if (searchTerm) {
+        events = events.filter(event => 
+          event.title.toLowerCase().includes(searchTerm) ||
+          event.description.toLowerCase().includes(searchTerm) ||
+          event.location.toLowerCase().includes(searchTerm)
+        );
+        console.log('filterEvents: Após filtro de busca:', events.length);
+      }
+    }
+    
+    if (filters.location) {
+      const locationTerm = filters.location.toLowerCase().trim();
+      events = events.filter(event => 
+        event.location.toLowerCase().includes(locationTerm)
+      );
+      console.log('filterEvents: Após filtro de localização:', events.length);
+    }
+    
+    if (filters.category) {
+      events = events.filter(event => event.category === filters.category);
+      console.log('filterEvents: Após filtro de categoria:', events.length);
+    }
+    
+    if (filters.date) {
+      const dateFilter = filters.date;
+      const today = new Date();
+      
+      switch (dateFilter) {
+        case 'today':
+          // Filtrar eventos de hoje
+          const todayStr = today.toLocaleDateString('pt-BR');
+          events = events.filter(event => event.date.includes(todayStr));
+          break;
+        case 'tomorrow':
+          // Filtrar eventos de amanhã
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+          events = events.filter(event => event.date.includes(tomorrowStr));
+          break;
+        case 'this-week':
+          // Filtrar eventos desta semana (próximos 7 dias)
+          events = events.filter(event => {
+            // Implementação básica - pode ser melhorada
+            return true; // Por enquanto retornar todos
+          });
+          break;
+        case 'weekend':
+          // Filtrar eventos do fim de semana
+          events = events.filter(event => {
+            // Implementação básica - pode ser melhorada
+            return true; // Por enquanto retornar todos
+          });
+          break;
+        case 'this-month':
+          // Filtrar eventos deste mês
+          const currentMonth = today.getMonth();
+          events = events.filter(event => {
+            // Implementação básica - procurar pelo nome do mês na data
+            const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                              'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const currentMonthName = monthNames[currentMonth];
+            return event.date.toLowerCase().includes(currentMonthName);
+          });
+          break;
+        default:
+          // Se for uma data específica, procurar na string da data
+          if (dateFilter) {
+            events = events.filter(event => event.date.includes(dateFilter));
+          }
+      }
+      console.log('filterEvents: Após filtro de data:', events.length);
+    }
+    
+    console.log('filterEvents: Eventos finais filtrados:', events.length);
+    return events;
+  } catch (error) {
+    console.error('filterEvents: Erro ao filtrar eventos:', error);
+    return [];
   }
-  
-  if (filters.location) {
-    events = events.filter(event => 
-      event.location.toLowerCase().includes(filters.location.toLowerCase())
-    );
+};
+
+// Funções de utilidade
+export const refreshFromAPI = async () => {
+  try {
+    console.log('Forçando sincronização com API...');
+    apiEventsCache = null;
+    localStorage.removeItem(LAST_API_SYNC_KEY);
+    mergedEventsCache = null;
+    
+    const events = await mergeEvents();
+    console.log('Dados sincronizados com API');
+    return events;
+  } catch (error) {
+    console.error('Erro ao sincronizar com API:', error);
+    return await mergeEvents();
   }
+};
+
+export const clearCache = () => {
+  localStorage.removeItem(EVENTS_STORAGE_KEY);
+  localStorage.removeItem(API_EVENTS_STORAGE_KEY);
+  localStorage.removeItem(LAST_API_SYNC_KEY);
+  apiEventsCache = null;
+  mergedEventsCache = null;
+  console.log('Cache de eventos limpo');
+};
+
+export const clearLocalEvents = () => {
+  localStorage.removeItem(LOCAL_EVENTS_STORAGE_KEY);
+  localEventsCache = null;
+  mergedEventsCache = null;
+  console.log('Eventos locais limpos');
+};
+
+export const getEventStats = async () => {
+  const apiEvents = await loadApiEvents();
+  const localEvents = loadLocalEvents();
   
-  if (filters.category) {
-    events = events.filter(event => event.category === filters.category);
+  return {
+    total: apiEvents.length + localEvents.length,
+    fromAPI: apiEvents.length,
+    local: localEvents.length,
+    lastAPISync: localStorage.getItem(LAST_API_SYNC_KEY)
+  };
+};
+
+// Inicializar dados
+export const initializeFromAPI = async () => {
+  try {
+    const events = await mergeEvents();
+    console.log(`Sistema inicializado com ${events.length} eventos`);
+    return events.length > 0;
+  } catch (error) {
+    console.error('Erro ao inicializar:', error);
+    return false;
   }
-  
-  if (filters.date) {
-    // Simple date filtering - can be enhanced
-    events = events.filter(event => event.date.includes(filters.date));
-  }
-  
-  return events;
 };

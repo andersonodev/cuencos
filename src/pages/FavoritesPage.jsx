@@ -2,76 +2,146 @@ import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header'; // Alterado de ModernHeader para Header
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 import EventCard from '../components/EventCard';
-import { ArrowLeft } from 'lucide-react';
-import { getEventById } from '../lib/events';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
 import '../styles/favorites.css';
 
 const FavoritesPage = () => {
-  const { isFavorite } = useFavorites();
-  const { user } = useAuth();
+  const { getFavoriteEvents, loading: favoritesLoading } = useFavorites();
+  const { user, loading: authLoading } = useAuth();
   const [favoriteEvents, setFavoriteEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const loadFavorites = async () => {
+    if (!user) {
+      setFavoriteEvents([]);
+      setLoading(false);
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      console.log('FavoritesPage: Carregando favoritos...');
+      const events = await getFavoriteEvents();
+      console.log('FavoritesPage: Favoritos carregados:', events.length);
+      
+      setFavoriteEvents(events || []);
+    } catch (error) {
+      console.error("FavoritesPage: Erro ao carregar favoritos:", error);
+      setError('Não foi possível carregar seus favoritos');
+      setFavoriteEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    // Carregar os favoritos do localStorage e obter os detalhes dos eventos
-    const loadFavorites = async () => {
-      if (!user) return;
-      
-      try {
-        // Importamos getFavorites aqui para evitar problemas de circular dependency
-        const { getFavorites } = await import('../lib/favorites');
-        const favoriteIds = getFavorites(user.id);
-        
-        // Carregar detalhes de cada evento favorito
-        const favorites = [];
-        for (const id of favoriteIds) {
-          const event = getEventById(id);
-          if (event) favorites.push(event);
-        }
-        
-        setFavoriteEvents(favorites);
-      } catch (error) {
-        console.error("Erro ao carregar favoritos:", error);
-      }
-    };
-    
-    loadFavorites();
-  }, [user]);
+    // Aguardar o contexto de autenticação terminar de carregar
+    if (!authLoading) {
+      loadFavorites();
+    }
+  }, [user, authLoading, getFavoriteEvents]);
   
-  // Redirecionar para a página de login se não estiver autenticado
-  if (!user) {
+  // Aguardar autenticação carregar antes de redirecionar
+  if (authLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-black">
+        <Header />
+        <main className="flex-grow py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                <p className="text-gray-400">Verificando autenticação...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+  
+  // Redirecionar para a página de login apenas após verificar que não há usuário
+  if (!authLoading && !user) {
     return <Navigate to="/login" />;
+  }
+
+  if (loading || favoritesLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-black">
+        <Header />
+        <main className="flex-grow py-8">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                <p className="text-gray-400">Carregando seus favoritos...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      <Header /> {/* Substituído ModernHeader por Header */}
+      <Header />
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-8">
-            <Link to="/" className="text-white mr-2 hover:text-gray-300">
-              <ArrowLeft className="h-6 w-6" />
-            </Link>
-            <h1 className="text-3xl font-bold text-white">
-              <img 
-                src="/assets/heart-icon.png" 
-                alt="Ícone de favoritos" 
-                className="inline-block mr-2 h-8 w-8 align-text-bottom"
-              />
-              Favoritos
-            </h1>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center">
+              <Link to="/" className="text-white mr-2 hover:text-gray-300">
+                <ArrowLeft className="h-6 w-6" />
+              </Link>
+              <h1 className="text-3xl font-bold text-white">
+                <img 
+                  src="./assets/icons/star.png"
+                  alt="Ícone de favoritos" 
+                  className="inline-block mr-2 h-8 w-8 align-text-bottom"
+                />
+                Favoritos
+              </h1>
+            </div>
+            
+            {/* Botão de atualizar */}
+            <button
+              onClick={loadFavorites}
+              className="text-gray-400 hover:text-white transition-colors"
+              title="Atualizar favoritos"
+              disabled={loading}
+            >
+              <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
+          
+          {error && (
+            <div className="bg-red-900/20 border border-red-900/30 text-red-500 p-4 rounded-md mb-6">
+              <p>{error}</p>
+              <button 
+                onClick={loadFavorites}
+                className="mt-2 text-sm underline hover:text-red-400"
+                disabled={loading}
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
           
           {favoriteEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {favoriteEvents.map(event => (
                 <EventCard 
                   key={event.id} 
-                  event={event} 
-                  isFavorite={isFavorite(event.id)}
+                  event={event}
                 />
               ))}
             </div>

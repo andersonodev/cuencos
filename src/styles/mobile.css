@@ -64,6 +64,12 @@ body, html {
     height: 60vh !important;
   }
   
+  .hero-slide {
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: scroll !important;
+  }
+  
   .hero-content {
     max-width: 100% !important;
     padding: 0 1rem !important;
@@ -145,9 +151,70 @@ body, html {
   .navbar-container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    justify-content: center !important;
   }
   
   .navbar-right {
     padding-top: calc(var(--header-height-mobile) + 20px) !important;
   }
-} 
+  
+  /* Regras globais para centralização de logos em mobile */
+  .navbar-logo,
+  .header-logo,
+  .guest-navbar-logo,
+  .logo {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    justify-content: center !important;
+  }
+}
+
+/* Regras específicas para telas muito pequenas */
+@media (max-width: 480px) {
+  .navbar-logo,
+  .header-logo,
+  .guest-navbar-logo,
+  .logo {
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    justify-content: center !important;
+  }
+  
+  .logo-icon,
+  .header-logo-icon {
+    height: 32px !important;
+  }
+  
+  .logo-text,
+  .logo-text-visitante,
+  #CuencosTextOrganizador {
+    font-size: 16px !important;
+  }
+  
+  /* Ajustes específicos para páginas de auth */
+  .register-container .logo,
+  .login-container .logo {
+    top: 15px !important; /* Mover logo mais para cima */
+  }
+  
+  .register-container .promo-text,
+  .login-container .promo-text {
+    top: 50% !important; /* Reposicionar texto */
+    margin-top: 1rem !important;
+  }
+}
+
+/* Ajustes para tablets em modo retrato */
+@media (max-width: 768px) and (min-width: 481px) {
+  .register-container .logo,
+  .login-container .logo {
+    top: 20px !important;
+  }
+  
+  .register-container .promo-text,
+  .login-container .promo-text {
+    top: 52% !important;
+  }
+}

@@ -65,12 +65,12 @@ const EditionStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
   
   // Manipuladores de data específicos
   const handleDateChange = (date, field) => {
-    // Extrai o dia do objeto Date
-    const day = date.getDate();
+    // Formata a data para o formato ISO
+    const formattedDate = date.toISOString().split('T')[0];
     
     setFormData(prev => ({
       ...prev,
-      [field]: day.toString() // Guarda apenas o dia como string
+      [field]: formattedDate
     }));
     
     // Limpa erro se existir
@@ -173,7 +173,7 @@ const EditionStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
               </label>
             </div>
             <CustomDatePicker
-              value={formData.date ? new Date(2025, 4, parseInt(formData.date)) : null}
+              value={formData.date ? new Date(formData.date) : null}
               onChange={(date) => handleDateChange(date, 'date')}
               placeholder="Selecione uma data"
               label={null}
@@ -208,7 +208,7 @@ const EditionStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
               </label>
             </div>
             <CustomDatePicker
-              value={formData.endDate ? new Date(2025, 4, parseInt(formData.endDate)) : null}
+              value={formData.endDate ? new Date(formData.endDate) : null}
               onChange={(date) => handleDateChange(date, 'endDate')}
               placeholder="Selecione uma data"
               label={null}

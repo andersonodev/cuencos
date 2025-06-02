@@ -37,27 +37,35 @@ const AuthLayout = ({
       {/* Overlay roxo */}
       <div className="absolute inset-0 bg-purple-900/70 z-0"></div>
       
-      {/* Logo */}
+      {/* Logo - ajustado para reduzir espaço superior no mobile */}
       <div className={cn(
-        "absolute top-8 flex items-center z-10",
-        isMobile ? "left-1/2 -translate-x-1/2" : "left-[10%]"
+        "flex items-center z-20 mt-8 mb-6 md:absolute md:top-8 md:left-[10%] md:mt-0 md:mb-0 md:-translate-x-0"
       )}>
         <Link to="/" className="flex items-center">
           <img 
-            src="/assets/logo/logocuencospreta.svg" 
-            alt="Cuencos" 
-            className="h-12 w-auto mr-2"
+            src="./assets/logo/logocuencosroxa.png" 
+            alt="Cuencos"
+            className={cn(
+              "w-auto mr-2",
+              isMobile ? "h-10" : "h-12"
+            )}
           />
-          <span className="text-white text-2xl font-bold">Cuencos</span>
+          <span className={cn(
+            "text-white font-bold",
+            isMobile ? "text-xl" : "text-2xl"
+          )}>Cuencos</span>
         </Link>
       </div>
       
-      {/* Texto promocional */}
+      {/* Texto promocional - margem superior removida no mobile */}
       <div className={cn(
-        "relative z-1 text-white max-w-lg px-6 mx-auto text-center",
-        isMobile ? "mt-24 mb-4" : "md:text-left md:mx-0 md:absolute md:left-[10%] md:top-1/2 md:-translate-y-1/2"
+        "relative z-10 text-white max-w-lg px-6 mx-auto text-center mb-8",
+        "md:text-left md:mx-0 md:absolute md:left-[10%] md:top-1/2 md:-translate-y-1/2 md:mb-0"
       )}>
-        <p className="text-2xl md:text-3xl font-normal leading-relaxed">
+        <p className={cn(
+          "font-normal leading-relaxed",
+          isMobile ? "text-lg" : "text-2xl md:text-3xl"
+        )}>
           {promoText}
         </p>
       </div>
@@ -65,7 +73,7 @@ const AuthLayout = ({
       {/* Card de autenticação */}
       <div className={cn(
         "bg-white rounded-xl shadow-lg p-6 md:p-10 w-[90%] max-w-md mx-auto relative z-10",
-        isMobile ? "mt-4 mb-8" : "md:absolute md:bottom-5 md:mt-0",
+        isMobile ? "mt-0 mb-8" : "md:absolute md:bottom-5 md:mt-0",
         cardPosition === 'right' && !isMobile ? "md:right-[10%] md:translate-x-0" : 
         isMobile ? "" : "md:left-1/2 md:-translate-x-1/2"
       )}>
@@ -75,4 +83,4 @@ const AuthLayout = ({
   );
 };
 
-export default AuthLayout; 
+export default AuthLayout;

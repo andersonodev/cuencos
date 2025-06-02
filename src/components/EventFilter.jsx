@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, X, ChevronDown } from 'lucide-react';
 import { estadosBrasil } from '../lib/constants';
-import CustomDatePicker from './ui/DatePicker';
 import '../styles/eventFilter.css';
 
-const EventFilter = ({ onFilterChange, className = '' }) => {
+const EventFilter = ({ onFilterChange, className = '', showResultsInline = false }) => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     search: '',
     location: '',
-    date: null,
+    date: '',
     category: ''
   });
   
@@ -20,76 +19,74 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
   // Detect mobile devices
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth < 768);
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
+  
+  // Função para navegar para resultados de busca
+  const navigateToSearchResults = () => {
+    const searchParams = new URLSearchParams();
+    
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value.toString().trim()) {
+        searchParams.append(key, value.toString().trim());
+      }
+    });
+    
+    navigate(`/search${searchParams.toString() ? `?${searchParams.toString()}` : ''}`);
+  };
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    setFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [name]: value
-    }));
+    };
+    
+    setFilters(newFilters);
   };
   
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
+    
+    const newFilters = {
+      ...filters,
       [name]: value
-    }));
+    };
+    
+    setFilters(newFilters);
   };
   
-  const handleDateChange = (date) => {
-    setFilters(prev => ({
-      ...prev,
-      date: date
-    }));
+  // Função para aplicar filtros ao pressionar Enter na busca
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      console.log('EventFilter: Enter pressionado, navegando para resultados');
+      navigateToSearchResults();
+    }
   };
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Notificar o componente pai sobre a mudança dos filtros (se necessário)
-    if (onFilterChange) {
-      onFilterChange(filters);
-    }
-    
-    // Construir query params para a navegação
-    const queryParams = new URLSearchParams();
-    
-    if (filters.search) queryParams.append('q', filters.search);
-    if (filters.location) queryParams.append('location', filters.location);
-    if (filters.date) queryParams.append('date', filters.date);
-    if (filters.category) queryParams.append('category', filters.category);
-    
-    // Navegar para a página de busca com os parâmetros aplicados
-    if (queryParams.toString()) {
-      navigate(`/search?${queryParams.toString()}`);
-    }
+    console.log('EventFilter: Submit com filtros:', filters);
+    navigateToSearchResults();
   };
   
   const clearFilters = () => {
-    const emptyFilters = {
+    const clearedFilters = {
       search: '',
       location: '',
-      date: null,
+      date: '',
       category: ''
     };
     
-    setFilters(emptyFilters);
-    
-    if (onFilterChange) {
-      onFilterChange(emptyFilters);
-    }
+    setFilters(clearedFilters);
   };
   
   const dateOptions = [
@@ -104,13 +101,13 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
   
   const categoryOptions = [
     { value: '', label: isMobile ? 'Todas' : 'Todas Categorias' },
-    { value: 'athletics', label: 'Atléticas' },
-    { value: 'party', label: isMobile ? 'Festas' : 'Festas & Shows' },
-    { value: 'academic', label: 'Acadêmico' },
-    { value: 'cultural', label: 'Cultural' },
-    { value: 'sports', label: 'Esportivo' }
+    { value: 'festa', label: 'Festas' },
+    { value: 'academico', label: 'Acadêmico' },
+    { value: 'esporte', label: 'Esportivo' },
+    { value: 'show', label: 'Shows' },
+    { value: 'cultural', label: 'Cultural' }
   ];
-  
+
   return (
     <div className={`event-filter-container ${className} ${isExpanded ? 'expanded' : ''}`}>
       <div className="filter-backdrop"></div>
@@ -127,13 +124,17 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                 name="search"
                 value={filters.search}
                 onChange={handleInputChange}
-                placeholder={isMobile ? "Buscar" : "Buscar eventos"}
+                onKeyPress={handleSearchKeyPress}
+                placeholder={isMobile ? "Buscar eventos" : "Buscar eventos"}
                 className="search-input"
               />
               {filters.search && (
                 <button 
                   type="button" 
-                  onClick={() => setFilters(prev => ({ ...prev, search: '' }))}
+                  onClick={() => {
+                    const newFilters = { ...filters, search: '' };
+                    setFilters(newFilters);
+                  }}
                   className="clear-input-button"
                   aria-label="Limpar busca"
                 >
@@ -183,12 +184,18 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
                 <span>Data</span>
               </div>
               <div className="select-wrapper">
-                <CustomDatePicker
+                <select 
+                  name="date"
                   value={filters.date}
-                  onChange={handleDateChange}
-                  placeholder="Selecione uma data"
-                  className="w-full bg-cuencos-darkPurple border-transparent focus:border-white/30"
-                />
+                  onChange={handleSelectChange}
+                  className="filter-select"
+                >
+                  {dateOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
                 <ChevronDown size={isMobile ? 14 : 16} className="select-icon" />
               </div>
             </div>
@@ -221,7 +228,7 @@ const EventFilter = ({ onFilterChange, className = '' }) => {
               Limpar
             </button>
             <button type="submit" className="apply-filter-btn">
-              <span>Aplicar</span>
+              <span>Buscar</span>
               <Search size={isMobile ? 14 : 16} className="btn-icon" />
             </button>
           </div>

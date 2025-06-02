@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import EventCard from '../components/EventCard';
-import SearchBar from '../components/SearchBar';
+import EventFilter from '../components/EventFilter';
 import SearchFilters from '../components/SearchFilters';
-import { searchEvents, getEvents } from '../lib/events';
+import { filterEvents } from '../lib/events';
 import { ArrowLeft } from 'lucide-react';
 
 const SearchResultsPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   
   const initialFilters = {
     q: searchParams.get('q') || '',
+    search: searchParams.get('search') || searchParams.get('q') || '',
     location: searchParams.get('location') || '',
     date: searchParams.get('date') || '',
+    category: searchParams.get('category') || '',
   };
   
   const [filters, setFilters] = useState(initialFilters);
@@ -24,18 +27,17 @@ const SearchResultsPage = () => {
   
   // Carregar eventos baseado nos filtros
   useEffect(() => {
-    const loadEvents = () => {
+    const loadEvents = async () => {
       setIsLoading(true);
       
       try {
-        // Usar a função searchEvents para filtrar os eventos
-        const filteredEvents = searchEvents(
-          filters.q,
-          filters.location,
-          filters.date
-        );
+        console.log('SearchResultsPage: Aplicando filtros:', filters);
         
-        setEvents(filteredEvents);
+        // Usar a função filterEvents da lib/events
+        const filteredEvents = await filterEvents(filters);
+        
+        console.log('SearchResultsPage: Eventos encontrados:', filteredEvents.length);
+        setEvents(filteredEvents || []);
       } catch (error) {
         console.error("Erro ao buscar eventos:", error);
         setEvents([]);
@@ -50,24 +52,64 @@ const SearchResultsPage = () => {
   // Atualizar filtros quando os parâmetros de URL mudam
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    setFilters({
+    const newFilters = {
       q: params.get('q') || '',
+      search: params.get('search') || params.get('q') || '',
       location: params.get('location') || '',
       date: params.get('date') || '',
-    });
+      category: params.get('category') || '',
+    };
+    
+    setFilters(newFilters);
   }, [location.search]);
+  
+  // Handler para mudanças no filtro - ADICIONADO
+  const handleFilterChange = (newFilters) => {
+    console.log('SearchResultsPage: Recebendo novos filtros:', newFilters);
+    
+    // Atualizar a URL com os novos filtros
+    const searchParams = new URLSearchParams();
+    
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value.toString().trim()) {
+        // Usar 'q' para busca em vez de 'search'
+        const paramKey = key === 'search' ? 'q' : key;
+        searchParams.append(paramKey, value.toString().trim());
+      }
+    });
+    
+    // Navegar para a nova URL com os filtros
+    navigate(`/search${searchParams.toString() ? `?${searchParams.toString()}` : ''}`, { replace: true });
+  };
   
   // Aplicar filtros adicionais
   const applyDateFilter = (dateFilter) => {
-    setFilters(prev => ({
-      ...prev,
-      date: dateFilter
-    }));
+    const newFilters = { ...filters, date: dateFilter };
+    handleFilterChange(newFilters);
   };
   
   // Aplicar filtros de categoria
   const applyCategoryFilter = (category) => {
-    // Implementação futura
+    const newFilters = { ...filters, category: category };
+    handleFilterChange(newFilters);
+  };
+  
+  // Gerar título da busca
+  const getSearchTitle = () => {
+    if (filters.q || filters.search) {
+      return `Resultados para "${filters.q || filters.search}"`;
+    }
+    
+    const appliedFilters = [];
+    if (filters.location) appliedFilters.push(`Local: ${filters.location}`);
+    if (filters.category) appliedFilters.push(`Categoria: ${filters.category}`);
+    if (filters.date) appliedFilters.push(`Data: ${filters.date}`);
+    
+    if (appliedFilters.length > 0) {
+      return `Eventos filtrados (${appliedFilters.join(', ')})`;
+    }
+    
+    return "Todos os eventos";
   };
   
   return (
@@ -83,9 +125,13 @@ const SearchResultsPage = () => {
           </Link>
         </div>
         
-        {/* Barra de pesquisa */}
+        {/* Barra de pesquisa - MODIFICADO: Adicionado onFilterChange */}
         <div className="mb-6">
-          <SearchBar defaultValues={filters} />
+          <EventFilter 
+            onFilterChange={handleFilterChange}
+            defaultValues={filters}
+            showResultsInline={false}
+          />
         </div>
         
         <div className="flex flex-col md:flex-row gap-6">
@@ -93,23 +139,43 @@ const SearchResultsPage = () => {
           <aside className="w-full md:w-64 flex-shrink-0">
             <SearchFilters 
               selectedDate={filters.date}
+              selectedCategory={filters.category}
               onDateFilterChange={applyDateFilter}
+              onCategoryFilterChange={applyCategoryFilter}
             />
           </aside>
           
           {/* Resultados da busca */}
           <div className="flex-grow">
             <h1 className="text-3xl font-bold text-white mb-4">
-              {filters.q 
-                ? `Resultados para "${filters.q}"` 
-                : "Todos os eventos"}
+              {getSearchTitle()}
             </h1>
             
-            {filters.location && (
-              <p className="text-gray-400 mb-4">
-                Local: {filters.location}
-              </p>
-            )}
+            {/* Informações dos filtros aplicados */}
+            <div className="mb-4">
+              {filters.location && (
+                <p className="text-gray-400 text-sm">
+                  📍 Local: {filters.location}
+                </p>
+              )}
+              {filters.category && (
+                <p className="text-gray-400 text-sm">
+                  🏷️ Categoria: {filters.category}
+                </p>
+              )}
+              {filters.date && (
+                <p className="text-gray-400 text-sm">
+                  📅 Data: {filters.date}
+                </p>
+              )}
+            </div>
+            
+            <p className="text-gray-400 mb-6 text-sm">
+              {isLoading 
+                ? 'Buscando eventos...' 
+                : `${events.length} evento${events.length !== 1 ? 's' : ''} encontrado${events.length !== 1 ? 's' : ''}`
+              }
+            </p>
             
             {isLoading ? (
               <div className="flex items-center justify-center h-64">

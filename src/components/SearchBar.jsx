@@ -18,9 +18,8 @@ const SearchBar = ({ className, defaultValues = {} }) => {
     }));
   };
   
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
+  // Função para navegar para resultados
+  const navigateToResults = () => {
     // Construir query params apenas para valores não vazios
     const queryParams = new URLSearchParams();
     
@@ -31,6 +30,22 @@ const SearchBar = ({ className, defaultValues = {} }) => {
     // Navegar para página de busca apenas se tiver pelo menos um parâmetro
     if (queryParams.toString()) {
       navigate(`/search?${queryParams.toString()}`);
+    } else if (searchParams.q || searchParams.location || searchParams.date) {
+      // Se tem pelo menos um campo preenchido, navegar mesmo sem query params
+      navigate('/search');
+    }
+  };
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigateToResults();
+  };
+  
+  // Função para detectar Enter em qualquer campo
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      navigateToResults();
     }
   };
   
@@ -44,6 +59,7 @@ const SearchBar = ({ className, defaultValues = {} }) => {
             name="q"
             value={searchParams.q}
             onChange={handleChange}
+            onKeyPress={handleKeyPress}
             placeholder="Buscar eventos"
             className="search-input w-full bg-transparent border-none focus:outline-none text-white pl-8"
           />
@@ -55,6 +71,7 @@ const SearchBar = ({ className, defaultValues = {} }) => {
             name="location"
             value={searchParams.location}
             onChange={handleChange}
+            onKeyPress={handleKeyPress}
             placeholder="Local"
             className="search-input w-full bg-transparent border-none focus:outline-none text-white"
           />
@@ -65,6 +82,7 @@ const SearchBar = ({ className, defaultValues = {} }) => {
             name="date"
             value={searchParams.date}
             onChange={handleChange}
+            onKeyPress={handleKeyPress}
             className="search-input w-full bg-transparent border-none focus:outline-none text-white appearance-none"
           >
             <option value="" className="bg-zinc-800">Qualquer Data</option>

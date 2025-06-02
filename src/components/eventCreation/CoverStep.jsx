@@ -88,7 +88,11 @@ const CoverStep = ({ onSave, initialData, onBack, onDelete, isEditMode }) => {
       // Allow continuing anyway
     }
     
-    onSave({ image: preview });
+    // Salvar a imagem em base64 diretamente (não o nome do arquivo)
+    onSave({ 
+      image: preview, // Usar a imagem em base64 diretamente
+      imageFile: fileInfo // Manter informações do arquivo para referência
+    });
   };
   
   return (

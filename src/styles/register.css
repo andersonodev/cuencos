@@ -124,6 +124,44 @@ a {
   color: #000000;
 }
 
+/* Media queries para centralização do logo em mobile */
+@media (max-width: 768px) {
+  .logo {
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    width: 100%;
+    top: 20px;
+  }
+  
+  .promo-text {
+    top: 55%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+    width: 100%;
+    top: 15px;
+  }
+  
+  .logo img {
+    height: 35px;
+  }
+  
+  .logo-text {
+    font-size: 18px;
+  }
+  
+  .promo-text {
+    top: 52%;
+    padding: 0 1rem;
+  }
+}
+
 /* Mensagens de início de cadastro */
 .start-message {
   text-align: left;
@@ -386,6 +424,8 @@ a {
   .logo {
     left: 50%;
     transform: translateX(-50%);
+    justify-content: center;
+    width: 100%;
   }
   
   .promo-text {

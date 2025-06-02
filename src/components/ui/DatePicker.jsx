@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react';
 import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker.css';
 
-const CustomDatePicker = ({ label, value, onChange, placeholder, required, disabled, className }) => {
+const CustomDatePicker = ({ label, value, onChange, placeholder, required, disabled, className, isClearable = false }) => {
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <div className="relative">
       {/* Ícone movido para o lado esquerdo */}
@@ -15,7 +15,7 @@ const CustomDatePicker = ({ label, value, onChange, placeholder, required, disab
         onClick={onClick}
       />
       <input
-        className={`w-full pl-10 pr-3 py-3 rounded-md bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cuencos-purple ${className}`}
+        className={`w-full pl-10 pr-3 py-3 rounded-md bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cuencos-purple ${className || ''}`}
         onClick={onClick}
         ref={ref}
         value={value}
@@ -33,17 +33,19 @@ const CustomDatePicker = ({ label, value, onChange, placeholder, required, disab
         </label>
       )}
       <DatePicker
-        selected={value ? new Date(value) : null}
+        selected={value}
         onChange={onChange}
         customInput={<CustomInput />}
         locale={ptBR}
         dateFormat="dd/MM/yyyy"
         disabled={disabled}
+        isClearable={isClearable}
         showYearDropdown
         yearDropdownItemNumber={10}
         scrollableYearDropdown
         popperClassName="custom-popper"
         calendarClassName="custom-calendar"
+        placeholderText={placeholder}
       />
     </div>
   );

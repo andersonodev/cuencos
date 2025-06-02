@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from "./components/ui/toaster"; // Corrigido o caminho de importação
+import { Toaster } from "./components/ui/toaster";
 import { AuthProvider } from './context/AuthContext';
 import { FavoritesProvider } from './context/FavoritesContext';
-import { ThemeProvider } from "./components/theme-provider"; // Corrigido o caminho da importação
+import { ThemeProvider } from "./components/theme-provider";
+import { initializeFromAPI } from './lib/events'; // Corrigida a importação
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Importação de todas as páginas
 import HomePage from './pages/HomePage';
@@ -35,8 +38,17 @@ import { isAvailable } from './lib/storage';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
+  // Limpar dados locais que podem interferir com a API
+  useEffect(() => {
+    // Limpar localStorage de eventos antigos
+    localStorage.removeItem('cuencos_events');
+    localStorage.removeItem('events');
+    console.log('Cache local de eventos limpo - usando apenas API');
+  }, []);
+  
   const [storageAvailable, setStorageAvailable] = useState(true);
+  const [apiStatus, setApiStatus] = useState('checking');
   
   useEffect(() => {
     // Verificar se o localStorage está disponível
@@ -50,6 +62,43 @@ const App = () => {
     };
     
     checkStorage();
+  }, []);
+  
+  useEffect(() => {
+    // Inicializar dados de eventos quando o app carregar
+    const initializeEvents = async () => {
+      try {
+        setApiStatus('checking');
+        
+        // Tentar inicializar com dados da API
+        const success = await initializeFromAPI();
+        
+        if (success) {
+          setApiStatus('online');
+          console.log('✅ Eventos carregados da API com sucesso');
+        } else {
+          setApiStatus('offline');
+          console.warn('⚠️ Usando dados locais - API indisponível');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao inicializar eventos:', error);
+        setApiStatus('offline');
+      }
+    };
+    
+    initializeEvents();
+    
+    // Verificar status da API periodicamente (a cada 30 segundos)
+    const healthCheckInterval = setInterval(async () => {
+      try {
+        const isOnline = await checkAPIStatus();
+        setApiStatus(isOnline ? 'online' : 'offline');
+      } catch (error) {
+        setApiStatus('offline');
+      }
+    }, 30000);
+    
+    return () => clearInterval(healthCheckInterval);
   }, []);
   
   return (
@@ -72,7 +121,65 @@ const App = () => {
               </div>
             )}
             
+            {/* Indicador de status da API obrigatório */}
+            {apiStatus === 'offline' && (
+              <div 
+                style={{ 
+                  background: '#dc2626', 
+                  color: 'white', 
+                  textAlign: 'center', 
+                  padding: '8px', 
+                  fontSize: '12px',
+                  position: 'relative'
+                }}
+              >
+                🔴 API offline - Nenhum evento será exibido | 
+                <button 
+                  onClick={() => window.location.reload()} 
+                  style={{
+                    marginLeft: '8px',
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Tentar reconectar
+                </button>
+              </div>
+            )}
+            
+            {apiStatus === 'online' && (
+              <div 
+                style={{ 
+                  background: '#16a34a', 
+                  color: 'white', 
+                  textAlign: 'center', 
+                  padding: '4px', 
+                  fontSize: '11px',
+                  opacity: 0.9
+                }}
+              >
+                🟢 Conectado à API
+              </div>
+            )}
+            
             <Router>
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+              />
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/events/:id" element={<EventDetailsPage />} />

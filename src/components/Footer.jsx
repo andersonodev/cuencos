@@ -9,9 +9,9 @@ const Footer = () => {
           <div>
             <Link to="/" className="text-cuencos-purple font-bold text-2xl flex items-center mb-4">
               <img 
-                src="/assets/images/logo-cuencos-roxa.png" 
+                src="./assets/logo/logocuencosroxa.png" 
                 alt="Cuencos" 
-                className="h-8 mr-2" 
+                className="h-8 mr-1" 
               />
               Cuencos
             </Link>

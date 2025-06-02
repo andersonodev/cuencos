@@ -14,57 +14,83 @@ const SuccessPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isPaymentCompleted, setIsPaymentCompleted] = useState(false);
   const [addedTicket, setAddedTicket] = useState(null);
+  const [event, setEvent] = useState(null);
   
   useEffect(() => {
-    const storedInfo = localStorage.getItem('checkoutInfo');
-    if (!storedInfo) {
-      navigate('/');
-      return;
-    }
+    const loadData = async () => {
+      const storedInfo = localStorage.getItem('checkoutInfo');
+      if (!storedInfo) {
+        navigate('/');
+        return;
+      }
+      
+      try {
+        const data = JSON.parse(storedInfo);
+        
+        // Verificar se os dados são recentes (menos de 1 hora)
+        if (Date.now() - (data.timestamp || 0) > 60 * 60 * 1000) {
+          localStorage.removeItem('checkoutInfo');
+          navigate('/');
+          return;
+        }
+        
+        setCheckoutInfo(data);
+        
+        // Carregar dados do evento
+        const eventData = await getEventById(data.eventId);
+        if (eventData) {
+          setEvent(eventData);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados de sucesso:', error);
+        navigate('/');
+      }
+    };
     
-    const data = JSON.parse(storedInfo);
-    // Verificar se os dados são recentes (menos de 1 hora)
-    if (Date.now() - (data.timestamp || 0) > 60 * 60 * 1000) {
-      localStorage.removeItem('checkoutInfo');
-      navigate('/');
-      return;
-    }
-    
-    setCheckoutInfo(data);
+    loadData();
   }, [navigate]);
   
   useEffect(() => {
-    if (checkoutInfo && !isPaymentCompleted) {
+    if (checkoutInfo && event && !isPaymentCompleted && user) {
       // Simulate payment processing
-      const timer = setTimeout(() => {
+      const timer = setTimeout(async () => {
         setIsPaymentCompleted(true);
         
-        // Add ticket to user's account
-        const event = getEventById(checkoutInfo.eventId);
-        const newTicket = addTicket({
-          userId: user.id,
-          eventId: checkoutInfo.eventId,
-          eventTitle: event.title,
-          eventImage: event.image,
-          eventDate: event.date,
-          eventLocation: event.location,
-          ticketType: checkoutInfo.ticketType,
-          quantity: checkoutInfo.quantity,
-          attendeeName: checkoutInfo.participantInfo.fullName,
-          attendeeEmail: checkoutInfo.participantInfo.email,
-          attendeePhone: checkoutInfo.participantInfo.phone,
-        });
-        
-        setAddedTicket(newTicket);
-        
-        // Clear session storage
-        localStorage.removeItem('checkoutInfo');
-        localStorage.removeItem('ticketSelection');
+        try {
+          // Add ticket to user's account com dados completos da imagem
+          const newTicket = await addTicket({
+            userId: user.id || user.email,
+            eventId: checkoutInfo.eventId,
+            eventTitle: event.title,
+            eventImage: event.image,
+            eventImageData: event.imageData, // Adicionar imageData
+            eventDate: event.date,
+            eventLocation: event.location,
+            ticketType: checkoutInfo.ticketType,
+            quantity: checkoutInfo.quantity,
+            attendeeName: checkoutInfo.participantInfo.fullName,
+            attendeeEmail: checkoutInfo.participantInfo.email,
+            attendeePhone: checkoutInfo.participantInfo.phone || '',
+            purchaseDate: new Date().toISOString(),
+            status: 'active'
+          });
+          
+          console.log('Ticket criado com sucesso:', newTicket);
+          setAddedTicket(newTicket);
+          
+          // Clear session storage
+          localStorage.removeItem('checkoutInfo');
+          localStorage.removeItem('ticketSelection');
+        } catch (error) {
+          console.error('Erro ao criar ticket:', error);
+          // Mesmo com erro, vamos mostrar como sucesso para o usuário
+          // O ticket pode ter sido salvo localmente
+        }
       }, 1500);
       
       return () => clearTimeout(timer);
     }
-  }, [checkoutInfo, user, isPaymentCompleted]);
+  }, [checkoutInfo, event, user, isPaymentCompleted]);
   
   useEffect(() => {
     if (isPaymentCompleted && addedTicket) {

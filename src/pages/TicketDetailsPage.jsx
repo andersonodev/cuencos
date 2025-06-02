@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Modal from '../components/Modal';
 import { getTicketById } from '../lib/tickets';
 import QRCode from 'react-qr-code';
-import { Download, ArrowLeft, Calendar, MapPin, User, Hash, Apple, Wallet } from 'lucide-react';
+import { Download, ArrowLeft, Calendar, MapPin, User, Hash, Apple, Wallet, Share2 } from 'lucide-react';
 import { generateTicketPDF } from '../lib/pdfGenerator';
 import { toast } from '../components/ui/use-toast';
 
@@ -15,26 +16,42 @@ const TicketDetailsPage = () => {
   const { user } = useAuth();
   const [ticket, setTicket] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
+    const loadTicket = async () => {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
 
-    const ticketData = getTicketById(id);
-    if (!ticketData || ticketData.userId !== user.id) {
-      navigate('/my-tickets');
-      return;
-    }
+      try {
+        const ticketData = await getTicketById(id);
+        if (!ticketData || ticketData.userId !== (user.id || user.email)) {
+          navigate('/my-tickets');
+          return;
+        }
 
-    setTicket(ticketData);
-    setIsLoading(false);
+        setTicket(ticketData);
+      } catch (error) {
+        console.error('Erro ao carregar ticket:', error);
+        toast({
+          title: "Erro ao carregar ingresso",
+          description: "Não foi possível carregar os detalhes do ingresso",
+          variant: "destructive"
+        });
+        navigate('/my-tickets');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTicket();
   }, [id, user, navigate]);
 
   // Gera um identificador único para o ticket baseado nos seus dados
   const generateTicketIdentifier = (ticket) => {
-    return `CUENCOS-${ticket.id}-${ticket.eventId}-${ticket.userId.substring(0, 8)}`;
+    return `CUENCOS-${ticket.id}-${ticket.eventId}-${(ticket.userId || '').substring(0, 8)}`;
   };
 
   // Gera dados estruturados para o QR Code em formato JSON
@@ -86,16 +103,60 @@ const TicketDetailsPage = () => {
   };
 
   const addToAppleWallet = () => {
-    // Aqui viria a lógica para gerar o PKPass
-    // Por enquanto apenas simularemos com um alerta
     toast({
       title: "Funcionalidade em desenvolvimento",
       description: "A integração com Apple Wallet será implementada em breve!",
       duration: 3000,
     });
+  };
+
+  const shareTicket = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Ingresso para ${ticket.eventTitle}`,
+        text: `Meu ingresso para ${ticket.eventTitle} em ${ticket.eventDate}`,
+        url: window.location.href,
+      }).catch(err => {
+        console.error('Erro ao compartilhar:', err);
+      });
+    } else {
+      navigator.clipboard.writeText(`Meu ingresso para ${ticket.eventTitle}`);
+      toast({
+        title: "Copiado!",
+        description: "Informações do ingresso copiadas para a área de transferência",
+        variant: "success"
+      });
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate('/my-tickets');
+  };
+
+  // Função para gerar URL da imagem - CORRIGIDA
+  const getImageUrl = (imagePath, imageData) => {
+    // PRIORIDADE 1: Se tiver imagem em base64, usar ela
+    if (imageData && imageData.startsWith('data:')) {
+      return imageData;
+    }
     
-    // Em uma implementação real, aqui você geraria o Apple Wallet Pass
-    // e usaria window.open ou um anchor para fazer o download
+    // PRIORIDADE 2: Se a imagem já é uma URL de dados (base64)
+    if (imagePath && imagePath.startsWith('data:')) {
+      return imagePath;
+    }
+    
+    if (!imagePath) return '/assets/images/placeholder-event.jpg';
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    if (imagePath.startsWith('/')) {
+      return imagePath;
+    }
+    
+    return `/assets/events/${imagePath}`;
   };
 
   if (isLoading) {
@@ -131,127 +192,120 @@ const TicketDetailsPage = () => {
     <div className="min-h-screen bg-black text-white">
       <Header />
       
-      {/* Espaçador para compensar o header fixo */}
-      <div className="h-16 md:h-20"></div>
-      
-      <main className="container mx-auto px-4 py-4 max-w-4xl">
-        {/* Botão Voltar - mais compacto */}
-        <button
-          onClick={() => navigate('/my-tickets')}
-          className="flex items-center text-gray-400 hover:text-white mb-4 transition-colors text-sm"
+      <div className="flex-grow">
+        <Modal 
+          isOpen={isModalOpen} 
+          onClose={closeModal}
+          title="Detalhes do Ingresso"
+          className="max-w-lg"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Voltar aos meus ingressos
-        </button>
-
-        {/* Card do Ingresso - layout mais compacto */}
-        <div className="bg-gradient-to-br from-cuencos-purple via-purple-700 to-purple-900 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl relative overflow-hidden">
-          {/* Padrão de fundo decorativo - responsivo */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-2 right-2 md:top-4 md:right-4 w-16 h-16 md:w-32 md:h-32 border border-white/20 rounded-full"></div>
-            <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 w-12 h-12 md:w-24 md:h-24 border border-white/20 rounded-full"></div>
-          </div>
-          
-          {/* Header do ingresso - mais compacto */}
-          <div className="relative z-10 text-center mb-4 md:mb-6">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-2 line-clamp-2">{ticket.eventTitle}</h1>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-1 sm:gap-4 text-sm md:text-base">
-              <div className="flex items-center justify-center text-white/80">
-                <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                <span className="truncate">{ticket.eventDate}</span>
-              </div>
-              <div className="flex items-center justify-center text-white/80">
-                <MapPin className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                <span className="truncate">{ticket.eventLocation}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Layout responsivo para QR Code e Informações */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-            {/* QR Code */}
-            <div className="flex flex-col items-center lg:items-start">
-              <div className="bg-white p-3 md:p-4 rounded-lg shadow-lg">
-                <QRCode 
-                  value={generateTicketQRData(ticket)}
-                  size={window.innerWidth < 768 ? 150 : 180}
-                  style={{ width: '100%', height: '100%' }}
-                  level="H"
+          <div className="p-4">
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-white mb-4">Seu ingresso</h3>
+              
+              <div className="bg-gray-800 p-4 rounded mb-4">
+                <img 
+                  src={getImageUrl(ticket.eventImage, ticket.eventImageData)} 
+                  alt={ticket.eventTitle} 
+                  className="w-full h-32 object-cover rounded mb-3"
+                  onError={(e) => {
+                    e.target.src = '/assets/images/placeholder-event.jpg';
+                  }}
                 />
+                
+                <h4 className="text-lg font-bold text-white uppercase line-clamp-2 mb-2">
+                  {ticket.eventTitle}
+                </h4>
+                <p className="text-gray-400 text-sm mb-3">
+                  {ticket.eventDate} - {ticket.eventLocation}
+                </p>
+                
+                <div className="grid grid-cols-3 gap-2 mb-3 border-t border-gray-700 pt-3">
+                  <div>
+                    <p className="text-xs text-cuencos-purple mb-1">Data</p>
+                    <p className="text-white text-xs">{ticket.eventDate.split(' ')[0]}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-cuencos-purple mb-1">Tipo</p>
+                    <p className="text-white text-xs truncate">{ticket.ticketType}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-cuencos-purple mb-1">Nome</p>
+                    <p className="text-white text-xs truncate">{ticket.attendeeName.split(' ')[0]}</p>
+                  </div>
+                </div>
+                
+                {/* QR Code */}
+                <div className="flex flex-col items-center">
+                  <div className="bg-white p-3 rounded-md w-48 h-48 mx-auto">
+                    <QRCode 
+                      value={generateTicketQRData(ticket)}
+                      size={192}
+                      style={{ width: '100%', height: '100%' }}
+                      level="H"
+                    />
+                  </div>
+                  
+                  <p className="text-gray-400 text-xs mt-2">Escaneie esse QR Code na entrada.</p>
+                  <p className="text-gray-400 text-xs mb-3 break-all px-2">
+                    ID: {generateTicketIdentifier(ticket)}
+                  </p>
+                  
+                  <div className="flex flex-col gap-2 w-full">
+                    <button
+                      onClick={addToAppleWallet}
+                      className="flex items-center justify-center gap-2 bg-black text-white py-2 px-3 rounded-md border border-gray-600 hover:bg-gray-900 transition-colors text-sm"
+                    >
+                      <Apple size={14} />
+                      <Wallet size={14} />
+                      <span>Apple Wallet</span>
+                    </button>
+                    
+                    <button
+                      onClick={handleDownloadPDF}
+                      className="flex items-center justify-center gap-2 bg-cuencos-purple text-white py-2 px-3 rounded-md hover:bg-cuencos-darkPurple transition-colors text-sm"
+                    >
+                      <Download size={14} />
+                      <span>Baixar PDF</span>
+                    </button>
+                    
+                    <button
+                      onClick={shareTicket}
+                      className="flex items-center justify-center gap-2 bg-gray-600 text-white py-2 px-3 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                    >
+                      <Share2 size={14} />
+                      <span>Compartilhar</span>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Informações adicionais */}
+                <div className="mt-4 text-left">
+                  <h5 className="text-white font-semibold mb-2 text-sm">Informações do Ingresso</h5>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Portador:</span>
+                      <span className="text-white">{ticket.attendeeName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Email:</span>
+                      <span className="text-white truncate">{ticket.attendeeEmail}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Quantidade:</span>
+                      <span className="text-white">{ticket.quantity}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Status:</span>
+                      <span className="text-green-400">{ticket.status || 'Ativo'}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-white/80 text-xs text-center mt-2 break-all">
-                ID: {generateTicketIdentifier(ticket)}
-              </p>
             </div>
-
-            {/* Informações do Ingresso - grid responsivo */}
-            <div className="space-y-3">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div className="flex items-center text-white mb-1">
-                  <User className="h-3 w-3 md:h-4 md:w-4 mr-2 flex-shrink-0" />
-                  <span className="font-medium text-sm md:text-base">Portador</span>
-                </div>
-                <p className="text-white/90 text-sm md:text-base truncate">{ticket.attendeeName}</p>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div className="flex items-center text-white mb-1">
-                  <Hash className="h-3 w-3 md:h-4 md:w-4 mr-2 flex-shrink-0" />
-                  <span className="font-medium text-sm md:text-base">Tipo de Ingresso</span>
-                </div>
-                <p className="text-white/90 text-sm md:text-base">{ticket.ticketType}</p>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                <div className="flex items-center text-white mb-1">
-                  <span className="font-medium text-sm md:text-base">Quantidade</span>
-                </div>
-                <p className="text-white/90 text-sm md:text-base">{ticket.quantity} ingresso(s)</p>
-              </div>
-            </div>
           </div>
-
-          {/* Botões de Ação - layout responsivo */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={addToAppleWallet}
-              className="bg-black text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-medium md:font-bold text-sm md:text-base hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center gap-2 shadow-lg"
-            >
-              <Apple className="h-4 w-4 md:h-5 md:w-5" />
-              <Wallet className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="hidden sm:inline">Apple Wallet</span>
-              <span className="sm:hidden">Wallet</span>
-            </button>
-            
-            <button
-              onClick={handleDownloadPDF}
-              className="bg-white text-cuencos-purple px-4 md:px-6 py-2 md:py-3 rounded-full font-medium md:font-bold text-sm md:text-base hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center gap-2 shadow-lg"
-            >
-              <Download className="h-4 w-4 md:h-5 md:w-5" />
-              <span className="hidden sm:inline">Baixar PDF</span>
-              <span className="sm:hidden">PDF</span>
-            </button>
-          </div>
-
-          {/* Instruções - mais compactas */}
-          <div className="mt-4 md:mt-6 text-center">
-            <p className="text-white/80 text-xs md:text-sm">
-              Apresente este QR code na entrada do evento para validação
-            </p>
-          </div>
-        </div>
-
-        {/* Informações adicionais - mais compactas */}
-        <div className="mt-4 md:mt-6 bg-gray-900 rounded-lg p-4 md:p-6">
-          <h3 className="text-white font-bold mb-3 text-sm md:text-base">Informações Importantes</h3>
-          <ul className="text-gray-300 space-y-1 md:space-y-2 text-xs md:text-sm">
-            <li>• Chegue com antecedência para evitar filas</li>
-            <li>• Tenha um documento de identidade em mãos</li>
-            <li>• Este ingresso é pessoal e intransferível</li>
-            <li>• Guarde este ingresso em local seguro</li>
-          </ul>
-        </div>
-      </main>
+        </Modal>
+      </div>
       
       <Footer />
     </div>

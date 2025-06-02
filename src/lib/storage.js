@@ -33,7 +33,6 @@ const setItem = (key, data) => {
       timestamp: Date.now()
     });
     localStorage.setItem(prefixedKey, serializedData);
-    console.log(`Dados salvos em ${prefixedKey}:`, data);
     return true;
   } catch (error) {
     console.error(`Erro ao salvar '${key}' no localStorage:`, error);
@@ -48,7 +47,6 @@ const getItem = (key, maxAge = null) => {
     const storedValue = localStorage.getItem(prefixedKey);
     
     if (!storedValue) {
-      console.log(`Nenhum dado encontrado para a chave ${prefixedKey}`);
       return null;
     }
     
@@ -57,7 +55,6 @@ const getItem = (key, maxAge = null) => {
     
     // Verificar se os dados expiraram (se maxAge for fornecido em milissegundos)
     if (maxAge && Date.now() - timestamp > maxAge) {
-      console.log(`Dados expirados para a chave ${prefixedKey}`);
       removeItem(key);
       return null;
     }
@@ -112,11 +109,22 @@ const isAvailable = () => {
 // Inicializar o armazenamento ao importar este módulo
 initializeStorage();
 
-export { 
-  setItem, 
-  getItem, 
-  removeItem, 
-  clearAll, 
+// Exportar funções individualmente
+export {
+  setItem,
+  getItem,
+  removeItem,
+  clearAll,
+  isAvailable,
+  SCHEMA_VERSION
+};
+
+// Exportação padrão como alternativa para importação de todas as funções
+export default {
+  setItem,
+  getItem,
+  removeItem,
+  clearAll,
   isAvailable,
   SCHEMA_VERSION
 };

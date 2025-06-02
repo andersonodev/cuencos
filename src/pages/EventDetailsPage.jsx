@@ -1,312 +1,395 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getEventById } from '../lib/events';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
+import { Heart, Calendar, Clock, MapPin, ArrowLeft, Share, DollarSign } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getEventById, getEvents } from '../lib/events';
-import { toggleFavorite, isFavorite } from '../lib/favorites';
-import { hasTicketForEvent } from '../lib/tickets';
-import { Share2, Clock, MapPin, Calendar, Ticket, Heart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useToast } from "@/components/ui/use-toast";
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext 
-} from '../components/ui/carousel';
-import '../styles/carousel.css';
+import { toast } from '../components/ui/use-toast';
+import { getTicketsByUserId } from '../lib/tickets';
 
 const EventDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [userTickets, setUserTickets] = useState([]);
+  const [hasTicketForEvent, setHasTicketForEvent] = useState(false);
   const { user } = useAuth();
-  const { toast } = useToast();
-  const event = getEventById(Number(id));
-  const [isFav, setIsFav] = useState(false);
-  const [hasTicket, setHasTicket] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
   
-  useEffect(() => {
-    if (user && event) {
-      setIsFav(isFavorite(user.id, Number(id)));
-      setHasTicket(hasTicketForEvent(user.id, Number(id)));
-    }
-  }, [user, id, event]);
-  
-  if (!event) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <div className="container mx-auto py-12 px-4 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-white">Evento não encontrado</h1>
-          <Link to="/" className="text-cuencos-purple hover:underline">Voltar para a página inicial</Link>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  const handleToggleFavorite = () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    
-    const result = toggleFavorite(user.id, event.id);
-    setIsFav(result);
-    
-    toast({
-      description: result ? "Adicionado aos favoritos!" : "Removido dos favoritos!",
-      duration: 2000,
+  // Função para rolar para o topo
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'instant'
     });
   };
   
-  const handleBuyTickets = () => {
-    navigate(`/events/${id}/buy`);
+  // Efeito para rolar para o topo quando o componente for montado
+  useEffect(() => {
+    scrollToTop();
+  }, []);
+  
+  useEffect(() => {
+    const loadEvent = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Carregando evento com ID:', id);
+        const eventData = await getEventById(parseInt(id));
+        
+        if (eventData) {
+          console.log('Evento carregado com sucesso:', eventData);
+          setEvent(eventData);
+          // Rolar para o topo após carregar o evento
+          scrollToTop();
+        } else {
+          console.warn('Evento não encontrado');
+          setError('Evento não encontrado');
+        }
+      } catch (err) {
+        console.error('Erro ao carregar evento:', err);
+        setError('Não foi possível carregar os detalhes do evento');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    const loadUserTickets = async () => {
+      if (user && id) {
+        try {
+          const tickets = await getTicketsByUserId(user.id || user.email);
+          setUserTickets(tickets || []);
+          
+          // Verificar se o usuário já tem ingresso para este evento
+          const hasTicket = tickets.some(ticket => 
+            ticket.eventId == id && ticket.status === 'active'
+          );
+          setHasTicketForEvent(hasTicket);
+        } catch (error) {
+          console.error('Erro ao carregar tickets do usuário:', error);
+        }
+      }
+    };
+    
+    if (id) {
+      loadEvent();
+      loadUserTickets();
+    }
+  }, [id, user]);
+  
+  const handleToggleFavorite = () => {
+    if (!user) {
+      toast({
+        title: "Ação necessária",
+        description: "Faça login para adicionar eventos aos favoritos",
+        variant: "warning"
+      });
+      return;
+    }
+    
+    const eventId = parseInt(id);
+    const wasFavorite = isFavorite(eventId);
+    
+    toggleFavorite(eventId);
+    
+    toast({
+      title: wasFavorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
+      description: wasFavorite 
+        ? "O evento foi removido dos seus favoritos" 
+        : "O evento foi adicionado aos seus favoritos",
+      variant: wasFavorite ? "default" : "success"
+    });
   };
   
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: event.title,
-        text: event.description,
-        url: window.location.href,
-      }).catch(err => {
-        console.error('Error sharing:', err);
-      });
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href);
-      // Show toast notification
-      toast({
-        description: "Link copiado para a área de transferência!",
-        duration: 2000,
-      });
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: event?.title,
+          text: event?.description,
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link copiado",
+          description: "URL do evento copiada para a área de transferência",
+          variant: "success"
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar:', error);
     }
   };
   
-  // Get related events
-  const allEvents = getEvents();
-  const relatedEvents = allEvents.filter(e => e.id !== event.id).slice(0, 3);
+  const handlePurchaseTicket = async () => {
+    if (!user) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para comprar ingressos",
+        variant: "warning"
+      });
+      navigate('/login', { state: { from: `/events/${id}` } });
+      return;
+    }
+    
+    if (!event) {
+      toast({
+        title: "Erro",
+        description: "Dados do evento não carregados",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (hasTicketForEvent) {
+      toast({
+        title: "Você já possui ingresso",
+        description: "Você já comprou ingresso para este evento. Acesse 'Meus Ingressos' para visualizá-lo.",
+        variant: "warning"
+      });
+      navigate('/my-tickets');
+      return;
+    }
+    
+    // Redirecionar para a página de seleção de ingressos
+    navigate(`/events/${id}/buy`);
+  };
   
-  return (
-    <div className="flex flex-col min-h-screen bg-cuencos-black">
-      <Header />
-      
-      {/* Event Banner */}
-      <div className="container mx-auto px-4 pt-6">
-        <div className="rounded-lg overflow-hidden relative">
-          <img 
-            src={event.image} 
-            alt={event.title} 
-            className="w-full h-56 md:h-80 object-cover"
-          />
-          
-          {/* Action buttons */}
-          <div className="absolute top-4 right-4 flex gap-2">
-            <button 
-              onClick={handleShare}
-              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+  // Função para gerar URL de imagem compatível
+  const getImageUrl = (imagePath, imageData) => {
+    // PRIORIDADE 1: Se tiver imagem em base64, usar ela
+    if (imageData && imageData.startsWith('data:')) {
+      return imageData;
+    }
+    
+    // PRIORIDADE 2: Se a imagem já é uma URL de dados (base64)
+    if (imagePath && imagePath.startsWith('data:')) {
+      return imagePath;
+    }
+    
+    if (!imagePath) return '/assets/images/placeholder-event.jpg';
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    if (imagePath.startsWith('/')) {
+      return imagePath;
+    }
+    
+    // Se a imagem começa com ./assets, remove o ponto inicial
+    if (imagePath.startsWith('./assets')) {
+      return imagePath.substring(1);
+    }
+    
+    // Se a imagem começa com assets, adiciona a barra inicial
+    if (imagePath.startsWith('assets')) {
+      return '/' + imagePath;
+    }
+    
+    return `/assets/events/${imagePath}`;
+  };
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Header />
+        <div className="container mx-auto px-4 py-8 flex items-center justify-center h-[80vh]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !event) {
+    return (
+      <div className="min-h-screen bg-black">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-gray-900 rounded-lg p-8 text-center max-w-2xl mx-auto">
+            <h1 className="text-2xl text-white mb-4">Evento não encontrado</h1>
+            <p className="text-gray-400 mb-6">{error || "Este evento não existe ou foi removido."}</p>
+            <Link 
+              to="/"
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-md inline-block"
             >
-              <Share2 className="w-5 h-5 text-cuencos-purple" />
-            </button>
-            <button 
-              onClick={handleToggleFavorite}
-              className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <Heart 
-                className={`w-5 h-5 ${isFav ? 'fill-cuencos-purple text-cuencos-purple' : 'text-white'}`}
-                alt="Favoritar"
-              />
-            </button>
+              Voltar para a página inicial
+            </Link>
           </div>
         </div>
       </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen bg-black">
+      <Header />
       
-      <main className="container mx-auto px-4 py-6 flex-grow">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">{event.title}</h1>
+      <main className="container mx-auto px-4 py-8">
+        {/* Navegação de volta */}
+        <div className="mb-6">
+          <Link to="/" className="flex items-center text-white hover:text-gray-300">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar à página inicial
+          </Link>
+        </div>
         
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Main content column */}
-          <div className="w-full md:w-2/3">
-            {/* Date and time section */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-white mb-3">Data e Horário</h2>
-              <div className="flex items-start gap-2 text-gray-300">
-                <Calendar className="w-5 h-5 mt-0.5 text-cuencos-purple" />
-                <p>{event.date}</p>
-              </div>
-              <div className="flex items-start gap-2 text-gray-300 mt-2">
-                <Clock className="w-5 h-5 mt-0.5 text-cuencos-purple" />
-                <p>{event.time || "21:00 PM - 4:00 AM"}</p>
-              </div>
-            </div>
-            
-            {/* Location section */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-white mb-3">Endereço e Local</h2>
-              <div className="flex items-start gap-2 text-gray-300">
-                <MapPin className="w-5 h-5 mt-0.5 text-cuencos-purple" />
-                <p>{event.location}</p>
-              </div>
-            </div>
-            
-            {/* Age restriction */}
-            {event.ageRestriction && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-white mb-3">Faixa Etária</h2>
-                <div className="flex items-start gap-2 text-gray-300">
-                  <span className="text-cuencos-purple text-xl">🔞</span>
-                  <p>{event.ageRestriction}</p>
-                </div>
-              </div>
-            )}
-            
-            {/* Organizers */}
-            {event.organizers && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-white mb-3">Organizadores</h2>
-                <p className="text-gray-300">{event.organizers}</p>
-              </div>
-            )}
-            
-            {/* Event description */}
-            <div className="mb-8">
-              <h2 className="text-lg font-semibold text-white mb-3">Descrição do Evento</h2>
-              <div className="text-gray-300 space-y-4">
-                <p className="font-bold text-cuencos-purple">FALA RAÇA</p>
-                <p>Quem aí não perde uma festa da MAIOR DA CAPITAL??</p>
-                <p>Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!</p>
-                <p>Vocês estão preparados (ou)?</p>
-                <p>Esperamos que SIM! Aqui é PUC, respeitem e traga o seu sorriso!</p>
-                <p>Agora o que todo mundo quer saber...</p>
-                
-                <div className="mt-4">
-                  <p className="font-semibold">Quando?</p>
-                  <p>09 de maio de 2025</p>
-                  <p>21h - 04h</p>
-                </div>
-                
-                <div className="mt-4">
-                  <p className="font-semibold">Onde?</p>
-                  <p>EM BREVE...</p>
-                </div>
-                
-                <div className="mt-4">
-                  <p className="font-semibold">OPEN BAR</p>
-                  <ul className="list-disc pl-5">
-                    <li>Cerveja (brahma)</li>
-                    <li>Vodka</li>
-                    <li>Energético</li>
-                    <li>Refrigerante</li>
-                    <li>Gummy</li>
-                  </ul>
-                </div>
-                
-                <div className="mt-4">
-                  <p className="font-semibold">ATRAÇÕES</p>
-                  <p>EM BREVE...</p>
-                </div>
-                
-                <div className="mt-6 text-sm border-t border-gray-700 pt-4">
-                  <p>A receita pra curtir: vodcê já sabem! Né! fígado forte, filtro delicado, muita animação, chegar no rol crush, perde o BJ, ficar de ressaca e sair felizão quando é planetário!</p>
-                  <p className="mt-2">Você não pode perdor, omitir ou piorar, muito menos que você vai se arrepender até o último suspiro.</p>
-                  <p className="mt-2">Lembrando sempre que não será tolerado nenhum tipo de abuso, desrespeito, intolerância, racismo, machismo e LGBTfobia. Não hesite em procurar a organização (de blusa, óculos ou seguranças). Depois só MÓ festa e álcool, queremos te encontrar ainda de lucido!</p>
-                  <p className="mt-2">Só é permitida a entrada de maiores de 18 anos.</p>
-                </div>
-              </div>
-            </div>
+        {/* Banner do evento */}
+        <div className="relative rounded-lg overflow-hidden mb-8 h-60 md:h-80 lg:h-96">
+          <img 
+            src={getImageUrl(event.image, event.imageData)} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = '/assets/images/placeholder-event.jpg';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+          
+          {/* Informações no banner */}
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">{event.title}</h1>
+            <p className="text-gray-300 text-sm md:text-base">{event.description}</p>
           </div>
           
-          {/* Ticket sidebar */}
-          <div className="w-full md:w-1/3">
-            <div className="bg-cuencos-gray rounded-lg p-6 sticky top-20">
-              <h2 className="text-2xl font-bold text-white mb-4">Ingresso</h2>
-              <div className="bg-cuencos-black/50 p-4 rounded-lg mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 rounded-full bg-cuencos-purple"></div>
-                  <p className="text-white font-medium">Sexto Lote: R$ {event.price.toFixed(2)}</p>
-                </div>
-                <p className="text-sm text-gray-400 ml-5">+ taxa a partir de R${(event.price * 0.1).toFixed(2)}</p>
-              </div>
-              
-              {hasTicket ? (
-                <div className="bg-green-500/20 p-3 rounded-lg mb-4 text-center border border-green-500/30">
-                  <Ticket className="w-5 h-5 text-green-500 mx-auto mb-2" />
-                  <p className="text-green-400 font-medium">Você já tem ingresso para este evento!</p>
-                  <Link 
-                    to="/my-tickets" 
-                    className="text-green-300 text-sm hover:underline mt-1 inline-block"
-                  >
-                    Ver meus ingressos
-                  </Link>
-                </div>
-              ) : (
-                <Button
-                  onClick={handleBuyTickets}
-                  className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-full font-medium flex items-center justify-center gap-2"
-                >
-                  <Ticket className="h-4 w-4" />
-                  Comprar
-                </Button>
-              )}
-            </div>
+          {/* Botões de ação */}
+          <div className="absolute top-4 right-4 flex space-x-2">
+            <button 
+              onClick={handleToggleFavorite}
+              className="bg-black/40 hover:bg-black/60 p-2 rounded-full text-white"
+              aria-label={isFavorite(parseInt(id)) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <Heart className={`h-5 w-5 ${isFavorite(parseInt(id)) ? 'fill-pink-500 text-pink-500' : ''}`} />
+            </button>
+            <button 
+              onClick={handleShare}
+              className="bg-black/40 hover:bg-black/60 p-2 rounded-full text-white"
+              aria-label="Compartilhar evento"
+            >
+              <Share className="h-5 w-5" />
+            </button>
           </div>
         </div>
         
-        {/* Related events carousel - SEÇÃO CORRIGIDA */}
-        <div className="my-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Outros eventos que você pode gostar</h2>
-          <div className="relative">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-                slidesToScroll: 1,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {relatedEvents.map((relEvent) => (
-                  <CarouselItem key={relEvent.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
-                    <Link to={`/events/${relEvent.id}`} className="block">
-                      <div className="bg-cuencos-gray rounded-lg overflow-hidden hover:shadow-lg hover:shadow-cuencos-purple/20 transition-all duration-300 transform hover:-translate-y-1">
-                        <div className="h-48 overflow-hidden">
-                          <img 
-                            src={relEvent.image} 
-                            alt={relEvent.title} 
-                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <div className="text-xs font-semibold text-cuencos-purple mb-2 uppercase tracking-wide">
-                            {relEvent.date?.split(' ')[2] || 'MAY'}
-                          </div>
-                          <h3 className="text-white font-medium line-clamp-2 mb-1 hover:text-cuencos-purple transition-colors">
-                            {relEvent.title}
-                          </h3>
-                          <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">
-                            {relEvent.description}
-                          </p>
-                          <div className="mt-3 flex items-center justify-between">
-                            <span className="text-cuencos-purple font-semibold text-sm">
-                              R$ {relEvent.price?.toFixed(2) || '0,00'}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {relEvent.location?.split(' - ')[1] || 'Local'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-4 md:-left-6 bg-black/70 hover:bg-black/90 text-white border-white/20 hover:border-white/40" />
-              <CarouselNext className="-right-4 md:-right-6 bg-black/70 hover:bg-black/90 text-white border-white/20 hover:border-white/40" />
-            </Carousel>
+        {/* Conteúdo principal */}
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Coluna principal */}
+          <div className="flex-grow">
+            {/* Detalhes do evento */}
+            <div className="bg-gray-900 rounded-lg p-6 mb-8">
+              <h2 className="text-xl font-bold text-white mb-4">Sobre o evento</h2>
+              <p className="text-gray-300 whitespace-pre-line mb-6">{event.longDescription || event.description}</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start">
+                  <Calendar className="h-5 w-5 text-purple-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400">Data</h3>
+                    <p className="text-white">{event.date}</p>
+                    {event.endDate && event.endDate !== event.date && (
+                      <p className="text-white">até {event.endDate}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <Clock className="h-5 w-5 text-purple-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400">Horário</h3>
+                    <p className="text-white">{event.time || "A definir"}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <MapPin className="h-5 w-5 text-purple-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400">Local</h3>
+                    <p className="text-white">{event.location}</p>
+                  </div>
+                </div>
+                
+                {event.ageRestriction && (
+                  <div className="flex items-start">
+                    <div className="h-5 w-5 text-purple-500 mt-0.5 mr-3 flex-shrink-0 flex items-center justify-center">
+                      <span className="text-sm font-bold">18+</span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-400">Restrição de idade</h3>
+                      <p className="text-white">{event.ageRestriction}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Organizadores */}
+            {event.organizers && (
+              <div className="bg-gray-900 rounded-lg p-6 mb-8">
+                <h2 className="text-xl font-bold text-white mb-4">Organização</h2>
+                <p className="text-gray-300">{event.organizers}</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Coluna lateral - Compra */}
+          <div className="w-full md:w-80 flex-shrink-0">
+            <div className="bg-gray-900 rounded-lg p-6 sticky top-6">
+              <div className="flex items-center mb-4">
+                <DollarSign className="h-6 w-6 text-green-500 mr-2" />
+                <div className="text-2xl font-bold text-white">
+                  {event.price > 0 ? `R$ ${event.price.toFixed(2)}` : "Gratuito"}
+                </div>
+              </div>
+              
+              {event.ticketName && (
+                <div className="mb-4 text-sm">
+                  <span className="text-gray-400">Ingresso: </span>
+                  <span className="text-white">{event.ticketName}</span>
+                </div>
+              )}
+              
+              <button 
+                onClick={handlePurchaseTicket}
+                disabled={isPurchasing || hasTicketForEvent}
+                className={`w-full py-3 rounded-md mb-4 transition-colors ${
+                  hasTicketForEvent 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                    : 'bg-purple-700 hover:bg-purple-800 disabled:bg-gray-600 disabled:cursor-not-allowed text-white'
+                }`}
+              >
+                {isPurchasing 
+                  ? 'Processando...' 
+                  : hasTicketForEvent 
+                    ? 'Ingresso já adquirido' 
+                    : 'Comprar ingresso'
+                }
+              </button>
+              
+              {hasTicketForEvent && (
+                <div className="text-center text-sm mb-4">
+                  <button
+                    onClick={() => navigate('/my-tickets')}
+                    className="text-cuencos-purple hover:text-cuencos-darkPurple underline"
+                  >
+                    Ver meu ingresso
+                  </button>
+                </div>
+              )}
+              
+              <div className="text-center text-sm text-gray-400">
+                {event.salesCount > 0 && (
+                  <p className="mb-2">{event.salesCount} pessoas já compraram</p>
+                )}
+                <p>Compra 100% segura via Cuencos</p>
+              </div>
+            </div>
           </div>
         </div>
       </main>

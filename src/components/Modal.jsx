@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, className = "" }) => {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -21,19 +22,32 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   
   if (!isOpen) return null;
   
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-      <div className="bg-cuencos-black border border-cuencos-gray rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-4 border-b border-cuencos-gray">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
+    <div 
+      className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-[2000] overflow-y-auto"
+      onClick={handleBackdropClick}
+    >
+      <div className={`bg-[#1a1a1a] rounded-lg max-w-md w-full max-h-[90vh] shadow-xl relative ${className}`}>
+        {/* Header do modal */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h2 className="text-lg font-semibold text-white">{title}</h2>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-white transition-colors p-1"
+            aria-label="Fechar modal"
           >
-            ✕
+            <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="p-4">
+        
+        {/* Conteúdo do modal */}
+        <div className="overflow-y-auto max-h-[calc(90vh-4rem)]">
           {children}
         </div>
       </div>

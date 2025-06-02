@@ -158,6 +158,13 @@
 @media (max-width: 768px) {
   .guest-navbar-container {
     padding: 0 1rem 0 0.75rem;
+    justify-content: center;
+  }
+  
+  .guest-navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .logo-icon {
@@ -168,14 +175,20 @@
 @media (max-width: 480px) {
   .guest-navbar-container {
     padding: 0 0.75rem 0 0.5rem;
+    justify-content: center;
+  }
+  
+  .guest-navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .logo-icon {
     height: 32px;
   }
   
-  .guest-navbar-links {
-    width: 280px;
-    right: -280px;
+  .logo-text {
+    font-size: 18px;
   }
 }

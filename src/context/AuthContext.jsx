@@ -15,15 +15,17 @@ export const AuthProvider = ({ children }) => {
   const [previousRole, setPreviousRole] = useState(null);
   const { toast } = useToast();
 
-  // Carregar usuário da sessão ao montar o componente
+  // Carregar usuário da sessão ao montar o componente - CORRIGIDO
   useEffect(() => {
     const loadUser = () => {
       try {
+        console.log('AuthContext: Carregando usuário da sessão...');
+        
         // Verifica primeiro o usuário no localStorage diretamente (caminho mais rápido)
         const localStorageUser = localStorage.getItem('usuarioLogado');
         if (localStorageUser) {
           const parsedUser = JSON.parse(localStorageUser);
-          console.log("Usuário recuperado do localStorage:", parsedUser);
+          console.log('AuthContext: Usuário recuperado do localStorage:', parsedUser);
           setUser(parsedUser);
           setLoading(false);
           return;
@@ -32,17 +34,21 @@ export const AuthProvider = ({ children }) => {
         // Se não encontrou no localStorage diretamente, tenta com getCurrentUser
         const currentUser = getCurrentUser();
         if (currentUser) {
-          console.log("Usuário autenticado carregado via getCurrentUser:", currentUser);
+          console.log('AuthContext: Usuário autenticado carregado via getCurrentUser:', currentUser);
           
           // Garante que o usuário também esteja em 'usuarioLogado'
           localStorage.setItem('usuarioLogado', JSON.stringify(currentUser));
           
           setUser(currentUser);
         } else {
-          console.log("Nenhum usuário autenticado encontrado");
+          console.log('AuthContext: Nenhum usuário autenticado encontrado');
+          setUser(null);
         }
       } catch (error) {
-        console.error("Erro ao carregar usuário:", error);
+        console.error('AuthContext: Erro ao carregar usuário:', error);
+        // Em caso de erro, limpar dados corrompidos
+        localStorage.removeItem('usuarioLogado');
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -59,7 +65,7 @@ export const AuthProvider = ({ children }) => {
       if (loggedInUser) {
         console.log("Login bem-sucedido:", loggedInUser);
         
-        // Garantir que o usuário seja salvo no localStorage em ambos os formatos
+        // Garantir que o usuário seja salvo no localStorage
         localStorage.setItem('usuarioLogado', JSON.stringify(loggedInUser));
         
         setUser(loggedInUser);
@@ -74,14 +80,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função de logout - atualizada para remover ambas as chaves
+  // Função de logout - MELHORADA
   const logout = () => {
     try {
+      console.log("Realizando logout...");
+      
       // Limpar tanto o usuário normal quanto o organizador
       logoutUser();
       localStorage.removeItem('usuarioLogado');
+      
+      // Limpar favoritos e outros dados do usuário
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('cuencos_favorites_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
       setUser(null);
+      setPreviousRole(null);
+      
       console.log("Logout bem-sucedido");
+      
       toast({
         title: "Logout realizado com sucesso!",
         variant: "success"

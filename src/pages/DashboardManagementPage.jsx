@@ -32,6 +32,44 @@ const DashboardManagementPage = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
 
+  // Função para gerar URL de imagem compatível
+  const getImageUrl = (imagePath, imageData) => {
+    // PRIORIDADE 1: Se tiver imagem em base64, usar ela
+    if (imageData && imageData.startsWith('data:')) {
+      return imageData;
+    }
+    
+    // PRIORIDADE 2: Se a imagem já é uma URL de dados (base64)
+    if (imagePath && imagePath.startsWith('data:')) {
+      return imagePath;
+    }
+    
+    if (!imagePath) return '/assets/images/placeholder-event.jpg';
+    
+    // Se a imagem já começa com http, é uma URL completa da API
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // Se começa com /, é um caminho absoluto relativo à raiz do servidor
+    if (imagePath.startsWith('/')) {
+      return imagePath;
+    }
+    
+    // Se começa com ./, é um caminho relativo
+    if (imagePath.startsWith('./')) {
+      return imagePath.substring(1); // Remove o ponto inicial
+    }
+    
+    // Se começa com assets, adiciona a barra inicial
+    if (imagePath.startsWith('assets')) {
+      return '/' + imagePath;
+    }
+    
+    // Caso contrário, assume-se que é um nome de arquivo na pasta assets/events
+    return `/assets/events/${imagePath}`;
+  };
+
   // Verificar se o usuário está logado e é um organizador
   useEffect(() => {
     if (!user) {
@@ -55,18 +93,30 @@ const DashboardManagementPage = () => {
     }
 
     // Carregar dados dos eventos
-    const loadEvents = () => {
+    const loadEvents = async () => {
       try {
+        console.log('Carregando eventos do organizador...');
+        setIsLoading(true);
+        
         // Carregar eventos do organizador logado
-        const userEvents = getEventsByUser(user.id || user.email);
+        const userEvents = await getEventsByUser(user.id || user.email);
+        console.log('Eventos do organizador carregados:', userEvents.length);
         
-        // Separar eventos ativos e rascunhos (eventos com status draft)
-        const activeEventsList = userEvents.filter(event => !event.isDraft);
-        const draftsList = userEvents.filter(event => event.isDraft);
+        if (Array.isArray(userEvents)) {
+          // Separar eventos ativos e rascunhos
+          const activeEventsList = userEvents.filter(event => !event.isDraft);
+          const draftsList = userEvents.filter(event => event.isDraft);
+          
+          setEvents(activeEventsList);
+          setDrafts(draftsList);
+          
+          console.log(`${activeEventsList.length} eventos ativos, ${draftsList.length} rascunhos`);
+        } else {
+          console.warn('Nenhum evento retornado');
+          setEvents([]);
+          setDrafts([]);
+        }
         
-        setEvents(activeEventsList);
-        setDrafts(draftsList);
-        setIsLoading(false);
       } catch (error) {
         console.error('Erro ao carregar eventos:', error);
         toast({
@@ -74,6 +124,9 @@ const DashboardManagementPage = () => {
           title: "Erro",
           description: "Não foi possível carregar seus eventos",
         });
+        setEvents([]);
+        setDrafts([]);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -248,9 +301,12 @@ const DashboardManagementPage = () => {
                   {events.map(event => (
                     <div key={event.id} className="bg-[#1e1e1e] rounded-xl overflow-hidden">
                       <img 
-                        src={event.image} 
+                        src={getImageUrl(event.image, event.imageData)} 
                         alt={event.title} 
                         className="w-full h-48 object-cover"
+                        onError={(e) => {
+                          e.target.src = '/assets/images/placeholder-event.jpg';
+                        }}
                       />
                       <div className="p-4">
                         <div className="flex justify-between items-start mb-2">
@@ -322,9 +378,12 @@ const DashboardManagementPage = () => {
                   {drafts.map(draft => (
                     <div key={draft.id} className="bg-[#1e1e1e] rounded-xl overflow-hidden">
                       <img 
-                        src={draft.image || "/assets/images/placeholder.svg"} 
+                        src={getImageUrl(draft.image, draft.imageData)} 
                         alt={draft.title} 
                         className="w-full h-48 object-cover"
+                        onError={(e) => {
+                          e.target.src = '/assets/images/placeholder-event.jpg';
+                        }}
                       />
                       <div className="p-4">
                         <div className="flex justify-between items-start mb-2">

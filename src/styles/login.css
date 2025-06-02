@@ -33,7 +33,7 @@ a {
 .login-container {
   width: 100%;
   height: 100vh;
-  background-image: url('/assets/events/imagerio.png');
+  background-image: url('./assets/events/imagerio.png');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -297,136 +297,118 @@ a {
   font-size: 12px;
 }
 
-/* Responsividade - Ajustes para diferentes tamanhos de tela */
-@media (max-width: 1200px) {
-  .promo-text {
-    left: 5%;
-    max-width: 400px;
+/* Responsividade - Ajustes melhorados para mobile */
+@media (max-width: 768px) {
+  .login-container {
+    background-position: center;
+    background-attachment: fixed;
+    padding: 0;
+    min-height: 100vh;
+    height: auto;
+    overflow-y: auto;
   }
   
-  .promo-text p {
-    font-size: 28px;
-  }
-  
-  .login-card {
-    right: 5%;
-    width: 450px;
-    padding: 30px;
-  }
-}
-
-@media (max-width: 992px) {
-  .promo-text {
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    top: 30%;
-    max-width: 80%;
-  }
-  
-  .login-card {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    bottom: 50px;
-    width: 80%;
-    max-width: 500px;
+  .login-container::before {
+    background-color: rgba(48, 4, 72, 0.85);
   }
   
   .logo {
+    position: fixed;
     top: 20px;
-  }
-  
-  .logo-text {
-    font-size: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    width: 100%;
+    justify-content: center;
   }
   
   .logo img {
-    height: 40px;
+    height: 35px;
   }
-}
-
-@media (max-width: 768px) {
-  .login-container {
-    overflow-y: auto;
-    height: auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
+  
+  .logo-text {
+    font-size: 18px;
   }
   
   .promo-text {
     position: relative;
-    top: 90px;
     left: 0;
+    top: 0;
     transform: none;
-    margin: 0 auto 30px;
+    margin: 80px auto 20px;
     padding: 0 20px;
     max-width: 100%;
     width: 100%;
     text-align: center;
   }
   
+  .promo-text p {
+    font-size: 24px;
+    line-height: 1.4;
+    margin-bottom: 0;
+  }
+  
   .login-card {
     position: relative;
     bottom: auto;
-    left: auto;
-    transform: none;
-    margin: 120px auto 30px;
-    width: 90%;
-    max-width: 450px;
+    right: auto;
+    left: 0;
+    margin: 20px auto 40px;
+    width: calc(100% - 40px);
+    max-width: 400px;
     min-height: auto;
-    padding: 25px;
+    padding: 30px 25px;
   }
   
-  .logo {
-    position: fixed;
-    top: 15px;
-    left: 20px;
-    transform: none;
+  .login-card h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
   }
   
-  h1 {
-    font-size: 24px;
+  .welcome-message {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
     margin-bottom: 20px;
   }
   
   .form-group input {
-    padding: 12px;
+    padding: 12px 15px;
+    font-size: 16px;
+  }
+  
+  .password-input-container {
+    position: relative;
+  }
+  
+  .password-field {
+    width: 100%;
+    padding-right: 45px;
+  }
+  
+  .password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .eye-icon {
+    width: 20px;
+    height: 20px;
+    color: #666;
   }
   
   .continue-btn {
     padding: 15px;
-  }
-}
-
-@media (max-width: 576px) {
-  .logo {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .promo-text {
-    top: 80px;
-  }
-  
-  .promo-text p {
-    font-size: 24px;
-  }
-  
-  .login-card {
-    width: calc(100% - 30px);
-    padding: 20px;
-    margin-top: 100px;
-  }
-  
-  h1 {
-    font-size: 22px;
-  }
-  
-  .form-group label {
-    font-size: 13px;
+    font-size: 16px;
+    margin-top: 15px;
   }
   
   .divider-container {
@@ -435,80 +417,191 @@ a {
   
   .google-login {
     padding: 10px;
+    margin-bottom: 20px;
   }
   
   .google-login span {
     font-size: 14px;
   }
   
-  .signup-link, .login-info {
+  .signup-link {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+  .login-info {
+    font-size: 13px;
+  }
+  
+  .organizador-info {
+    margin-top: 8px;
+    padding: 8px;
+  }
+  
+  .organizador-info p {
+    font-size: 11px;
+    margin: 3px 0;
+  }
+}
+
+/* Ajustes específicos para telas muito pequenas */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0 10px;
+  }
+  
+  .promo-text {
+    margin-top: 70px;
+    padding: 0 15px;
+  }
+  
+  .promo-text p {
+    font-size: 20px;
+  }
+  
+  .login-card {
+    width: calc(100% - 20px);
+    margin: 15px auto 30px;
+    padding: 25px 20px;
+  }
+  
+  .logo {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .login-card h1 {
+    font-size: 20px;
+  }
+  
+  .welcome-message {
+    font-size: 13px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+  }
+  
+  .form-group input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .continue-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  .google-login span {
     font-size: 13px;
   }
 }
 
-@media (max-height: 650px) and (max-width: 768px) {
-  .login-container {
-    height: auto;
-    padding-top: 0;
-    padding-bottom: 20px;
-  }
-  
-  .login-card {
-    margin: 100px auto 20px;
-    min-height: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
-  
-  .promo-text {
-    top: 70px;
-  }
-  
-  .promo-text p {
-    font-size: 22px;
-  }
-}
-
-@media (max-height: 700px) {
-  .login-card {
-    min-height: auto;
-    bottom: 20px;
-  }
-  
-  .promo-text {
-    top: 45%;
-  }
-  
-  .promo-text p {
-    font-size: 24px;
-  }
-}
-
-/* Para telas pequenas em orientação paisagem */
+/* Orientação paisagem em mobile */
 @media (max-width: 767px) and (orientation: landscape) {
   .login-container {
     height: auto;
     min-height: 100vh;
-    padding: 30px 0;
-  }
-  
-  .promo-text {
-    position: relative;
-    top: 40px;
-    margin-bottom: 10px;
-  }
-  
-  .login-card {
-    position: relative;
-    bottom: auto;
-    margin: 70px auto 30px;
+    padding: 20px 0;
   }
   
   .logo {
     position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .logo img {
+    height: 30px;
+  }
+  
+  .logo-text {
+    font-size: 16px;
+  }
+  
+  .promo-text {
+    margin: 50px auto 15px;
+  }
+  
+  .promo-text p {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+  
+  .login-card {
+    margin: 15px auto 20px;
+    padding: 20px;
   }
   
   .form-group {
     margin-bottom: 15px;
+  }
+  
+  .continue-btn {
+    padding: 10px;
+  }
+}
+
+/* Ajustes para tablets em modo retrato */
+@media (min-width: 481px) and (max-width: 768px) {
+  .promo-text p {
+    font-size: 26px;
+  }
+  
+  .login-card {
+    width: 80%;
+    max-width: 450px;
+    padding: 35px 30px;
+  }
+  
+  .logo {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .login-card h1 {
+    font-size: 24px;
+  }
+  
+  .form-group input {
+    padding: 14px 16px;
+  }
+  
+  .continue-btn {
+    padding: 16px;
+    font-size: 17px;
+  }
+}
+
+/* Estados de foco melhorados para mobile */
+@media (max-width: 768px) {
+  .form-group input:focus,
+  .continue-btn:focus,
+  .google-login:focus,
+  .info-button:focus {
+    outline: 2px solid #A200FF;
+    outline-offset: 2px;
+  }
+  
+  /* Melhor área de toque para botões */
+  .continue-btn,
+  .google-login,
+  .password-toggle-btn {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  
+  .password-toggle-btn {
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

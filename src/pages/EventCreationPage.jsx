@@ -37,91 +37,99 @@ const EventCreationPage = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      toast({
-        title: "Acesso restrito",
-        description: "Faça login para criar ou editar eventos",
-        variant: "destructive",
-      });
-      navigate('/login');
-      return;
-    }
-
-    if (!isOrganizer()) {
-      toast({
-        title: "Permissão negada",
-        description: "Apenas organizadores podem criar eventos",
-        variant: "destructive",
-      });
-      navigate('/dashboard');
-      return;
-    }
-
-    // If we have an ID, try to load existing event data
-    if (id && id !== 'new') {
-      try {
-        const event = getEventById(parseInt(id));
-        if (!event) {
-          toast({
-            title: "Evento não encontrado",
-            description: "O evento que você está tentando editar não existe",
-            variant: "destructive",
-          });
-          navigate('/dashboard/management');
-          return;
-        }
-
-        // Format event data for form
-        setEventData({
-          title: event.title || '',
-          description: event.description || '',
-          category: event.category || '',
-          date: event.date?.split(' de ')[0] || '',
-          startTime: event.time?.split(' - ')[0] || '',
-          endTime: event.time?.split(' - ')[1] || '',
-          location: event.location || '',
-          image: event.image || null,
-          ticketType: event.price > 0 ? 'paid' : 'free',
-          ticketName: event.ticketName || 'Ingresso Padrão',
-          ticketPrice: event.price?.toString() || '0',
-          isDraft: event.isDraft || false,
-          createdBy: event.createdBy || user?.id || user?.email
-        });
-      } catch (error) {
-        console.error('Error loading event:', error);
+    const loadEventData = async () => {
+      if (!user) {
         toast({
-          title: "Erro ao carregar evento",
-          description: "Não foi possível carregar os dados do evento",
+          title: "Acesso restrito",
+          description: "Faça login para criar ou editar eventos",
           variant: "destructive",
         });
+        navigate('/login');
+        return;
       }
-    } else {
-      // Check if we have draft data in localStorage
-      try {
-        const editionData = localStorage.getItem('eventoDraft_edicao');
-        const coverData = localStorage.getItem('eventoDraft_capa');
-        const ticketData = localStorage.getItem('eventoDraft_ingresso');
 
-        if (editionData) {
-          const parsedData = JSON.parse(editionData);
-          setEventData(prev => ({ ...prev, ...parsedData }));
-        }
-
-        if (coverData) {
-          const parsedCover = JSON.parse(coverData);
-          setEventData(prev => ({ ...prev, image: parsedCover.image }));
-        }
-
-        if (ticketData) {
-          const parsedTicket = JSON.parse(ticketData);
-          setEventData(prev => ({ ...prev, ...parsedTicket }));
-        }
-      } catch (error) {
-        console.error('Error loading draft data:', error);
+      if (!isOrganizer()) {
+        toast({
+          title: "Permissão negada",
+          description: "Apenas organizadores podem criar eventos",
+          variant: "destructive",
+        });
+        navigate('/dashboard');
+        return;
       }
-    }
 
-    setIsLoading(false);
+      // If we have an ID, try to load existing event data
+      if (id && id !== 'new') {
+        try {
+          console.log('Carregando evento da API para edição:', id);
+          const event = await getEventById(parseInt(id));
+          
+          if (!event) {
+            toast({
+              title: "Evento não encontrado",
+              description: "O evento que você está tentando editar não existe na API",
+              variant: "destructive",
+            });
+            navigate('/dashboard/management');
+            return;
+          }
+
+          console.log('Evento carregado da API:', event.title);
+          
+          // Format event data for form
+          setEventData({
+            title: event.title || '',
+            description: event.description || '',
+            category: event.category || '',
+            date: event.date?.split(' de ')[0] || '',
+            startTime: event.time?.split(' - ')[0] || '',
+            endTime: event.time?.split(' - ')[1] || '',
+            location: event.location || '',
+            image: event.image || null,
+            ticketType: event.price > 0 ? 'paid' : 'free',
+            ticketName: event.ticketName || 'Ingresso Padrão',
+            ticketPrice: event.price?.toString() || '0',
+            isDraft: event.isDraft || false,
+            createdBy: event.createdBy || user?.id || user?.email
+          });
+        } catch (error) {
+          console.error('Error loading event from API:', error);
+          toast({
+            title: "Erro ao carregar evento",
+            description: "Não foi possível carregar os dados do evento da API",
+            variant: "destructive",
+          });
+        }
+      } else {
+        // Check if we have draft data in localStorage
+        try {
+          const editionData = localStorage.getItem('eventoDraft_edicao');
+          const coverData = localStorage.getItem('eventoDraft_capa');
+          const ticketData = localStorage.getItem('eventoDraft_ingresso');
+
+          if (editionData) {
+            const parsedData = JSON.parse(editionData);
+            setEventData(prev => ({ ...prev, ...parsedData }));
+          }
+
+          if (coverData) {
+            const parsedCover = JSON.parse(coverData);
+            setEventData(prev => ({ ...prev, image: parsedCover.image }));
+          }
+
+          if (ticketData) {
+            const parsedTicket = JSON.parse(ticketData);
+            setEventData(prev => ({ ...prev, ...parsedTicket }));
+          }
+        } catch (error) {
+          console.error('Error loading draft data:', error);
+        }
+      }
+
+      setIsLoading(false);
+    };
+
+    loadEventData();
   }, [id, user, isOrganizer, navigate, toast]);
 
   const steps = [
@@ -154,11 +162,18 @@ const EventCreationPage = () => {
   };
 
   const handleCoverSave = (coverFormData) => {
-    const updatedData = { ...eventData, ...coverFormData };
+    const updatedData = { 
+      ...eventData, 
+      image: coverFormData.image, // Esta será a imagem em base64 ou URL
+      imageFile: coverFormData.imageFile // Informações do arquivo
+    };
     setEventData(updatedData);
     
-    // Save to localStorage
-    localStorage.setItem('eventoDraft_capa', JSON.stringify({ image: coverFormData.image }));
+    // Save to localStorage - salvar a imagem em base64
+    localStorage.setItem('eventoDraft_capa', JSON.stringify({ 
+      image: coverFormData.image,
+      imageFile: coverFormData.imageFile 
+    }));
     
     goToNextStep();
   };
@@ -173,120 +188,99 @@ const EventCreationPage = () => {
     goToNextStep();
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     try {
-      const dateStr = eventData.date ? `${eventData.date} de Maio` : '09 de Maio';
-      const endDateStr = eventData.endDate ? `${eventData.endDate} de Maio` : dateStr;
-      const timeStr = eventData.startTime && eventData.endTime ? 
-        `${eventData.startTime} - ${eventData.endTime}` : 
-        '21:00 - 04:00';
+      setIsLoading(true);
       
-      const finalEventData = {
-        title: eventData.title,
-        description: eventData.description,
-        longDescription: eventData.description,
-        category: eventData.category,
-        date: dateStr,
-        endDate: endDateStr,  // Adicionado data final
-        time: timeStr,
-        location: eventData.location,
-        image: eventData.image,
-        price: parseFloat(eventData.ticketPrice) || 0,
-        ticketName: eventData.ticketName || 'Ingresso Padrão',
-        featured: false,
-        ageRestriction: "Proibido menores de 18 anos",
-        organizers: "Associação Atlética",
-        createdBy: user?.id || user?.email,
-        isDraft: false,
-        salesCount: 0
+      // Preparar dados para publicação
+      const publishData = {
+        ...eventData,
+        isDraft: false, // Publicar imediatamente
+        featured: false, // Pode ser alterado depois
+        createdBy: user?.id || user?.email || 'organizador@cuencos.com'
       };
-
-      let eventId;
       
+      let result;
       if (id && id !== 'new') {
-        // Update existing event
-        eventId = parseInt(id);
-        updateEvent(eventId, finalEventData);
+        // Atualizar evento existente
+        result = await updateEvent(parseInt(id), publishData);
         toast({
-          title: "Evento atualizado",
-          description: "O evento foi atualizado com sucesso",
+          title: "Evento atualizado!",
+          description: "Seu evento foi atualizado e publicado com sucesso",
           variant: "success",
         });
       } else {
-        // Add new event
-        const newEvent = addEvent(finalEventData);
-        eventId = newEvent.id;
+        // Criar novo evento
+        result = await addEvent(publishData);
         toast({
-          title: "Evento publicado",
-          description: "Seu evento foi publicado com sucesso",
+          title: "Evento publicado!",
+          description: "Seu evento foi criado e publicado com sucesso",
           variant: "success",
         });
       }
       
-      // Clear localStorage draft data
-      localStorage.removeItem('eventoDraft_edicao');
-      localStorage.removeItem('eventoDraft_capa');
-      localStorage.removeItem('eventoDraft_ingresso');
+      // Limpar dados temporários
+      ['eventoDraft_edicao', 'eventoDraft_capa', 'eventoDraft_ingresso'].forEach(key => {
+        localStorage.removeItem(key);
+      });
       
-      // Redirecionar para a página de gerenciamento em vez da página de detalhes do evento
+      // Redirecionar para a página de gerenciamento
       navigate('/dashboard/management');
+      
     } catch (error) {
-      console.error('Error publishing event:', error);
+      console.error('Erro ao publicar evento:', error);
       toast({
-        title: "Erro ao publicar evento",
-        description: "Não foi possível publicar seu evento",
+        title: "Erro ao publicar",
+        description: error.message || "Não foi possível publicar o evento",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSaveAsDraft = () => {
+  const handleSaveAsDraft = async () => {
     try {
-      const dateStr = eventData.date ? `${eventData.date} de Maio` : '09 de Maio';
-      const timeStr = eventData.startTime && eventData.endTime ? 
-        `${eventData.startTime} - ${eventData.endTime}` : 
-        '21:00 - 04:00';
+      setIsLoading(true);
       
-      const finalEventData = {
-        title: eventData.title || "Novo Evento",
-        description: eventData.description || "Descrição do evento",
-        date: dateStr,
-        time: timeStr,
-        location: eventData.location || "Em breve...",
-        image: eventData.image || "/lovable-uploads/placeholder.svg",
-        price: parseFloat(eventData.ticketPrice) || 0,
-        createdBy: user?.id || user?.email,
-        isDraft: true
+      // Preparar dados para rascunho
+      const draftData = {
+        ...eventData,
+        isDraft: true,
+        createdBy: user?.id || user?.email || 'organizador@cuencos.com'
       };
-
+      
+      let result;
       if (id && id !== 'new') {
-        // Update existing event
-        updateEvent(parseInt(id), finalEventData);
+        // Atualizar rascunho existente
+        result = await updateEvent(parseInt(id), draftData);
         toast({
-          title: "Rascunho salvo",
-          description: "Suas alterações foram salvas com sucesso",
+          title: "Rascunho salvo!",
+          description: "Suas alterações foram salvas",
           variant: "success",
         });
       } else {
-        // Add new event as draft
-        addEvent(finalEventData);
+        // Criar novo rascunho
+        result = await addEvent(draftData);
         toast({
-          title: "Rascunho salvo",
+          title: "Rascunho salvo!",
           description: "Seu evento foi salvo como rascunho",
           variant: "success",
         });
       }
       
-      // Keep localStorage for now, might want to continue editing later
-      
+      // Redirecionar para o dashboard
       navigate('/dashboard/management');
+      
     } catch (error) {
-      console.error('Error saving draft:', error);
+      console.error('Erro ao salvar rascunho:', error);
       toast({
-        title: "Erro ao salvar rascunho",
-        description: "Não foi possível salvar seu rascunho",
+        title: "Erro ao salvar",
+        description: error.message || "Não foi possível salvar o rascunho",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
