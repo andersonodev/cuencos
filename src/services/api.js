@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuração base do cliente Axios
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://api-eventos-kaq4.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },

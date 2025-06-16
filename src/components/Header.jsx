@@ -1,110 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import GuestNavbar from './GuestNavbar';
-import Container from './ui/container';
+import Container from './ui/Container';
 import '../styles/navbar.css';
-import '../styles/mobile-menu.css';
 import RoleSwitcher from './RoleSwitcher';
+import MobileBottomMenu from './MobileBottomMenu';
+import MobileTopBar from './MobileTopBar';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 
 const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Função para abrir o menu
-  const openMenu = () => {
-    setIsMenuOpen(true);
-    document.body.classList.add('menu-open');
-    document.body.style.overflow = 'hidden'; // Impede rolagem quando menu está aberto
-  };
-
-  // Função para fechar o menu
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-    document.body.classList.remove('menu-open');
-    document.body.style.overflow = ''; // Restaura rolagem
-  };
+  const isMobile = useIsMobile();
 
   // Função para lidar com o logout
   const handleLogout = () => {
     logout();
     navigate('/');
-    closeMenu();
   };
 
-  // Fecha o menu ao redimensionar a tela para desktop
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768 && isMenuOpen) {
-        closeMenu();
-      }
-    };
+  // Função para verificar se é organizador
+  const isOrganizer = () => user && (user.role === 'organizador' || user.previousRole === 'organizador');
 
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isMenuOpen]);
-
-  // IMPORTANTE: Verificamos se o usuário está logado para exibir o menu correto
   if (!user) {
     return <GuestNavbar />;
   }
-  
-  // Get the first name safely
+
   const firstName = user && user.name ? user.name.split(' ')[0] : 'Usuário';
-  
-  // Se chegou aqui, o usuário está logado e verá o menu de usuário autenticado
+
+  if (isMobile) {
+    return (
+      <>
+        <MobileTopBar />
+        <MobileBottomMenu onLogout={handleLogout} />
+      </>
+    );
+  }
+
   return (
-    <header className="navbar">
-      <Container padding={false}>
-        <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
-          <Link to="/" className="navbar-logo flex items-center gap-1">
-            <img 
-              src="./assets/logo/logocuencosroxa.png" 
-              alt="Cuencos Logo" 
-              className="logo-icon" 
-            />
-            <span className="logo-text-headeruser">Cuencos</span>
-          </Link>
-          
-          <div className="menu-toggle" onClick={openMenu}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          
-          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`} style={{ marginLeft: 'auto' }}>
-            <div className="close-menu" onClick={closeMenu}></div>
-            <Link to="/favorites" className="nav-item" onClick={closeMenu}>
-              <img src="./assets/icons/star.png" alt="Favoritos" className="nav-icon" />
-              <span>Favoritos</span>
+    <>
+      <header className="navbar">
+        <Container padding={false}>
+          <div className="navbar-container w-full">
+            <Link to="/" className="navbar-logo header-mobile-logo">
+              <img 
+                src="/assets/logo/logocuencosroxa.png" 
+                alt="Cuencos Logo" 
+                className="logo-icon" 
+              />
+              <span className="logo-text-headeruser">Cuencos</span>
             </Link>
-            <Link to="/my-tickets" className="nav-item" onClick={closeMenu}>
-              <img src="./assets/icons/icone-ingresso.png" alt="Meus Ingressos" className="nav-icon" />
-              <span>Meus Ingressos</span>
-            </Link>
-            
-            {/* Adicionando o botão de alternância de papel aqui */}
-            <div className="nav-item">
-              <RoleSwitcher />
+            <div className="navbar-right header-desktop-menu">
+              <Link to="/favorites" className="nav-item">
+                <img 
+                  src="/assets/icons/star.png" 
+                  alt="Favoritos" 
+                  className="nav-icon"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5Z29uIHBvaW50cz0iMTIgMiAxNS4wOSA4LjI2IDIyIDkuMjcgMTcgMTQuMTQgMTguMTggMjEuMDIgMTIgMTcuNzcgNS44MiAyMS4wMiA3IDE0LjE0IDIgOS4yNyA4LjkxIDguMjYgMTIgMiI+PC9wb2x5Z29uPjwvc3ZnPg==';
+                  }}
+                />
+                <span>Favoritos</span>
+              </Link>
+              <Link to="/my-tickets" className="nav-item">
+                <img 
+                  src="/assets/icons/icone-ingresso.png" 
+                  alt="Meus Ingressos" 
+                  className="nav-icon"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik01LjUgMmgxM2w0IDgtNCA4aC0xM2wtNC04IDQtOFoiPjwvcGF0aD48cGF0aCBkPSJNMTIgNnY4Ij48L3BhdGg+PHBhdGggZD0iTTggMTBoOCI+PC9wYXRoPjwvc3ZnPg==';
+                  }}
+                />
+                <span>Meus Ingressos</span>
+              </Link>
+              {isOrganizer() && (
+                <div className="nav-item">
+                  <RoleSwitcher />
+                </div>
+              )}
+              <Link to="/account" className="nav-item">
+                <img 
+                  src="/assets/icons/profilebutton.png" 
+                  alt="Perfil" 
+                  className="nav-icon"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iOCIgcj0iNSI+PC9jaXJjbGU+PHBhdGggZD0iTTIwIDIxYTggOCAwIDAgMC0xNiAwIj48L3BhdGg+PC9zdmc+';
+                  }}
+                />
+                <span>Perfil{isOrganizer() ? ' (Organizador)' : ''}</span>
+              </Link>
+              <button onClick={handleLogout} className="nav-item">
+                <LogOut size={20} />
+                <span>Sair</span>
+              </button>
             </div>
-            
-            <Link to="/account" className="nav-item" onClick={closeMenu}>
-              <img src="./assets/icons/profilebutton.png" alt="Perfil" className="nav-icon" />
-              <span>Perfil ({firstName})</span>
-            </Link>
-            <button onClick={handleLogout} className="nav-item logout-button">
-              <LogOut className="nav-icon" />
-              <span>Sair</span>
-            </button>
           </div>
-        </div>
-      </Container>
-    </header>
+        </Container>
+      </header>
+      <MobileBottomMenu onLogout={handleLogout} />
+    </>
   );
 };
 

@@ -7,7 +7,7 @@ import EventCard from '../components/EventCard';
 import { getEvents, getFeaturedEvents } from '../lib/events';
 import { useAuth } from '../context/AuthContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import '../styles/homepage.css';
+import'../styles/homepage.css';
 
 const HomePage = () => {
   const navigate = useNavigate();

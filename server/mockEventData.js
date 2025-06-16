@@ -388,4 +388,11 @@ const mockEvents = [
   }
 ];
 
-module.exports = { mockEvents };
+// Verificamos se estamos em um contexto que suporta module.exports (CommonJS)
+// ou export (ES Modules) para garantir compatibilidade em diferentes ambientes
+if (typeof module !== 'undefined') {
+  module.exports = { mockEvents };
+} else {
+  // Estamos em um ambiente ES Module (como navegador)
+  globalThis.mockEvents = mockEvents;
+}

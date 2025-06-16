@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://api-eventos-kaq4.onrender.com/api';
 
 // Instância do axios com configuração base
 const api = axios.create({

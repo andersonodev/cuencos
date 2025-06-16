@@ -7,6 +7,7 @@ import EventFilter from '../components/EventFilter';
 import SearchFilters from '../components/SearchFilters';
 import { filterEvents } from '../lib/events';
 import { ArrowLeft } from 'lucide-react';
+import '../styles/search-results.css';
 
 const SearchResultsPage = () => {
   const location = useLocation();
@@ -113,28 +114,27 @@ const SearchResultsPage = () => {
   };
   
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black search-results-page">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Barra de navegação/voltar */}
-        <div className="mb-6">
-          <Link to="/" className="flex items-center text-white hover:text-gray-300">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+      <main className="container mx-auto px-4 py-8 flex flex-col">
+        {/* Barra de navegação/voltar com maior destaque e garantindo posicionamento no topo */}
+        <div className="back-navigation">
+          <Link to="/" className="flex items-center text-white hover:text-gray-300 text-base md:text-lg">
+            <ArrowLeft className="h-5 w-5 mr-2" />
             Voltar à página inicial
           </Link>
         </div>
         
-        {/* Barra de pesquisa - MODIFICADO: Adicionado onFilterChange */}
-        <div className="mb-6">
+        {/* Barra de pesquisa */}
+        <div className="search-filter-container">
           <EventFilter 
             onFilterChange={handleFilterChange}
-            defaultValues={filters}
             showResultsInline={false}
           />
         </div>
         
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-6 search-results-content">
           {/* Sidebar com filtros */}
           <aside className="w-full md:w-64 flex-shrink-0">
             <SearchFilters 

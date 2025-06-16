@@ -12,17 +12,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import MobileTopBarOrganizer from './MobileTopBarOrganizer';
+import MobileBottomMenuOrganizer from './MobileBottomMenuOrganizer';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 
 const DashboardHeader = ({ user }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const isMobile = useIsMobile();
   
   const handleLogout = () => {
     logout();
     navigate('/');
   };
   
+  if (isMobile) {
+    return <>
+      <MobileTopBarOrganizer />
+      <MobileBottomMenuOrganizer onLogout={handleLogout} />
+    </>;
+  }
+
   return (
     <header className="header-modern">
       <div className="header-container" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>

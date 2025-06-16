@@ -9,13 +9,13 @@
 */
 
 :root {
-  --header-height-mobile: 64px;
   --header-height-desktop: 72px;
 }
 
 /* Ajustes gerais responsivos */
 body, html {
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Ajustes para telas pequenas */
@@ -78,18 +78,6 @@ body, html {
   
   .hero-buttons {
     justify-content: center !important;
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-  
-  .hero-carousel-control {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  
-  .carousel-arrow {
-    width: 20px !important;
-    height: 20px !important;
   }
 }
 

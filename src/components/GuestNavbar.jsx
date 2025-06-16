@@ -1,66 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import Container from './ui/container';
+import { LogIn } from 'lucide-react';
+import Container from './ui/Container';
 import '../styles/navbar.css';
-import '../styles/mobile-menu.css';
+import MobileTopBarGuest from './MobileTopBarGuest';
+import MobileBottomMenuGuest from './MobileBottomMenuGuest';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 
 const GuestNavbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Função para abrir o menu
-  const openMenu = () => {
-    setIsMenuOpen(true);
-    document.body.classList.add('menu-open');
-    document.body.style.overflow = 'hidden'; // Impede rolagem quando menu está aberto
-  };
-
-  // Função para fechar o menu
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-    document.body.classList.remove('menu-open');
-    document.body.style.overflow = ''; // Restaura rolagem
-  };
-
-  // Fecha o menu ao redimensionar a tela para desktop
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768 && isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isMenuOpen]);
-
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return (
+      <>
+        <MobileTopBarGuest />
+        <MobileBottomMenuGuest />
+      </>
+    );
+  }
   return (
     <header className="navbar">
       <Container padding={false}>
-        <div className="navbar-container w-full" style={{ justifyContent: 'space-between', gap: '1.5rem' }}>
+        <div className="navbar-container w-full">
           <Link to="/" className="navbar-logo">
             <img 
-              src="./assets/logo/logocuencosroxa.png" 
+              src="/assets/logo/logocuencosroxa.png" 
               alt="Cuencos Logo" 
               className="logo-icon" 
             />
             <span className="logo-text-visitante">Cuencos</span>
           </Link>
           
-          <div className="menu-toggle" onClick={openMenu}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          
-          <div className={`navbar-right ${isMenuOpen ? 'active' : ''}`} style={{ marginLeft: 'auto' }}>
-            <div className="close-menu" onClick={closeMenu}></div>
-            <Link to="/login" className="nav-item" onClick={closeMenu}>
+          <div className="navbar-right">
+            <Link to="/login" className="nav-item">
+              <img 
+                src="/assets/icons/icone-ingresso.png" 
+                alt="Venda aqui" 
+                className="nav-icon"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik01LjUgMmgxM2w0IDgtNCA4aC0xM2wtNC04IDQtOFoiPjwvcGF0aD48cGF0aCBkPSJNMTIgNnY4Ij48L3BhdGg+PHBhdGggZD0iTTggMTBoOCI+PC9wYXRoPjwvc3ZnPg==';
+                }}
+              />
               <span>Venda aqui</span>
             </Link>
-            <Link to="/login" className="nav-item login-button" onClick={closeMenu}>
+            <Link to="/login" className="nav-item login-button">
+              <LogIn size={20} />
               <span>Login</span>
             </Link>
           </div>

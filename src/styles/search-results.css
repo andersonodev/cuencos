@@ -1,0 +1,90 @@
+/* Estilos específicos para a página de resultados de busca */
+
+/* Container principal para garantir ordem dos elementos */
+.search-results-page main {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Garantir que o botão Voltar fique acima da barra de pesquisa */
+.search-results-page .back-navigation {
+  order: 1;
+  margin-bottom: 2rem; /* Aumentado de 1.5rem para 2rem para maior espaçamento */
+  padding: 0.5rem 0; /* Adicionado padding vertical para aumentar área clicável */
+}
+
+.search-results-page .search-filter-container {
+  order: 2;
+}
+
+/* Resto do conteúdo */
+.search-results-page .search-results-content {
+  order: 3;
+}
+
+.back-navigation {
+  order: -1;
+  margin-bottom: 1.5rem;  
+  display: block;
+  width: 100%;
+  z-index: 20; /* Aumentado de 5 para 20 para garantir que fique acima do filtro */
+  position: relative; /* Adicionado position relative para controle de z-index */
+}
+
+.back-navigation a {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  transition: color 0.2s ease;
+}
+
+.back-navigation a:hover {
+  color: #e9e9e9; /* Cor mais clara ao passar o mouse */
+}
+
+/* Ajustes para desktop - novo */
+@media (min-width: 769px) {
+  .search-results-page .back-navigation {
+    margin-bottom: 2.5rem; /* Maior espaçamento em desktop */
+  }
+  
+  /* Neutralizar o margin-top negativo do filtro na página de busca */
+  .search-results-page .event-filter-container {
+    margin-top: 0 !important; /* Importante para sobrescrever o margin-top negativo */
+  }
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+  .search-results-page main {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-results-page .back-navigation {
+    margin-bottom: 1.5rem; /* Aumentado ligeiramente para mobile */
+    order: 1 !important;
+    z-index: 15;
+    position: relative;
+  }
+  
+  .search-results-page .back-navigation a {
+    font-size: 1rem;
+    padding: 10px 0;
+    font-weight: 500;
+  }
+  
+  .search-results-page .search-filter-container {
+    order: 2 !important;
+  }
+  
+  .search-results-page .search-results-content {
+    order: 3 !important;
+  }
+  
+  /* Ajuste para mobile - corrigir margin-top do filtro de eventos */
+  .search-results-page .event-filter-container {
+    margin-top: -20px !important; /* Reduzido o margin-top negativo para mobile */
+  }
+}

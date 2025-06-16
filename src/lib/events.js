@@ -71,7 +71,10 @@ const loadApiEvents = async () => {
   // Se nada funcionar, tentar dados mock como fallback para API
   try {
     console.log('Carregando dados mock como fallback da API...');
-    const { mockEvents } = await import('../../server/mockEventData.js');
+    // Usar fetch para carregar o arquivo mocado como JSON
+    const mockEventsResponse = await fetch('/api/events');
+    const mockEvents = await mockEventsResponse.json();
+    
     if (mockEvents && mockEvents.length > 0) {
       apiEventsCache = mockEvents.map(event => ({
         ...event,
@@ -549,7 +552,6 @@ export const filterEvents = async (filters) => {
     return [];
   }
 };
-
 // Funções de utilidade
 export const refreshFromAPI = async () => {
   try {
@@ -606,3 +608,4 @@ export const initializeFromAPI = async () => {
     return false;
   }
 };
+

@@ -1,7 +1,7 @@
 /* Efeito premium para o filtro com glassmorphism avançado */
 .event-filter-container {
   position: relative;
-  margin-top: -60px; 
+  margin-top: -60px; /* Este valor negativo é usado apenas na página inicial */
   margin-bottom: 30px;
   border-radius: 18px; 
   overflow: hidden;
