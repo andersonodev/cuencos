@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext';
 import { useAuth } from '../context/AuthContext';
@@ -12,8 +12,25 @@ const FavoritesPage = () => {
   const { getFavoriteEvents, loading: favoritesLoading } = useFavorites();
   const { user, loading: authLoading } = useAuth();
   const [favoriteEvents, setFavoriteEvents] = useState([]);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Função para simular progresso de carregamento
+  const startProgressSimulation = () => {
+    setLoadingProgress(0);
+    const interval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 95) {
+          clearInterval(interval);
+          return 95;
+        }
+        return prev + (95 - prev) / 10;
+      });
+    }, 200);
+    
+    return () => clearInterval(interval);
+  };
   
   const loadFavorites = async () => {
     if (!user) {
@@ -25,18 +42,28 @@ const FavoritesPage = () => {
     setLoading(true);
     setError(null);
     
+    // Iniciar simulação de progresso
+    const stopProgressSimulation = startProgressSimulation();
+    
     try {
       console.log('FavoritesPage: Carregando favoritos...');
       const events = await getFavoriteEvents();
       console.log('FavoritesPage: Favoritos carregados:', events.length);
       
       setFavoriteEvents(events || []);
+      // Completar o progresso
+      setLoadingProgress(100);
     } catch (error) {
       console.error("FavoritesPage: Erro ao carregar favoritos:", error);
       setError('Não foi possível carregar seus favoritos');
       setFavoriteEvents([]);
     } finally {
-      setLoading(false);
+      // Limpar a simulação de progresso
+      stopProgressSimulation();
+      // Definir um timeout para que o usuário possa ver o 100% antes de remover a UI de loading
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   };
   

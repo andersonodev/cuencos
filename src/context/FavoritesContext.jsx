@@ -99,7 +99,16 @@ export const FavoritesProvider = ({ children }) => {
     return favorites.includes(eventIdNum);
   };
 
-  // Obter eventos favoritos completos
+  // Cache para eventos favoritos
+  const [favoritesCache, setFavoritesCache] = useState({});
+  
+  // Limpar cache quando o usuário mudar
+  useEffect(() => {
+    // Quando o usuário muda (login/logout), limpar o cache de eventos
+    setFavoritesCache({});
+  }, [user]);
+
+  // Obter eventos favoritos completos - otimizado com cache e carregamento paralelo
   const getFavoriteEvents = async () => {
     if (!user || favorites.length === 0) {
       console.log('Nenhum favorito para carregar');
@@ -110,26 +119,56 @@ export const FavoritesProvider = ({ children }) => {
     try {
       console.log('Carregando eventos favoritos:', favorites);
       
-      const favoriteEvents = [];
+      // Verificar quais IDs já estão em cache e quais precisam ser carregados
+      const cachedEvents = [];
+      const idsToLoad = [];
       
-      for (const eventId of favorites) {
+      favorites.forEach(eventId => {
+        if (favoritesCache[eventId] && !favoritesCache[eventId].deleted) {
+          cachedEvents.push(favoritesCache[eventId]);
+        } else {
+          idsToLoad.push(eventId);
+        }
+      });
+      
+      console.log(`Usando ${cachedEvents.length} eventos do cache, carregando ${idsToLoad.length} eventos`);
+      
+      // Se todos os eventos já estão em cache, retornar imediatamente
+      if (idsToLoad.length === 0) {
+        console.log('Todos os eventos já estão em cache');
+        return cachedEvents;
+      }
+      
+      // Carregar eventos em paralelo usando Promise.all
+      const eventPromises = idsToLoad.map(async (eventId) => {
         try {
           const event = await getEventById(eventId);
-          if (event && !event.deleted) {
-            favoriteEvents.push(event);
-          } else {
-            console.warn(`Evento favorito ${eventId} não encontrado ou foi deletado`);
-          }
+          return event;
         } catch (error) {
           console.error(`Erro ao carregar evento favorito ${eventId}:`, error);
+          return null;
         }
-      }
-
-      console.log('Eventos favoritos carregados:', favoriteEvents.length);
-      return favoriteEvents;
+      });
+      
+      // Aguardar todas as promessas serem resolvidas
+      const loadedEvents = await Promise.all(eventPromises);
+      const validLoadedEvents = loadedEvents.filter(event => event && !event.deleted);
+      
+      // Atualizar o cache com os novos eventos
+      const newCache = { ...favoritesCache };
+      validLoadedEvents.forEach(event => {
+        newCache[event.id] = event;
+      });
+      setFavoritesCache(newCache);
+      
+      // Combinar eventos em cache com novos eventos
+      const allEvents = [...cachedEvents, ...validLoadedEvents];
+      console.log('Eventos favoritos carregados:', allEvents.length);
+      
+      return allEvents;
     } catch (error) {
       console.error('Erro ao obter eventos favoritos:', error);
-      return [];
+      return cachedEvents || [];
     } finally {
       setLoading(false);
     }
@@ -145,6 +184,7 @@ export const FavoritesProvider = ({ children }) => {
         localStorage.removeItem(favoritesKey);
       }
       setFavorites([]);
+      setFavoritesCache({}); // Limpar cache também
       console.log('Favoritos limpos para usuário:', user.id || user.email);
     } catch (error) {
       console.error('Erro ao limpar favoritos:', error);

@@ -191,15 +191,36 @@ export const getAllEvents = async () => {
   }
 };
 
-// Get event by ID
+// Cache para getEventById com TTL (30 minutos)
+const eventByIdCache = new Map();
+const EVENT_CACHE_TTL = 30 * 60 * 1000; // 30 minutos em ms
+
+// Get event by ID (com cache)
 export const getEventById = async (id) => {
   try {
-    console.log('Buscando evento por ID:', id);
+    const eventId = parseInt(id);
+    
+    // Verificar cache primeiro
+    if (eventByIdCache.has(eventId)) {
+      const { event: cachedEvent, timestamp } = eventByIdCache.get(eventId);
+      // Verificar se o cache ainda é válido (não expirou)
+      if (Date.now() - timestamp < EVENT_CACHE_TTL) {
+        console.log('Evento encontrado no cache:', cachedEvent.title);
+        return cachedEvent;
+      } else {
+        console.log('Cache expirado para evento:', eventId);
+        eventByIdCache.delete(eventId);
+      }
+    }
+    
+    console.log('Buscando evento por ID:', eventId);
     const events = await mergeEvents();
-    const event = events.find(event => event.id == id || event.id === parseInt(id));
+    const event = events.find(event => event.id === eventId || event.id === id);
     
     if (event) {
       console.log('Evento encontrado:', event.title, `(fonte: ${event.source})`);
+      // Armazenar no cache com timestamp
+      eventByIdCache.set(eventId, { event, timestamp: Date.now() });
       return event;
     }
     
@@ -575,6 +596,7 @@ export const clearCache = () => {
   localStorage.removeItem(LAST_API_SYNC_KEY);
   apiEventsCache = null;
   mergedEventsCache = null;
+  eventByIdCache.clear(); // Limpar cache de eventos por ID
   console.log('Cache de eventos limpo');
 };
 
