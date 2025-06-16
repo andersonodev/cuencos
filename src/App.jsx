@@ -8,6 +8,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { initializeFromAPI } from './lib/events'; // Corrigida a importação
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './lib/firebase'; // Importa e inicializa o Firebase
 
 // Importação de todas as páginas
 import HomePage from './pages/HomePage';

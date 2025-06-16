@@ -7,7 +7,7 @@ const MobileTopBarOrganizer = () => {
     <div className="mobile-topbar">
       <Link to="/dashboard" className="mobile-topbar-logo">
         <img 
-          src="/assets/logo/logocuencosroxa.png" 
+          src="./assets/logo/logocuencosroxa.png" 
           alt="Cuencos Logo" 
           className="mobile-topbar-logo-icon" 
         />
@@ -15,7 +15,7 @@ const MobileTopBarOrganizer = () => {
       </Link>
       <Link to="/dashboard/account" className="mobile-topbar-profile">
         <img 
-          src="/assets/icons/profilebutton.png" 
+          src="./assets/icons/profilebutton.png" 
           alt="Perfil" 
           className="mobile-topbar-profile-icon" 
         />

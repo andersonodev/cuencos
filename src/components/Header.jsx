@@ -55,7 +55,7 @@ const Header = () => {
           <div className="navbar-container w-full">
             <Link to="/" className="navbar-logo header-mobile-logo">
               <img 
-                src="/assets/logo/logocuencosroxa.png" 
+                src="./assets/logo/logocuencosroxa.png" 
                 alt="Cuencos Logo" 
                 className="logo-icon" 
               />
@@ -64,7 +64,7 @@ const Header = () => {
             <div className="navbar-right header-desktop-menu">
               <Link to="/favorites" className="nav-item">
                 <img 
-                  src="/assets/icons/star.png" 
+                  src="./assets/icons/star.png" 
                   alt="Favoritos" 
                   className="nav-icon"
                   onError={(e) => {
@@ -76,7 +76,7 @@ const Header = () => {
               </Link>
               <Link to="/my-tickets" className="nav-item">
                 <img 
-                  src="/assets/icons/icone-ingresso.png" 
+                  src="./assets/icons/icone-ingresso.png" 
                   alt="Meus Ingressos" 
                   className="nav-icon"
                   onError={(e) => {
@@ -93,7 +93,7 @@ const Header = () => {
               )}
               <Link to="/account" className="nav-item">
                 <img 
-                  src="/assets/icons/profilebutton.png" 
+                  src="./assets/icons/profilebutton.png" 
                   alt="Perfil" 
                   className="nav-icon"
                   onError={(e) => {

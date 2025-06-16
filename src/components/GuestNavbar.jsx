@@ -32,7 +32,7 @@ const GuestNavbar = () => {
         <div className="navbar-container w-full">
           <Link to="/" className="navbar-logo">
             <img 
-              src="/assets/logo/logocuencosroxa.png" 
+              src="./assets/logo/logocuencosroxa.png" 
               alt="Cuencos Logo" 
               className="logo-icon" 
             />
@@ -42,7 +42,7 @@ const GuestNavbar = () => {
           <div className="navbar-right">
             <Link to="/login" className="nav-item">
               <img 
-                src="/assets/icons/icone-ingresso.png" 
+                src="./assets/icons/icone-ingresso.png" 
                 alt="Venda aqui" 
                 className="nav-icon"
                 onError={(e) => {

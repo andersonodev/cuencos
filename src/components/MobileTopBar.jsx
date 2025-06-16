@@ -15,7 +15,7 @@ const MobileTopBar = () => {
       </Link>
       <Link to="/account" className="mobile-topbar-profile">
         <img 
-          src="/assets/icons/profilebutton.png" 
+          src="./assets/icons/profilebutton.png" 
           alt="Perfil" 
           className="mobile-topbar-profile-icon" 
         />

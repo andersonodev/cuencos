@@ -13,8 +13,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Configurar base condicional: usar caminho relativo apenas em produção
-  base: mode === 'production' ? '/cuencos/' : '/',
+  // Usar base raiz para ambos os ambientes
+  base: '/',
 }));
 
 

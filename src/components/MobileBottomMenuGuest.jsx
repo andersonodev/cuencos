@@ -12,7 +12,7 @@ const MobileBottomMenuGuest = () => {
       </Link>
       <Link to="/login" className="menu-item">
         <img
-          src="/assets/icons/icone-ingresso.png"
+          src="./assets/icons/icone-ingresso.png"
           alt="Venda aqui"
           className="menu-icon"
           onError={(e) => {

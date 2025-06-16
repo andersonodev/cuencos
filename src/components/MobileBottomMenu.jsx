@@ -12,7 +12,7 @@ const MobileBottomMenu = ({ onLogout }) => {
       </Link>
       <Link to="/favorites" className="menu-item">
         <img
-          src="/assets/icons/star.png"
+          src="./assets/icons/star.png"
           alt="Favoritos"
           className="menu-icon"
           onError={(e) => {
@@ -24,7 +24,7 @@ const MobileBottomMenu = ({ onLogout }) => {
       </Link>
       <Link to="/my-tickets" className="menu-item">
         <img
-          src="/assets/icons/icone-ingresso.png"
+          src="./assets/icons/icone-ingresso.png"
           alt="Ingressos"
           className="menu-icon"
           onError={(e) => {
@@ -36,7 +36,7 @@ const MobileBottomMenu = ({ onLogout }) => {
       </Link>
       <Link to="/account" className="menu-item">
         <img
-          src="/assets/icons/profilebutton.png"
+          src="./assets/icons/profilebutton.png"
           alt="Perfil"
           className="menu-icon"
           onError={(e) => {

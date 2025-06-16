@@ -35,7 +35,7 @@ const ModernHeader = () => {
         <div className="header-container">
           <Link to="/" className="header-logo">
             <img 
-              src="/assets/images/logo-cuencos-roxa.png" 
+              src="./assets/images/logo-cuencos-roxa.png" 
               alt="Cuencos" 
               className="header-logo-icon" 
             />

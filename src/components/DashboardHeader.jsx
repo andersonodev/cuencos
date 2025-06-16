@@ -119,7 +119,7 @@ const DashboardHeader = ({ user }) => {
                   onClick={() => navigate('/dashboard/email')}
                 >
                   <img 
-                    src="/assets/icons/icone-email.png" 
+                    src="./assets/icons/icone-email.png" 
                     alt="Email" 
                     className="h-5 w-5 mr-2"
                     onError={(e) => {

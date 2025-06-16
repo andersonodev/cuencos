@@ -9,7 +9,7 @@ const ModernFooter = () => {
         <div className="col-span-1">
           <div className="flex items-center mb-4">
             <img 
-              src="/assets/ticket-icon-purple.svg" 
+              src="./assets/ticket-icon-purple.svg" 
               alt="Cuencos" 
               className="h-8 w-auto mr-2" 
             />
