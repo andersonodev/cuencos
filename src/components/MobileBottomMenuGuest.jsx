@@ -8,7 +8,7 @@ const MobileBottomMenuGuest = () => {
 
   const handleLoginClick = (e) => {
     e.preventDefault();
-    navigate('/dashboard/management');
+    navigate('/dashboard');
   };
 
   return (
@@ -17,7 +17,7 @@ const MobileBottomMenuGuest = () => {
         <Home size={24} className="menu-icon" />
         <span>Home</span>
       </Link>
-      <Link to="/dashboard/management" className="menu-item">
+      <Link to="/dashboard" className="menu-item">
         <img
           src="./assets/icons/icone-ingresso.png"
           alt="Venda aqui"

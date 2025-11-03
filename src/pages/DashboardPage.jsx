@@ -26,18 +26,13 @@ const DashboardPage = () => {
   // Estado para o título do período selecionado
   const [periodTitle, setPeriodTitle] = useState('');
 
-  // Verificar se o usuário está logado e é um organizador
+  // Verificar se o usuário está logado (permite qualquer tipo de usuário)
   useEffect(() => {
     try {
       const loggedUser = JSON.parse(localStorage.getItem('usuarioLogado'));
       
       if (!loggedUser) {
         navigate('/login');
-        return;
-      }
-
-      if (loggedUser.tipo !== 'organizador') {
-        navigate('/');
         return;
       }
 

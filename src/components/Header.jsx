@@ -86,7 +86,7 @@ const Header = () => {
                 />
                 <span>Meus Ingressos</span>
               </Link>
-              <Link to="/dashboard/management" className="nav-item">
+              <Link to="/dashboard" className="nav-item">
                 <img 
                   src="./assets/icons/iconeDashboard.png" 
                   alt="Gestão de Eventos" 

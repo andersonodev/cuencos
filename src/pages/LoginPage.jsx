@@ -25,46 +25,20 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      toast({
-        title: "Erro no login",
-        description: "Por favor, preencha todos os campos.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsLoading(true);
+    
+    // Login automático - não precisa validar os campos
+    // O usuário já está sempre logado, apenas redireciona para o dashboard
     try {
-      // Credenciais para login como organizador (para facilitar os testes)
-      if (formData.email === 'organizador@cuencos.com' && formData.password === 'admin123') {
-        console.log("Tentando login como organizador:", formData.email);
-      }
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo ao Cuencos!",
+      });
       
-      const result = login(formData.email, formData.password);
+      // Redirecionar direto para o dashboard
+      console.log("Redirecionando para dashboard");
+      navigate('/dashboard', { replace: true });
       
-      if (result.success) {
-        toast({
-          title: "Login realizado com sucesso!",
-          description: `Bem-vindo de volta, ${result.user.name?.split(' ')[0] || result.user.email}!`,
-        });
-        
-        // Verificar explicitamente se é um organizador para redirecionar
-        if (result.user.tipo === 'organizador') {
-          console.log("Redirecionando para dashboard (organizador)");
-          navigate('/dashboard', { replace: true });
-        } else {
-          // Se não for organizador, redirecionar para a página anterior ou home
-          console.log("Redirecionando para página anterior (usuário regular)");
-          navigate(from, { replace: true });
-        }
-      } else {
-        toast({
-          title: "Erro no login",
-          description: result.message || "Usuário ou senha incorretos.",
-          variant: "destructive"
-        });
-      }
     } catch (error) {
       console.error("Erro no login:", error);
       toast({

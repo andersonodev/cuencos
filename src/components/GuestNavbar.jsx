@@ -23,8 +23,8 @@ const GuestNavbar = () => {
   // Função para fazer login automático e redirecionar
   const handleLoginClick = (e) => {
     e.preventDefault();
-    // Redirecionar direto para o dashboard/management
-    navigate('/dashboard/management');
+    // Redirecionar direto para o dashboard
+    navigate('/dashboard');
   };
 
   if (isMobile) {
@@ -49,7 +49,7 @@ const GuestNavbar = () => {
           </Link>
           
           <div className="navbar-right">
-            <Link to="/dashboard/management" className="nav-item">
+            <Link to="/dashboard" className="nav-item">
               <img 
                 src="./assets/icons/icone-ingresso.png" 
                 alt="Venda aqui" 
