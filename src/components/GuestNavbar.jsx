@@ -20,11 +20,11 @@ const GuestNavbar = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Função para fazer login automático e redirecionar
+  // Função para redirecionar para a página de login
   const handleLoginClick = (e) => {
     e.preventDefault();
-    // Redirecionar direto para o dashboard
-    navigate('/dashboard');
+    // Redirecionar para a página de login
+    navigate('/login');
   };
 
   if (isMobile) {

@@ -8,7 +8,7 @@ import '../styles/auth.css';
 import '../styles/global.css';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,22 +22,43 @@ const LoginPage = () => {
   // Obter a página para onde redirecionar após o login
   const from = location.state?.from || '/';
   
+  // Se o usuário já está logado, redirecionar imediatamente
+  React.useEffect(() => {
+    if (user) {
+      console.log("Usuário já está logado, redirecionando...");
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     setIsLoading(true);
     
-    // Login automático - não precisa validar os campos
-    // O usuário já está sempre logado, apenas redireciona para o dashboard
+    // Login automático - garante que o usuário padrão seja criado/carregado
     try {
+      // Criar ou carregar usuário padrão
+      const defaultUser = {
+        id: Date.now(),
+        email: 'usuario@cuencos.com',
+        name: 'Usuário Demo',
+        tipo: 'cliente',
+        createdAt: new Date().toISOString()
+      };
+      
+      // Salvar no localStorage
+      localStorage.setItem('usuarioLogado', JSON.stringify(defaultUser));
+      
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao Cuencos!",
       });
       
-      // Redirecionar direto para o dashboard
-      console.log("Redirecionando para dashboard");
-      navigate('/dashboard', { replace: true });
+      // Aguardar um pouco para garantir que o estado seja atualizado
+      setTimeout(() => {
+        console.log("Redirecionando para home");
+        window.location.href = '/'; // Usar window.location para forçar recarga completa
+      }, 100);
       
     } catch (error) {
       console.error("Erro no login:", error);
@@ -46,7 +67,6 @@ const LoginPage = () => {
         description: "Ocorreu um erro ao tentar fazer login.",
         variant: "destructive"
       });
-    } finally {
       setIsLoading(false);
     }
   };

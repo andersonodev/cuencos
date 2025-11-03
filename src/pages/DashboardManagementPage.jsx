@@ -70,7 +70,7 @@ const DashboardManagementPage = () => {
     return `/assets/events/${imagePath}`;
   };
 
-  // Verificar se o usuário está logado e é um organizador
+  // Verificar se o usuário está logado (permite qualquer tipo de usuário)
   useEffect(() => {
     if (!user) {
       toast({
@@ -79,16 +79,6 @@ const DashboardManagementPage = () => {
         variant: "destructive",
       });
       navigate('/login');
-      return;
-    }
-
-    if (!isOrganizer()) {
-      toast({
-        variant: "destructive",
-        title: "Acesso restrito",
-        description: "Essa área é exclusiva para organizadores",
-      });
-      navigate('/');
       return;
     }
 

@@ -8,7 +8,7 @@ const MobileBottomMenuGuest = () => {
 
   const handleLoginClick = (e) => {
     e.preventDefault();
-    navigate('/dashboard');
+    navigate('/login');
   };
 
   return (

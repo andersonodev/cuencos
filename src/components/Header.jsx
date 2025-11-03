@@ -98,11 +98,9 @@ const Header = () => {
                 />
                 <span>Gestão de Eventos</span>
               </Link>
-              {isOrganizer() && (
-                <div className="nav-item">
-                  <RoleSwitcher />
-                </div>
-              )}
+              <div className="nav-item">
+                <RoleSwitcher />
+              </div>
               <Link to="/account" className="nav-item">
                 <img 
                   src="./assets/icons/profilebutton.png" 
@@ -113,7 +111,7 @@ const Header = () => {
                     e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iOCIgcj0iNSI+PC9jaXJjbGU+PHBhdGggZD0iTTIwIDIxYTggOCAwIDAgMC0xNiAwIj48L3BhdGg+PC9zdmc+';
                   }}
                 />
-                <span>Perfil{isOrganizer() ? ' (Organizador)' : ''}</span>
+                <span>Perfil</span>
               </Link>
               <button onClick={handleLogout} className="nav-item">
                 <LogOut size={20} />

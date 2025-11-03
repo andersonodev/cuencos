@@ -22,38 +22,17 @@ const DashboardAccountPage = () => {
     phone: '',
   });
 
-  // Verificar se o usuário está logado e é um organizador
+    // Verificar se o usuário está logado (qualquer usuário pode acessar)
   useEffect(() => {
-    if (!user) {
-      toast({
-        title: "Acesso restrito",
-        description: "Faça login para acessar esta página",
-        variant: "destructive",
-      });
+    const loggedUser = JSON.parse(localStorage.getItem('usuarioLogado'));
+    
+    if (!loggedUser) {
       navigate('/login');
       return;
     }
 
-    if (!isOrganizer()) {
-      toast({
-        variant: "destructive",
-        title: "Acesso restrito",
-        description: "Essa área é exclusiva para organizadores",
-      });
-      navigate('/');
-      return;
-    }
-
-    // Preencher o formulário com os dados do usuário
-    setFormData({
-      name: user.name || '',
-      email: user.email || '',
-      organization: user.organization || '',
-      phone: user.phone || '',
-    });
-
-    setIsLoading(false);
-  }, [user, isOrganizer, navigate, toast]);
+    setUser(loggedUser);
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

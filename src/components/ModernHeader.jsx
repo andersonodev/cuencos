@@ -73,17 +73,13 @@ const ModernHeader = () => {
             </Link>
             {user ? (
               <>
-                {isOrganizer() && (
-                  <Link to="/dashboard" className="header-link flex items-center gap-1">
-                    <LayoutDashboard className="h-4 w-4" />
-                    <span className="hidden sm:inline">Dashboard</span>
-                  </Link>
-                )}
+                <Link to="/dashboard" className="header-link flex items-center gap-1">
+                  <LayoutDashboard className="h-4 w-4" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </Link>
                 {/* Botão de alternância de papel - Com design melhorado */}
                 <div className="mx-2">
-                  {(isOrganizer() || user.previousRole === 'organizador') && (
-                    <RoleSwitcher />
-                  )}
+                  <RoleSwitcher />
                 </div>
                 
                 <Link to="/account" className="header-link">

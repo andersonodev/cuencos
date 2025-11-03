@@ -3,22 +3,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
-import { UserCog, User, SwitchCamera } from 'lucide-react';
+import { UserCog, User, SwitchCamera, Eye } from 'lucide-react';
 
 const RoleSwitcher = () => {
   const { isOrganizer, switchUserRole, previousRole } = useAuth();
   const navigate = useNavigate();
   
   const handleSwitchRole = () => {
-    // Verifica se o usuário pode alternar para organizador
-    if (!isOrganizer() && previousRole !== 'organizador') {
-      // Se o usuário não tem papel de organizador, redireciona para o cadastro
-      navigate('/register?role=organizer');
-      return;
-    }
-    
-    // Caso contrário, use a função switchUserRole com redirecionamento
-    switchUserRole(navigate);
+    // Redireciona para a página inicial de eventos
+    navigate('/');
   };
 
   return (
@@ -42,8 +35,8 @@ const RoleSwitcher = () => {
           </>
         ) : (
           <>
-            <UserCog className="h-3.5 w-3.5 text-white" />
-            <span className="text-xs font-medium text-white hidden md:inline">Seja Organizador</span>
+            <Eye className="h-3.5 w-3.5 text-white" />
+            <span className="text-xs font-medium text-white hidden md:inline">Visualizar</span>
           </>
         )}
         <SwitchCamera className="h-3 w-3 text-white/80 ml-0.5 animate-pulse" />

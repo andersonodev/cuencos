@@ -48,16 +48,6 @@ const EventCreationPage = () => {
         return;
       }
 
-      if (!isOrganizer()) {
-        toast({
-          title: "Permissão negada",
-          description: "Apenas organizadores podem criar eventos",
-          variant: "destructive",
-        });
-        navigate('/dashboard');
-        return;
-      }
-
       // If we have an ID, try to load existing event data
       if (id && id !== 'new') {
         try {

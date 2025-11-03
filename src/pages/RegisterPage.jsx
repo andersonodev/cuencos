@@ -36,42 +36,41 @@ const RegisterPage = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Validação simples
-    if (!formData.name || !formData.email || !formData.password) {
+    // Login/Cadastro automático - não precisa validar campos
+    // Redireciona direto para a home de eventos
+    try {
+      // Criar usuário padrão
+      const defaultUser = {
+        id: Date.now(),
+        email: 'usuario@cuencos.com',
+        name: 'Usuário Demo',
+        tipo: 'cliente',
+        createdAt: new Date().toISOString()
+      };
+      
+      // Salvar no localStorage
+      localStorage.setItem('usuarioLogado', JSON.stringify(defaultUser));
+      
+      toast({
+        title: "Cadastro realizado!",
+        description: "Bem-vindo ao Cuencos!",
+      });
+      
+      // Aguardar um pouco para garantir que o estado seja atualizado
+      setTimeout(() => {
+        console.log("Redirecionando para home");
+        window.location.href = '/'; // Usar window.location para forçar recarga completa
+      }, 100);
+      
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
       toast({
         title: "Erro no cadastro",
-        description: "Por favor, preencha todos os campos obrigatórios.",
+        description: "Ocorreu um erro ao criar sua conta.",
         variant: "destructive"
       });
       setIsLoading(false);
-      return;
     }
-    
-    // Tentativa de registro usando localStorage
-    const result = registerUser(formData);
-    
-    if (result.success) {
-      toast({
-        title: "Cadastro realizado!",
-        description: "Sua conta foi criada com sucesso.",
-      });
-      
-      // Redireciona para a página inicial após cadastro bem-sucedido
-      // Se for organizador, redireciona para o dashboard
-      if (formData.tipo === 'organizador') {
-        navigate('/dashboard');
-      } else {
-        navigate('/');
-      }
-    } else {
-      toast({
-        title: "Erro no cadastro",
-        description: result.message || "Ocorreu um erro ao criar sua conta.",
-        variant: "destructive"
-      });
-    }
-    
-    setIsLoading(false);
   };
   
   const isOrganizerRegistration = formData.tipo === 'organizador';
