@@ -1,13 +1,70 @@
-import * as eventService from '../services/eventService';
+// Dados mockados incluídos diretamente
+const mockEventsData = [
+  {
+    id: 1,
+    title: "PUC IN RIO",
+    description: "Quem ainda perde uma festa da MAIOR DA CAPITAL?? Pensando em vocês, o Hellboy soltou mais uma edição da PUC IN RIO!!",
+    longDescription: "PUC IN RIO é uma experiência única que combina música, diversão e a energia jovem universitária.",
+    image: "https://images.sympla.com.br/63043ad1c38d1-xs.jpg",
+    date: "09 de Maio de 2025",
+    endDate: "09 de Maio de 2025",
+    time: "21:00 - 04:00",
+    location: "Em breve... - Curitiba / Paraná",
+    price: 80.00,
+    featured: true,
+    ageRestriction: "Proibido menores de 18 anos",
+    organizers: "Associação Atlética PUC-PR",
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 84,
+    category: "festa",
+    ticketName: "Lote Principal",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 2,
+    title: "Calourada 2025.1",
+    description: "Calourada da UFRJ do campus de Duque de Caxias.",
+    longDescription: "A maior festa de recepção aos calouros de 2025!",
+    image: "https://res.cloudinary.com/htkavmx5a/image/upload/f_auto,q_auto/peqi6lzxtpeddqvsj67s.png",
+    date: "8 de Maio de 2025",
+    endDate: "8 de Maio de 2025",
+    time: "20:00 - 03:00",
+    location: "UFRJ - Rio de Janeiro / RJ",
+    price: 45.00,
+    featured: false,
+    ageRestriction: "Proibido menores de 18 anos",
+    organizers: "DCE UFRJ",
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 32,
+    category: "festa",
+    ticketName: "Lote 1"
+  },
+  {
+    id: 3,
+    title: "BAILE DO MAGNA",
+    description: "O tradicional baile da faculdade que promete agitar a noite com muita música e diversão!",
+    image: "https://repositorio.santamaria.rs.gov.br/midia/2025/02/F25-126003.jpg",
+    date: "15 de Maio de 2025",
+    time: "22:00 - 05:00",
+    location: "Clube Magna - São Paulo / SP",
+    price: 65.00,
+    featured: true,
+    ageRestriction: "Proibido menores de 18 anos",
+    organizers: "Magna Atlética",
+    createdBy: "organizador@cuencos.com",
+    isDraft: false,
+    salesCount: 156,
+    category: "festa"
+  }
+];
 
 // Chaves do localStorage
-const EVENTS_STORAGE_KEY = 'cuencos_events';
 const LOCAL_EVENTS_STORAGE_KEY = 'cuencos_local_events';
-const API_EVENTS_STORAGE_KEY = 'cuencos_api_events';
-const LAST_API_SYNC_KEY = 'cuencos_last_api_sync';
 
 // Cache em memória
-let apiEventsCache = null;
 let localEventsCache = null;
 let mergedEventsCache = null;
 
@@ -20,76 +77,20 @@ const getNextEventId = (events) => {
   return maxId + 1;
 };
 
-// Carregar eventos da API
-const loadApiEvents = async () => {
+// Carregar eventos mockados (substitui loadApiEvents)
+const loadMockEvents = () => {
   try {
-    // Verificar se já temos cache válido da API (menos de 5 minutos)
-    const lastSync = localStorage.getItem(LAST_API_SYNC_KEY);
-    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
-    
-    if (apiEventsCache && lastSync && parseInt(lastSync) > fiveMinutesAgo) {
-      console.log('Usando cache da API (válido por mais tempo)');
-      return apiEventsCache;
-    }
-    
-    console.log('Tentando carregar eventos da API...');
-    const apiEvents = await eventService.fetchEvents();
-    
-    if (apiEvents && Array.isArray(apiEvents) && apiEvents.length > 0) {
-      apiEventsCache = apiEvents.map(event => ({
-        ...event,
-        source: 'api',
-        id: parseInt(event.id) // Garantir que ID seja número
-      }));
-      
-      // Salvar no localStorage com timestamp
-      localStorage.setItem(API_EVENTS_STORAGE_KEY, JSON.stringify(apiEventsCache));
-      localStorage.setItem(LAST_API_SYNC_KEY, Date.now().toString());
-      
-      console.log(`${apiEventsCache.length} eventos carregados da API`);
-      return apiEventsCache;
-    } else {
-      console.warn('API retornou dados vazios ou inválidos');
-    }
-  } catch (apiError) {
-    console.warn('Erro ao conectar com a API:', apiError.message);
-  }
-  
-  // Fallback para eventos salvos da API no localStorage
-  try {
-    const storedApiEvents = localStorage.getItem(API_EVENTS_STORAGE_KEY);
-    if (storedApiEvents) {
-      apiEventsCache = JSON.parse(storedApiEvents);
-      console.log(`${apiEventsCache.length} eventos da API carregados do cache local`);
-      return apiEventsCache;
-    }
+    const events = mockEventsData.map(event => ({
+      ...event,
+      source: 'mock',
+      id: parseInt(event.id)
+    }));
+    console.log(`${events.length} eventos mockados carregados`);
+    return events;
   } catch (error) {
-    console.error('Erro ao carregar cache da API:', error);
-    localStorage.removeItem(API_EVENTS_STORAGE_KEY);
+    console.error('Erro ao carregar eventos mockados:', error);
+    return [];
   }
-  
-  // Se nada funcionar, tentar dados mock como fallback para API
-  try {
-    console.log('Carregando dados mock como fallback da API...');
-    // Usar fetch para carregar o arquivo mocado como JSON
-    const mockEventsResponse = await fetch('/api/events');
-    const mockEvents = await mockEventsResponse.json();
-    
-    if (mockEvents && mockEvents.length > 0) {
-      apiEventsCache = mockEvents.map(event => ({
-        ...event,
-        source: 'api',
-        id: parseInt(event.id)
-      }));
-      localStorage.setItem(API_EVENTS_STORAGE_KEY, JSON.stringify(apiEventsCache));
-      console.log(`${apiEventsCache.length} eventos mock carregados como API`);
-      return apiEventsCache;
-    }
-  } catch (error) {
-    console.error('Erro ao carregar dados mock:', error);
-  }
-  
-  return [];
 };
 
 // Carregar eventos locais
@@ -132,36 +133,26 @@ const saveLocalEvents = (events) => {
   }
 };
 
-// Mesclar eventos da API e locais
+// Mesclar eventos mockados e locais
 const mergeEvents = async () => {
   try {
-    const apiEvents = await loadApiEvents();
+    const mockEvts = loadMockEvents();
     const localEvents = loadLocalEvents();
     
-    // Combinar eventos, removendo duplicatas por ID
-    const eventMap = new Map();
+    // Filtrar eventos locais ativos (não deletados)
+    const activeLocalEvents = localEvents.filter(event => !event.deleted);
     
-    // Adicionar eventos da API primeiro
-    apiEvents.forEach(event => {
-      eventMap.set(event.id, event);
-    });
+    // Combinar eventos mockados + locais
+    const allEvents = [...mockEvts, ...activeLocalEvents];
     
-    // Adicionar eventos locais (podem sobrescrever se mesmo ID)
-    localEvents.forEach(event => {
-      eventMap.set(event.id, event);
-    });
-    
-    mergedEventsCache = Array.from(eventMap.values()).sort((a, b) => {
-      // Ordenar por data de criação, mais recentes primeiro
+    // Ordenar por data
+    mergedEventsCache = allEvents.sort((a, b) => {
       const dateA = new Date(a.createdAt || a.date || 0);
       const dateB = new Date(b.createdAt || b.date || 0);
       return dateB - dateA;
     });
     
-    console.log(`Total de ${mergedEventsCache.length} eventos (${apiEvents.length} da API + ${localEvents.length} locais)`);
-    
-    // Manter compatibilidade com localStorage antigo
-    localStorage.setItem(EVENTS_STORAGE_KEY, JSON.stringify(mergedEventsCache));
+    console.log(`Total de ${mergedEventsCache.length} eventos (${mockEvts.length} mockados + ${activeLocalEvents.length} locais)`);
     
     return mergedEventsCache;
   } catch (error) {
@@ -629,5 +620,10 @@ export const initializeFromAPI = async () => {
     console.error('Erro ao inicializar:', error);
     return false;
   }
+};
+
+// Função de verificação de status da API (sempre retorna true agora)
+export const checkAPIStatus = async () => {
+  return true;
 };
 

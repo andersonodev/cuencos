@@ -105,7 +105,7 @@ const LoginPage = () => {
         
         <div className="form-group">
           <label htmlFor="password">Senha</label>
-          <div className="password-input">
+          <div className="password-input" style={{ position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
@@ -113,7 +113,7 @@ const LoginPage = () => {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               disabled={isLoading}
               placeholder="admin123"
-              style={{ paddingRight: '2.5rem' }}
+              style={{ paddingRight: '2.5rem', width: '100%' }}
             />
             <button 
               type="button"
@@ -121,12 +121,16 @@ const LoginPage = () => {
               style={{
                 position: 'absolute',
                 right: '0.75rem',
-                top: '10%',
+                top: '50%',
                 transform: 'translateY(-50%)',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: '#666'
+                color: '#666',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '4px'
               }}
               aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
             >

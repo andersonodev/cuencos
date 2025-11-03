@@ -40,16 +40,7 @@ import { isAvailable } from './lib/storage';
 const queryClient = new QueryClient();
 
 function App() {
-  // Limpar dados locais que podem interferir com a API
-  useEffect(() => {
-    // Limpar localStorage de eventos antigos
-    localStorage.removeItem('cuencos_events');
-    localStorage.removeItem('events');
-    console.log('Cache local de eventos limpo - usando apenas API');
-  }, []);
-  
   const [storageAvailable, setStorageAvailable] = useState(true);
-  const [apiStatus, setApiStatus] = useState('checking');
   
   useEffect(() => {
     // Verificar se o localStorage está disponível
@@ -69,37 +60,14 @@ function App() {
     // Inicializar dados de eventos quando o app carregar
     const initializeEvents = async () => {
       try {
-        setApiStatus('checking');
-        
-        // Tentar inicializar com dados da API
-        const success = await initializeFromAPI();
-        
-        if (success) {
-          setApiStatus('online');
-          console.log('✅ Eventos carregados da API com sucesso');
-        } else {
-          setApiStatus('offline');
-          console.warn('⚠️ Usando dados locais - API indisponível');
-        }
+        await initializeFromAPI();
+        console.log('✅ Eventos mockados carregados com sucesso');
       } catch (error) {
         console.error('❌ Erro ao inicializar eventos:', error);
-        setApiStatus('offline');
       }
     };
     
     initializeEvents();
-    
-    // Verificar status da API periodicamente (a cada 30 segundos)
-    const healthCheckInterval = setInterval(async () => {
-      try {
-        const isOnline = await checkAPIStatus();
-        setApiStatus(isOnline ? 'online' : 'offline');
-      } catch (error) {
-        setApiStatus('offline');
-      }
-    }, 30000);
-    
-    return () => clearInterval(healthCheckInterval);
   }, []);
   
   return (
@@ -119,52 +87,6 @@ function App() {
               >
                 Atenção: O armazenamento local está desativado ou indisponível. 
                 Algumas funcionalidades como login e favoritos não irão funcionar corretamente.
-              </div>
-            )}
-            
-            {/* Indicador de status da API obrigatório */}
-            {apiStatus === 'offline' && (
-              <div 
-                style={{ 
-                  background: '#dc2626', 
-                  color: 'white', 
-                  textAlign: 'center', 
-                  padding: '8px', 
-                  fontSize: '12px',
-                  position: 'relative'
-                }}
-              >
-                🔴 API offline - Nenhum evento será exibido | 
-                <button 
-                  onClick={() => window.location.reload()} 
-                  style={{
-                    marginLeft: '8px',
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    color: 'white',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Tentar reconectar
-                </button>
-              </div>
-            )}
-            
-            {apiStatus === 'online' && (
-              <div 
-                style={{ 
-                  background: '#16a34a', 
-                  color: 'white', 
-                  textAlign: 'center', 
-                  padding: '4px', 
-                  fontSize: '11px',
-                  opacity: 0.9
-                }}
-              >
-                🟢 Conectado à API
               </div>
             )}
             

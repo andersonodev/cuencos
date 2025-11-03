@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [previousRole, setPreviousRole] = useState(null);
   const { toast } = useToast();
 
-  // Carregar usuário da sessão ao montar o componente - CORRIGIDO
+  // Carregar usuário da sessão ao montar o componente - MODIFICADO PARA SEMPRE ESTAR LOGADO
   useEffect(() => {
     const loadUser = () => {
       try {
@@ -41,14 +41,34 @@ export const AuthProvider = ({ children }) => {
           
           setUser(currentUser);
         } else {
-          console.log('AuthContext: Nenhum usuário autenticado encontrado');
-          setUser(null);
+          // NOVO: Se não há usuário, criar um usuário padrão automaticamente
+          console.log('AuthContext: Criando usuário padrão automaticamente');
+          const defaultUser = {
+            id: Date.now(),
+            email: 'usuario@cuencos.com',
+            name: 'Usuário Demo',
+            tipo: 'cliente',
+            createdAt: new Date().toISOString()
+          };
+          
+          localStorage.setItem('usuarioLogado', JSON.stringify(defaultUser));
+          setUser(defaultUser);
+          
+          console.log('AuthContext: Usuário padrão criado e logado automaticamente');
         }
       } catch (error) {
         console.error('AuthContext: Erro ao carregar usuário:', error);
-        // Em caso de erro, limpar dados corrompidos
-        localStorage.removeItem('usuarioLogado');
-        setUser(null);
+        // Em caso de erro, criar usuário padrão ao invés de deixar sem usuário
+        const defaultUser = {
+          id: Date.now(),
+          email: 'usuario@cuencos.com',
+          name: 'Usuário Demo',
+          tipo: 'cliente',
+          createdAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem('usuarioLogado', JSON.stringify(defaultUser));
+        setUser(defaultUser);
       } finally {
         setLoading(false);
       }

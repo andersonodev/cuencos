@@ -1,16 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Home } from 'lucide-react';
 import './MobileBottomMenu.css'; // Reutilizar o mesmo CSS
 
 const MobileBottomMenuGuest = () => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    navigate('/dashboard/management');
+  };
+
   return (
     <nav className="mobile-bottom-menu">
       <Link to="/" className="menu-item">
         <Home size={24} className="menu-icon" />
         <span>Home</span>
       </Link>
-      <Link to="/login" className="menu-item">
+      <Link to="/dashboard/management" className="menu-item">
         <img
           src="./assets/icons/icone-ingresso.png"
           alt="Venda aqui"
@@ -22,10 +29,10 @@ const MobileBottomMenuGuest = () => {
         />
         <span>Venda aqui</span>
       </Link>
-      <Link to="/login" className="menu-item">
+      <button onClick={handleLoginClick} className="menu-item" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
         <LogIn size={24} className="menu-icon" />
         <span>Login</span>
-      </Link>
+      </button>
     </nav>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import Container from './ui/Container';
 import '../styles/navbar.css';
@@ -18,6 +18,15 @@ function useIsMobile() {
 
 const GuestNavbar = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  // Função para fazer login automático e redirecionar
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    // Redirecionar direto para o dashboard/management
+    navigate('/dashboard/management');
+  };
+
   if (isMobile) {
     return (
       <>
@@ -40,7 +49,7 @@ const GuestNavbar = () => {
           </Link>
           
           <div className="navbar-right">
-            <Link to="/login" className="nav-item">
+            <Link to="/dashboard/management" className="nav-item">
               <img 
                 src="./assets/icons/icone-ingresso.png" 
                 alt="Venda aqui" 
@@ -52,10 +61,10 @@ const GuestNavbar = () => {
               />
               <span>Venda aqui</span>
             </Link>
-            <Link to="/login" className="nav-item login-button">
+            <button onClick={handleLoginClick} className="nav-item login-button" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
               <LogIn size={20} />
               <span>Login</span>
-            </Link>
+            </button>
           </div>
         </div>
       </Container>
